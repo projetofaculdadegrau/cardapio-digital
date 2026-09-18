@@ -5,7 +5,8 @@
 /bazel-out
 
 # Dependencies
-/node_modules
+node_modules/
+**/node_modules/
 
 # Logs
 npm-debug.log*
