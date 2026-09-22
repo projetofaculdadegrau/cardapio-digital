@@ -1,8 +1,8 @@
 # Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+dist/
+tmp/
+out-tsc/
+bazel-out/
 
 # Dependencies
 node_modules/
@@ -15,11 +15,12 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Angular
-/.angular/cache
+.angular/
+**/.angular/
 
 # Testing
-/coverage
-/testem.log
+coverage/
+testem.log
 
 # Python
 __pycache__/
