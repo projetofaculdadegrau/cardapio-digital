@@ -19,7 +19,7 @@ Muitas empresas de comida atualmente não possuem um site ou sistema oficial par
 
 ## Como executar
 
-Aqui colocaremos as instruções para rodar o projeto...
+Aqui colocaremos as instruções para rodar o projeto
 
 ## Equipe
 
