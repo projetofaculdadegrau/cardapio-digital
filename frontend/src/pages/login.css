@@ -1,0 +1,176 @@
+/* ---------- 1. VARIÁVEIS DE COR ----------
+   Guardamos as cores em um lugar só. Pra mudar o tema do site,
+   basta trocar aqui em cima. */
+:root {
+  --ground:  #fbf7f0;   /* fundo da página          */
+  --ground2: #f2e7d8;   /* fundo (tom p/ degradê)   */
+  --surface: #ffffff;   /* fundo do cartão de login */
+  --ink:     #211a13;   /* cor do texto             */
+  --muted:   #8b8175;   /* texto secundário/cinza   */
+  --line:    #e7ded1;   /* bordas dos campos        */
+  --field:   #f8f4ed;   /* fundo dos inputs         */
+  --accent:  #d6412b;   /* cor de destaque (tomate) */
+  --accent-press: #b8331f;  /* destaque mais escuro (hover/clique) */
+}
+
+/* ---------- 2. RESET BÁSICO ----------
+   Tira margens padrão e faz o padding contar dentro do tamanho. */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;              /* organiza header / main / footer em coluna */
+  flex-direction: column;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  color: var(--ink);
+  /* fundo com um leve degradê quente */
+  background: linear-gradient(160deg, var(--ground), var(--ground2));
+}
+
+/* ---------- 3. CABEÇALHO (texto acima do cartão) ---------- */
+header {
+  text-align: center;
+  padding: 40px 20px 0;
+}
+header h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+header p {
+  margin: 0 auto;
+  max-width: 42ch;           /* limita a largura do texto p/ leitura */
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------- 4. CARTÃO DE LOGIN (main.modal) ----------
+   A margem "auto" centraliza o cartão vertical e horizontalmente
+   no espaço que sobra entre o header e o footer. */
+main.modal {
+  margin: auto;
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 20px 45px -25px rgba(40, 25, 15, 0.35);
+}
+main.modal h2 {
+  margin: 0 0 22px;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------- 5. FORMULÁRIO (form.login) ----------
+   display:flex em coluna com "gap" dá o respiro entre os campos. */
+form.login {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+form.login label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+/* Campos de e-mail e senha */
+form.login input {
+  width: 100%;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--field);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 4px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+form.login input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+/* quando o campo está selecionado, a borda muda de cor */
+form.login input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(214, 65, 43, 0.22);
+}
+
+/* ---------- 6. BOTÃO ENTRAR ---------- */
+form.login button {
+  margin-top: 20px;
+  width: 100%;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+form.login button:hover { background: var(--accent-press); }
+form.login button:active { transform: translateY(1px); }
+
+/* ---------- 7. LINKS "Criar conta" / "Esqueci a senha" ---------- */
+.opcoes {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+.opcoes a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.opcoes a:hover { text-decoration: underline; }
+
+/* ---------- 8. RODAPÉ ---------- */
+footer {
+  text-align: center;
+  padding: 20px;
+}
+footer p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ---------- 9. RESPONSIVO (celular) ----------
+   Em telas pequenas, diminui o respiro e o tamanho do título. */
+@media (max-width: 480px) {
+  header { padding-top: 28px; }
+  header h1 { font-size: 25px; }
+  main.modal {
+    margin: 24px 16px;       /* gruda menos nas bordas do celular */
+    padding: 24px;
+  }
+  .opcoes { flex-direction: column; text-align: center; }
+}
+
+/* ---------- 10. TEMA ESCURO (opcional) ----------
+   Se o sistema do usuário estiver no modo escuro, trocamos as cores. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground:  #14110e;
+    --ground2: #0c0a08;
+    --surface: #1c1815;
+    --ink:     #f3ece1;
+    --muted:   #9a8f80;
+    --line:    #312a23;
+    --field:   #151210;
+    --accent:  #f2603f;
+    --accent-press: #d84d2f;
+  }
+}
