@@ -104,6 +104,51 @@ form.login input:focus {
   box-shadow: 0 0 0 4px rgba(214, 65, 43, 0.22);
 }
 
+/* ---------- 11. REQUISITOS DE SENHA ---------- */
+.password-requirements {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.password-requirements li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+/* Estado Inválido */
+.password-requirements li.invalid {
+  color: var(--muted);
+}
+.password-requirements li.invalid::before {
+  content: "✖";
+  color: #d6412b;
+}
+
+/* Estado Válido */
+.password-requirements li.valid {
+  color: var(--ink);
+  font-weight: 600;
+}
+.password-requirements li.valid::before {
+  content: "✔";
+  color: #2e7d32;
+}
+
+/* Estilo para o botão desativado */
+form.login button:disabled {
+  background: var(--line);
+  color: var(--muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ---------- 6. BOTÃO ENTRAR ---------- */
 form.login button {
   margin-top: 20px;
