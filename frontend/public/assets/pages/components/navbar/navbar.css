@@ -1,0 +1,462 @@
+/* ---------- CABEÇALHO FIXO ---------- */
+header.main-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #fbf7f0;
+  border-bottom: 1px solid #e7ded1;
+  box-shadow: 0 4px 20px -5px rgba(33, 26, 19, 0.08);
+  transition: all 0.3s ease;
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: #fbf7f0;
+}
+
+/* ---------- LOGO DA MARCA ---------- */
+.navbar-brand a {
+  font-size: 22px;
+  font-weight: 800;
+  color: #211a13;
+  text-decoration: none;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.2s ease;
+  background-color: #fbf7f0;
+}
+
+.navbar-brand a:hover {
+  transform: scale(1.02);
+  color: #b8331f;
+}
+
+.navbar-brand .brand-highlight {
+  color: #d6412b;
+  background-color: #fbf7f0;
+}
+
+/* ---------- CONTEÚDO PRINCIPAL ---------- */
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+  background-color: #fbf7f0;
+}
+
+/* Links do Menu */
+.navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 20px;
+  background-color: #fbf7f0;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8b8175;
+  text-decoration: none;
+  padding: 6px 4px;
+  position: relative;
+  transition: color 0.2s ease;
+  background-color: #fbf7f0;
+}
+
+.nav-link:hover {
+  color: #d6412b;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #d6412b;
+  transition: all 0.2s ease;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ---------- GRUPO DA DIREITA (LOGIN + CARRINHO) ---------- */
+.navbar-right-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/* ---------- FORMULÁRIO DE LOGIN ---------- */
+.navbar-login-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 0;
+}
+
+/* Base dos grupos de input */
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8b8175;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.navbar-login-form input {
+  font-size: 13px;
+  color: #211a13;
+  background: #f8f4ed;
+  border: 1.5px solid #e7ded1;
+  border-radius: 10px;
+  padding: 8px 12px 8px 32px;
+  width: 145px;
+  height: 38px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.navbar-login-form input::placeholder {
+  color: #8b8175;
+  opacity: 0.8;
+}
+
+.navbar-login-form input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #d6412b;
+  color: #211a13;
+}
+
+/* Grupo da Senha (com Link Absoluto) */
+.input-group-password {
+  position: relative;
+}
+
+/* O link flutua logo abaixo do campo de senha sem empurrar o formulário */
+.forgot-password-link {
+  position: absolute;
+  top: 100%;
+  left: 2px;
+  font-size: 11px;
+  color: #8b8175;
+  text-decoration: none;
+  margin-top: 3px;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.forgot-password-link:hover {
+  color: #d6412b;
+  text-decoration: underline;
+}
+
+/* Botão Entrar */
+.btn-login-nav {
+  font-size: 13px;
+  font-weight: 700;
+  color: #211a13;
+  background: #f8f4ed;
+  border: 1.5px solid #e7ded1;
+  border-radius: 10px;
+  padding: 0 18px;
+  height: 38px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-login-nav:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+  color: #d6412b;
+  border-color: #d6412b;
+}
+
+.btn-login-nav:active {
+  transform: translateY(0);
+}
+
+/* ---------- BOTÃO DO CARRINHO ---------- */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-cart {
+  position: relative;
+  background: #f8f4ed;
+  border: 1.5px solid #e7ded1;
+  padding: 0 12px;
+  height: 38px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #211a13;
+  transition: all 0.2s ease;
+}
+
+.btn-cart:hover {
+  border-color: #d6412b;
+  color: #d6412b;
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #d6412b;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  box-shadow: 0 2px 6px rgba(214, 65, 43, 0.4);
+  border: 2px solid #ffffff;
+}
+
+/* ---------- MODAL DE RECUPERAÇÃO DE SENHA ---------- */
+.modal-recovery-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(33, 26, 19, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-recovery-overlay.active {
+  display: flex;
+}
+
+.modal-recovery-content {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e7ded1;
+  border-radius: 16px;
+  padding: 32px 24px 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 20px 45px -25px rgba(40, 25, 15, 0.35);
+  animation: fadeInModal 0.25s ease-out;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.btn-close-modal {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #8b8175;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btn-close-modal:hover {
+  color: #d6412b;
+}
+
+.modal-recovery-content h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #211a13;
+}
+
+.modal-recovery-content p {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: #8b8175;
+  line-height: 1.4;
+}
+
+.modal-recovery-content .input-group {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.modal-recovery-content input {
+  width: 100%;
+  font-size: 14px;
+  color: #211a13;
+  background: #f8f4ed;
+  border: 1.5px solid #e7ded1;
+  border-radius: 10px;
+  padding: 10px 12px 10px 34px;
+}
+
+.btn-submit-recovery {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #d6412b;
+  border: none;
+  border-radius: 10px;
+  padding: 11px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-submit-recovery:hover {
+  background: #b8331f;
+}
+
+.recovery-feedback {
+  margin-top: 12px;
+  font-size: 13px;
+  text-align: center;
+  display: none;
+}
+
+.recovery-feedback.success {
+  display: block;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+/* ---------- MENU MOBILE TOGGLE ---------- */
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 26px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.navbar-toggle .bar {
+  width: 100%;
+  height: 2.5px;
+  background-color: #211a13;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* ---------- RESPONSIVIDADE (CELULAR / TABLET) ---------- */
+@media (max-width: 880px) {
+  .navbar-toggle {
+    display: flex;
+  }
+
+  .navbar-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fbf7f0;
+    flex-direction: column;
+    padding: 24px;
+    border-bottom: 1px solid #e7ded1;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    gap: 20px;
+  }
+
+  .navbar-content.active {
+    display: flex;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .navbar-right-group {
+    flex-direction: column;
+    width: 100%;
+    margin-left: 0;
+    gap: 16px;
+  }
+
+  .navbar-login-form {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .input-group,
+  .input-group-password,
+  .navbar-login-form input {
+    width: 100%;
+  }
+
+  .btn-login-nav {
+    width: 100%;
+  }
+
+  .navbar-actions {
+    width: 100%;
+    justify-content: center;
+    padding-top: 12px;
+    border-top: 1px solid #e7ded1;
+  }
+}

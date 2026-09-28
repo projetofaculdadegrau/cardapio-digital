@@ -13,6 +13,10 @@
   --accent-press: #b8331f;  /* destaque mais escuro (hover/clique) */
 }
 
+:root:darkmode {
+  --bg-darkmode: rgba(28, 24, 21, 0.85); /* fundo da página */
+}
+
 /* ---------- 2. RESET BÁSICO ----------
    Tira margens padrão e faz o padding contar dentro do tamanho. */
 * { box-sizing: border-box; }
