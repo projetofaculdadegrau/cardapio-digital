@@ -124,7 +124,7 @@ function initNavbar() {
       const email = document.getElementById('navEmail').value;
       const password = document.getElementById('navPassword').value;
       console.log('Login:', { email, password });
-      alert(`Tentativa de login enviada para: ${email}`);
+      alert(`Enviamos um e-mail para ${email}, siga as instruções enviadas e crie uma nova senha.`);
     });
   }
 }
