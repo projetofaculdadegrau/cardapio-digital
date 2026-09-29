@@ -128,6 +128,7 @@ h3,
   justify-content: center;
   margin: 24px auto;
   padding: 15px;
+  scroll-margin-top: 100px;
 }
 
 .filtro {
