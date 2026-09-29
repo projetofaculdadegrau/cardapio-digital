@@ -14,3 +14,32 @@ html, body {
 h1, h2, h3, .navbar-brand a {
   font-family: 'Playfair Display', serif;
 }
+
+/* ===== HERO SECTION (banner principal) ===== */
+.hero-section{
+  min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:60px 20px;color:#fff;
+  background:
+    linear-gradient(160deg, rgba(20,15,12,.72), rgba(20,15,12,.5)),
+    linear-gradient(120deg, #d6412b, #f2a007);
+  /* Pra usar uma FOTO de lanche no fundo, troca a última linha do background por:
+     url('../../img/hero-lanche.jpg') center/cover no-repeat; */
+}
+.hero-content{max-width:640px;}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  padding:6px 14px;border-radius:999px;font-size:14px;font-weight:600;margin-bottom:18px;}
+.hero-title{font-size:clamp(30px,5vw,50px);font-weight:800;line-height:1.1;margin:0 0 16px;}
+.hero-subtitle{font-size:clamp(15px,2vw,19px);line-height:1.6;margin:0 auto 28px;max-width:46ch;opacity:.95;}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.hero-btn{padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;
+  transition:transform .05s,background .15s;}
+.hero-btn-primary{background:#fff;color:#d6412b;}
+.hero-btn-primary:hover{background:#ffe9e3;}
+.hero-btn-ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.6);}
+.hero-btn-ghost:hover{background:rgba(255,255,255,.12);}
+.hero-btn:active{transform:translateY(1px);}
+@media (max-width:600px){
+  .hero-section{min-height:60vh;padding:48px 18px;}
+  .hero-actions{flex-direction:column;}
+  .hero-btn{width:100%;}
+}
