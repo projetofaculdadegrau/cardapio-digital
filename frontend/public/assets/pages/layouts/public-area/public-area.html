@@ -1,32 +1,249 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cardápio Digital - Área Pública</title>
   <link rel="stylesheet" href="public-area.css" />
   <link rel="stylesheet" href="../../components/navbar/navbar.css" />
+  <!-- Importação dos Ícones do Material Design -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
+
 <body>
 
   <header class="main-header" id="navbar-container"></header>
 
   <!-- Conteúdo Principal da Área Pública -->
- <main class="content">
-  <section class="hero-section">
-    <div class="hero-content">
-      <span class="hero-badge">🍔 Entrega rápida na sua porta</span>
-      <h1 class="hero-title">Bateu a fome?<br>Peça seu lanche agora.</h1>
-      <p class="hero-subtitle">Os melhores lanches da cidade, montados do seu jeito e entregues quentinhos. É só escolher e pedir.</p>
-      <div class="hero-actions">
-        <a href="#cardapio" class="hero-btn hero-btn-primary">Ver cardápio</a>
-        <a href="#" class="hero-btn hero-btn-ghost">Como funciona</a>
+  <main class="content" id="inicial">
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-badge">🍔 Entrega rápida na sua porta</span>
+        <h1 class="hero-title">Bateu a fome?<br>Peça seu lanche agora.</h1>
+        <p class="hero-subtitle">Os melhores lanches da cidade, montados do seu jeito e entregues quentinhos. É só
+          escolher e pedir.</p>
+        <div class="hero-actions">
+          <a href="#cardapio" class="hero-btn hero-btn-primary">Ver cardápio</a>
+          <a href="#" class="hero-btn hero-btn-ghost">Como funciona</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="filtros">
+    <a href="#inicial" class="filtro">Todos</a>
+    <a href="#bebidas" class="filtro">Bebidas</a>
+    <a href="#salgados" class="filtro">Salgados</a>
+    <a href="#doces" class="filtro">Doces</a>
+    <a href="#saudaveis" class="filtro">Saudáveis</a>
+    <a href="#combos" class="filtro">Combos</a>
+    <a href="#promocoes" class="filtro">Promoções</a>
+    <div class="search-container">
+      <mat-icon class="material-symbols-outlined search-icon">search</mat-icon>
+      <input id="busca" type="text" placeholder="Buscar...">
+    </div>
+  </div>
+
+  <div class="cardapio" id="cardapio">
+
+    <!-- Categoria: Bebidas -->
+    <section class="categoria-section" id="bebidas">
+      <h2 class="categoria-title">Bebidas</h2>
+      <div class="produtos-grid">
+        <div class="produto-card" data-nome="Coca-cola 350ml"
+          data-desc="Coca-cola geladinha na lata, perfeita para matar a sede em qualquer hora do dia."
+          data-preco="R$ 7,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Bebida">
+          </div>
+          <div class="produto-info">
+            <h3>Coca-cola 350ml</h3>
+            <p>Coca-cola geladina na lata.</p>
+            <span class="preco">R$ 7,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+        <div class="produto-card" data-nome="Suco Natural 500ml"
+          data-desc="Suco de laranja natural feito na hora, sem conservantes e cheio de vitamina C."
+          data-preco="R$ 9,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Suco">
+          </div>
+          <div class="produto-info">
+            <h3>Suco Natural 500ml</h3>
+            <p>Suco de laranja natural feito na hora.</p>
+            <span class="preco">R$ 9,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+        <div class="produto-card" data-nome="Água com Gás 500ml"
+          data-desc="Água mineral com gás na garrafinha, refrescante e leve para acompanhar qualquer refeição."
+          data-preco="R$ 9,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Água">
+          </div>
+          <div class="produto-info">
+            <h3>Água com gás 500ml</h3>
+            <p>Água com gás na garrafinha.</p>
+            <span class="preco">R$ 9,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+        <div class="produto-card" data-nome="Fanta Laranja 350ml"
+          data-desc="Fanta Laranja geladinha e refrescante, com o sabor inconfundível de laranja." data-preco="R$ 7,00"
+          data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Fanta">
+          </div>
+          <div class="produto-info">
+            <h3>Fanta Laranja 350ml</h3>
+            <p>Fanta Laranja geladinha.</p>
+            <span class="preco">R$ 7,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categoria: Salgados -->
+    <section class="categoria-section" id="salgados">
+      <h2 class="categoria-title">Salgados</h2>
+      <div class="produtos-grid">
+        <div class="produto-card" data-nome="Coxinha de Frango"
+          data-desc="Massa crocante e dourada com muito recheio cremoso de frango temperado. Feita fresquinha todo dia."
+          data-preco="R$ 7,50" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Salgado">
+          </div>
+          <div class="produto-info">
+            <h3>Coxinha de Frango</h3>
+            <p>Massa crocante com muito recheio cremoso de frango.</p>
+            <span class="preco">R$ 7,50</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+        <div class="produto-card" data-nome="Pastel Especial"
+          data-desc="Pastel crocante e irresistível, recheado com carne moída, queijo derretido e azeitona. Vai com bastante molho."
+          data-preco="R$ 8,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Pastel">
+          </div>
+          <div class="produto-info">
+            <h3>Pastel Especial</h3>
+            <p>Pastel recheado com carne, queijo e azeitona.</p>
+            <span class="preco">R$ 8,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categoria: Doces -->
+    <section class="categoria-section" id="doces">
+      <h2 class="categoria-title">Doces</h2>
+      <div class="produtos-grid">
+        <div class="produto-card" data-nome="Pudim de Leite"
+          data-desc="Aquele pudim caseiro cremoso com bastante calda de caramelo dourado. Uma sobremesa clássica que todo mundo ama."
+          data-preco="R$ 12,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Doce">
+          </div>
+          <div class="produto-info">
+            <h3>Pudim de Leite</h3>
+            <p>Aquele pudim caseiro com bastante calda de caramelo.</p>
+            <span class="preco">R$ 12,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categoria: Saudáveis -->
+    <section class="categoria-section" id="saudaveis">
+      <h2 class="categoria-title">Saudáveis</h2>
+      <div class="produtos-grid">
+        <div class="produto-card" data-nome="Salada Caseira"
+          data-desc="Salada fresquinha com alface crocante, tomate, azeitona e pepino. Temperada com azeite e limão. Leve e saudável."
+          data-preco="R$ 7,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Salada">
+          </div>
+          <div class="produto-info">
+            <h3>Salada</h3>
+            <p>Salada caseira com alface, tomate, azeitona e pepino.</p>
+            <span class="preco">R$ 7,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categoria: Combos -->
+    <section class="categoria-section" id="combos">
+      <h2 class="categoria-title">Combos</h2>
+      <div class="produtos-grid">
+        <div class="produto-card" data-nome="Combo Especial"
+          data-desc="Hambúrguer artesanal + Batata Frita crocante + Coca-cola 350ml. O combo perfeito para matar a fome com muito sabor. Aquele de dar água na boca!"
+          data-preco="R$ 35,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Combo">
+          </div>
+          <div class="produto-info">
+            <h3>Hambúrguer + Batata Frita + Coca-cola</h3>
+            <p>Aquele combo de dar água na boca</p>
+            <span class="preco">R$ 35,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categoria: Promoções -->
+    <section class="categoria-section" id="promocoes">
+      <h2 class="categoria-title">Promoções</h2>
+      <div class="produtos-grid">
+        <div class="produto-card" data-nome="Pizza de Chocolate 🍕"
+          data-desc="Pizza doce de chocolate por metade do preço! Massa fofinha com cobertura generosa de chocolate ao leite. Oferta por tempo limitado — aproveite!"
+          data-preco="R$ 15,00" data-img="../../../img/adicionar-foto-lanche.png">
+          <div class="img-container">
+            <img src="../../../img/adicionar-foto-lanche.png" alt="Promoção">
+          </div>
+          <div class="produto-info">
+            <h3>Pizza</h3>
+            <p>Pizza doce de chocolate por metade do preço.</p>
+            <span class="preco">R$ 15,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== MODAL DE DETALHES DO PRODUTO ===== -->
+  <div id="produto-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-nome">
+    <div class="modal-box">
+      <button class="modal-fechar" id="modal-fechar-btn" aria-label="Fechar modal">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="modal-imagem-wrap">
+        <img id="modal-img" src="" alt="" class="modal-img">
+        <div class="modal-badge-preco" id="modal-badge-preco"></div>
+      </div>
+      <div class="modal-corpo">
+        <h2 class="modal-nome" id="modal-nome"></h2>
+        <p class="modal-desc" id="modal-desc"></p>
+        <div class="modal-rodape">
+          <span class="modal-preco" id="modal-preco"></span>
+          <button class="btn-add modal-btn-add" id="modal-btn-add">🛒 Adicionar ao carrinho</button>
+        </div>
       </div>
     </div>
-  </section>
-</main>
+  </div>
 
   <script src="../../components/navbar/navbar.js"></script>
   <script src="public-area.js"></script>
 </body>
+
 </html>
