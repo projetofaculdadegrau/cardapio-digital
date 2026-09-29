@@ -462,3 +462,72 @@ header.main-header {
     border-top: 1px solid #e7ded1;
   }
 }
+
+/* ===== BOTÃO DO CARRINHO ===== */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-cart {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1.5px solid #e7ded1;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(33, 26, 19, 0.07);
+}
+
+.btn-cart:hover {
+  background: #fef4f2;
+  border-color: #d6412b;
+  transform: translateY(-1px);
+}
+
+.btn-cart:active {
+  transform: scale(0.95);
+}
+
+.cart-icon {
+  stroke: #5a4a3a;
+  flex-shrink: 0;
+}
+
+/* Badge numérico */
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #d6412b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-shadow: 0 2px 6px rgba(214, 65, 43, 0.45);
+  pointer-events: none;
+  transition: transform 0.15s;
+}
+
+/* Animação de "bump" ao adicionar item */
+@keyframes badge-bump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.55); }
+  70%  { transform: scale(0.88); }
+  100% { transform: scale(1); }
+}
+
+.cart-badge.badge-bump {
+  animation: badge-bump 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
