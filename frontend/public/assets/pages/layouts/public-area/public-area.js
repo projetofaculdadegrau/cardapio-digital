@@ -3,6 +3,45 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNavbarComponent('navbar-container');
   }
 
+  // ===== CARROSSEL DA HERO SECTION (ROLAGEM LATERAL) =====
+  const track = document.getElementById('carouselTrack');
+  const dots = document.querySelectorAll('.dot');
+  const totalSlides = 4;
+  let currentSlide = 0;
+  const slideInterval = 4000; // Tempo de cada slide (4 segundos)
+
+  function showSlide(index) {
+    if (!track) return;
+
+    // Desloca o trilho para a esquerda (cada slide ocupa 25% da largura total)
+    track.style.transform = `translateX(-${index * 25}%)`;
+
+    // Atualiza os pontos (dots)
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+
+    currentSlide = index;
+  }
+
+  function nextSlide() {
+    const nextIndex = (currentSlide + 1) % totalSlides;
+    showSlide(nextIndex);
+  }
+
+  if (track) {
+    let timer = setInterval(nextSlide, slideInterval);
+
+    // Permite trocar ao clicar nas bolinhas
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        clearInterval(timer);
+        showSlide(index);
+        timer = setInterval(nextSlide, slideInterval);
+      });
+    });
+  }
+
   // ===== CARRINHO =====
   let qtdCarrinho = parseInt(localStorage.getItem('carrinhoQtd') || '0', 10);
 
@@ -43,13 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     observer.observe(navbarContainer, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 
   // Delegação de eventos: botões "Adicionar ao carrinho" nos cards
   // (exclui o botão do modal)
-  document.querySelectorAll('.btn-add:not(#modal-btn-add)').forEach(btn => {
+  document.querySelectorAll('.btn-add:not(#modal-btn-add)').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       adicionarAoCarrinho();
@@ -90,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalPreco.textContent = preco;
     modalBadge.textContent = preco;
 
-    modalBtnAdd.textContent = '🛒 Adicionar ao carrinho';
+    modalBtnAdd.textContent = 'Adicionar ao carrinho';
     modalBtnAdd.style.background = '';
 
     modal.classList.add('aberto');
@@ -104,20 +143,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Botão "Adicionar ao carrinho" dentro do modal
-  modalBtnAdd.addEventListener('click', () => {
-    adicionarAoCarrinho();
+  if (modalBtnAdd) {
+    modalBtnAdd.addEventListener('click', () => {
+      adicionarAoCarrinho();
 
-    modalBtnAdd.textContent = '✔ Adicionado!';
-    modalBtnAdd.style.background = 'linear-gradient(135deg, #27ae60, #1e8449)';
+      modalBtnAdd.textContent = '✔ Adicionado!';
+      modalBtnAdd.style.background = 'linear-gradient(135deg, #27ae60, #1e8449)';
 
-    setTimeout(() => {
-      modalBtnAdd.textContent = '🛒 Adicionar ao carrinho';
-      modalBtnAdd.style.background = '';
-    }, 1200);
-  });
+      setTimeout(() => {
+        modalBtnAdd.textContent = 'Adicionar ao carrinho';
+        modalBtnAdd.style.background = '';
+      }, 1200);
+    });
+  }
 
   // Clique no card abre o modal (ignora clique no btn-add)
-  document.querySelectorAll('.produto-card').forEach(card => {
+  document.querySelectorAll('.produto-card').forEach((card) => {
     card.addEventListener('click', (e) => {
       if (e.target.closest('.btn-add')) return;
       abrirModal(card);
@@ -125,18 +166,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Fechar pelo botão X
-  btnFechar.addEventListener('click', fecharModal);
+  if (btnFechar) btnFechar.addEventListener('click', fecharModal);
 
   // Fechar clicando no overlay
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      fecharModal();
-    }
-  });
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        fecharModal();
+      }
+    });
+  }
 
   // Fechar com Escape
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('aberto')) {
+    if (e.key === 'Escape' && modal && modal.classList.contains('aberto')) {
       fecharModal();
     }
   });
@@ -157,18 +200,15 @@ document.addEventListener('DOMContentLoaded', () => {
     campoBusca.addEventListener('input', () => {
       const termo = normalizarTexto(campoBusca.value.trim());
 
-      secoesCategorias.forEach(secao => {
+      secoesCategorias.forEach((secao) => {
         const produtos = secao.querySelectorAll('.produto-card');
         let encontrouProduto = false;
 
-        produtos.forEach(produto => {
+        produtos.forEach((produto) => {
           const nome = normalizarTexto(produto.dataset.nome || '');
           const descricao = normalizarTexto(produto.dataset.desc || '');
 
-          const corresponde =
-            termo === '' ||
-            nome.includes(termo) ||
-            descricao.includes(termo);
+          const corresponde = termo === '' || nome.includes(termo) || descricao.includes(termo);
 
           produto.style.display = corresponde ? '' : 'none';
 
