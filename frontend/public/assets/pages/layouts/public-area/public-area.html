@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cardápio Digital - Área Pública</title>
+  <title>Burger Master - Cardápio Didital</title>
   <link rel="stylesheet" href="public-area.css" />
   <link rel="stylesheet" href="../../components/navbar/navbar.css" />
   <!-- Importação dos Ícones do Material Design -->
@@ -17,16 +17,39 @@
 
   <!-- Conteúdo Principal da Área Pública -->
   <main class="content" id="inicial">
+    <!-- ===== HERO SECTION (com carrossel de rolagem lateral) ===== -->
     <section class="hero-section">
+      <!-- Container e Trilho de Imagens -->
+      <div class="hero-carousel">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-slide" style="background-image: url('../../../img/promoção_dia.jpg');"></div>
+          <div class="carousel-slide" style="background-image: url('../../../img/combo1.jpg');"></div>
+          <div class="carousel-slide" style="background-image: url('../../../img/combo2.jpg');"></div>
+          <div class="carousel-slide" style="background-image: url('../../../img/combo3.jpg');"></div>
+        </div>
+      </div>
+
+      <!-- Máscara escura para leitura dos textos -->
+      <div class="hero-overlay"></div>
+
+      <!-- Conteúdo Principal -->
       <div class="hero-content">
-        <span class="hero-badge">🍔 Entrega rápida na sua porta</span>
+        <span class="hero-badge">Entrega rápida na sua porta</span>
         <h1 class="hero-title">Bateu a fome?<br>Peça seu lanche agora.</h1>
         <p class="hero-subtitle">Os melhores lanches da cidade, montados do seu jeito e entregues quentinhos. É só
           escolher e pedir.</p>
         <div class="hero-actions">
           <a href="#cardapio" class="hero-btn hero-btn-primary">Ver cardápio</a>
-          <a href="#" class="hero-btn hero-btn-ghost">Como funciona</a>
+          <a href="#" class="hero-btn hero-btn-ghost">Cadastre-se</a>
         </div>
+      </div>
+
+      <!-- Indicadores de navegação (4 bolinhas) -->
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
       </div>
     </section>
   </main>
@@ -183,19 +206,50 @@
     <section class="categoria-section" id="combos">
       <h2 class="categoria-title">Combos</h2>
       <div class="produtos-grid">
+
         <div class="produto-card" data-nome="Combo Especial"
-          data-desc="Hambúrguer artesanal + Batata Frita crocante + Coca-cola 350ml. O combo perfeito para matar a fome com muito sabor. Aquele de dar água na boca!"
-          data-preco="R$ 35,00" data-img="../../../img/adicionar-foto-lanche.png">
+          data-desc="1 Sanduíche + 1 Hot-Dog + Batata Frita Grande + Coca-Cola 350ml. O combo perfeito para matar a fome com muito sabor!"
+          data-preco="R$ 25,00" data-img="../../../img/combo3.jpg">
           <div class="img-container">
-            <img src="../../../img/adicionar-foto-lanche.png" alt="Combo">
+            <img src="../../../img/combo3.jpg" alt="Combo">
           </div>
           <div class="produto-info">
-            <h3>Hambúrguer + Batata Frita + Coca-cola</h3>
+            <h3>1 Sanduíche + 1 Hot-Dog + Batata Frita Grande + Coca-Cola</h3>
             <p>Aquele combo de dar água na boca</p>
             <span class="preco">R$ 35,00</span>
             <button class="btn-add">Adicionar ao carrinho</button>
           </div>
         </div>
+
+        <div class="produto-card" data-nome="Combo Especial"
+          data-desc="2 Hot-Dogs + Batata Frita + Suco. O combo perfeito para matar a fome com muito sabor!"
+          data-preco="R$ 30,00" data-img="../../../img/combo2.jpg">
+          <div class="img-container">
+            <img src="../../../img/combo2.jpg" alt="Combo">
+          </div>
+          <div class="produto-info">
+            <h3>2 Hot-Dogs + Batata Frita + Suco</h3>
+            <p>Aquele combo de dar água na boca</p>
+            <span class="preco">R$ 30,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+
+        <div class="produto-card" data-nome="Combo Especial"
+          data-desc="1 Sanduíche + Batata Frita Grande + Coca-Cola 350ml. O combo perfeito para matar a fome com muito sabor!"
+          data-preco="R$ 25,00" data-img="../../../img/combo1.jpg">
+          <div class="img-container">
+            <img src="../../../img/combo1.jpg" alt="Combo">
+          </div>
+          <div class="produto-info">
+            <h3>1 Sanduíche + Batata Frita Grande + Coca-Cola</h3>
+            <p>Aquele combo de dar água na boca</p>
+            <span class="preco">R$ 25,00</span>
+            <button class="btn-add">Adicionar ao carrinho</button>
+          </div>
+        </div>
+
+
       </div>
     </section>
 
@@ -236,7 +290,7 @@
         <p class="modal-desc" id="modal-desc"></p>
         <div class="modal-rodape">
           <span class="modal-preco" id="modal-preco"></span>
-          <button class="btn-add modal-btn-add" id="modal-btn-add">🛒 Adicionar ao carrinho</button>
+          <button class="btn-add modal-btn-add" id="modal-btn-add">Adicionar ao carrinho</button>
         </div>
       </div>
     </div>
