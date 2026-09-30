@@ -20,23 +20,62 @@ h3,
   font-family: 'Playfair Display', serif;
 }
 
-/* ===== HERO SECTION (banner principal) ===== */
+/* ===== HERO SECTION ===== */
 .hero-section {
-  min-height: 70vh;
+  position: relative;
+  min-height: 75vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 60px 20px;
   color: #fff;
-  background:
-    linear-gradient(160deg, rgba(20, 15, 12, .72), rgba(20, 15, 12, .5)),
-    linear-gradient(120deg, #d6412b, #f2a007);
-  /* Pra usar uma FOTO de lanche no fundo, troca a última linha do background por:
-     url('../../img/hero-lanche.jpg') center/cover no-repeat; */
+  overflow: hidden;
 }
 
+/* Container do carrossel no fundo */
+.hero-carousel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Trilho flexível com as 4 imagens lado a lado */
+.carousel-track {
+  display: flex;
+  width: 400%;
+  /* 4 imagens = 400% de largura total */
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  /* Transição suave de deslizamento */
+}
+
+/* Cada slide ocupa exatamente 100% da viewport (25% do trilho de 400%) */
+.carousel-slide {
+  width: 25%;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
+/* Máscara escura fixa por cima */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 15, 12, 0.75) 0%, rgba(20, 15, 12, 0.55) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Conteúdo elevado */
 .hero-content {
+  position: relative;
+  z-index: 3;
   max-width: 640px;
 }
 
@@ -49,6 +88,7 @@ h3,
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 18px;
+  backdrop-filter: blur(4px);
 }
 
 .hero-title {
@@ -105,19 +145,30 @@ h3,
   transform: translateY(1px);
 }
 
-@media (max-width:600px) {
-  .hero-section {
-    min-height: 60vh;
-    padding: 48px 18px;
-  }
+/* Indicadores / Bolinhas do carrossel */
+.carousel-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  gap: 8px;
+}
 
-  .hero-actions {
-    flex-direction: column;
-  }
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
+}
 
-  .hero-btn {
-    width: 100%;
-  }
+.dot.active {
+  background: #fff;
+  width: 24px;
+  border-radius: 12px;
 }
 
 /* ===== Filtros do Cardápio ===== */
