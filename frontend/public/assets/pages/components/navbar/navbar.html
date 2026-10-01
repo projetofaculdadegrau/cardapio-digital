@@ -1,7 +1,7 @@
 <nav class="navbar-container">
     <!-- Logo da Marca -->
     <div class="navbar-brand">
-        <a href="#inicial">
+        <a href="#">
             <span class="brand-highlight">Burger</span>Master
         </a>
     </div>
@@ -21,76 +21,69 @@
             <li><a href="#" class="nav-link">Cadastre-se</a></li>
         </ul>
 
-        <!-- Grupo da Direita: Login + Carrinho -->
+        <!-- Grupo da Direita: Dropdown de Login + Carrinho -->
         <div class="navbar-right-group">
-            <form class="navbar-login-form" id="navbarLoginForm">
-                <div class="input-group">
-                    <span class="input-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                            </path>
-                            <polyline points="22,6 12,13 2,6"></polyline>
-                        </svg>
-                    </span>
-                    <input type="email" id="navEmail" placeholder="E-mail" required autocomplete="username" />
+            <!-- Container do Popover de Login -->
+            <div class="login-dropdown-wrapper">
+                <button type="button" class="btn-login-trigger" id="btnLoginTrigger" aria-expanded="false">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Entrar</span>
+                </button>
+
+                <!-- Popover / Dropdown do Form -->
+                <div class="login-popover" id="loginPopover">
+                    <form class="navbar-login-form" id="navbarLoginForm">
+                        <div class="popover-header">
+                            <h4>Acessar Conta</h4>
+                        </div>
+
+                        <div class="input-group">
+                            <span class="input-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </span>
+                            <input type="email" id="navEmail" placeholder="E-mail" required autocomplete="username" />
+                        </div>
+
+                        <div class="input-group input-group-password">
+                            <span class="input-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </span>
+                            <input type="password" id="navPassword" placeholder="Senha" required autocomplete="current-password" />
+                            <button type="button" class="btn-toggle-password" id="btnTogglePassword" aria-label="Mostrar ou ocultar senha">
+                                
+                                <svg class="icon-eye-show" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+
+                                <svg class="icon-eye-hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="form-actions-row">
+                            <a href="#recuperar-senha" class="forgot-password-link" id="btnForgotPassword">Esqueceu a senha?</a>
+                            <button type="submit" class="btn-login-submit">Entrar</button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="input-group input-group-password">
-                    <span class="input-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                    </span>
-                    <input type="password" id="navPassword" placeholder="Senha" required
-                        autocomplete="current-password" />
-                    <a href="#recuperar-senha" class="forgot-password-link" id="btnForgotPassword">Esqueceu a senha?</a>
-                </div>
-
-                <!-- Modal de Recuperação de Senha -->
-                <div class="modal-recovery-overlay" id="recoveryModal">
-                    <div class="modal-recovery-content">
-                        <button type="button" class="btn-close-modal" id="btnCloseModal"
-                            aria-label="Fechar">&times;</button>
-
-                        <h3>Recuperar Senha</h3>
-                        <p>Digite seu e-mail cadastrado para receber o link de redefinição de senha.</p>
-
-                        <form id="recoveryForm">
-                            <div class="input-group">
-                                <span class="input-icon">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
-                                        <path
-                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                        </path>
-                                        <polyline points="22,6 12,13 2,6"></polyline>
-                                    </svg>
-                                </span>
-                                <input type="email" id="recoveryEmail" placeholder="Seu e-mail" required />
-                            </div>
-
-                            <div class="modal-actions">
-                                <button type="submit" class="btn-submit-recovery">Enviar</button>
-                            </div>
-                        </form>
-
-                        <!-- Mensagem de feedback -->
-                        <div class="recovery-feedback" id="recoveryFeedback"></div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-login-nav">Entrar</button>
-            </form>
+            </div>
 
             <!-- Botão do Carrinho -->
             <div class="navbar-actions">
                 <button class="btn-cart" id="btnCartDrawer" aria-label="Abrir Carrinho">
-                    <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                    <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
@@ -101,3 +94,30 @@
         </div>
     </div>
 </nav>
+
+<!-- Modal de Recuperação de Senha -->
+<div class="modal-recovery-overlay" id="recoveryModal">
+    <div class="modal-recovery-content">
+        <button type="button" class="btn-close-modal" id="btnCloseModal" aria-label="Fechar">&times;</button>
+        <h3>Recuperar Senha</h3>
+        <p>Digite seu e-mail cadastrado para receber o link de redefinição de senha.</p>
+
+        <form id="recoveryForm">
+            <div class="input-group">
+                <span class="input-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </span>
+                <input type="email" id="recoveryEmail" placeholder="Seu e-mail" required />
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn-submit-recovery">Enviar</button>
+            </div>
+        </form>
+
+        <div class="recovery-feedback" id="recoveryFeedback"></div>
+    </div>
+</div>
