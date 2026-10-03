@@ -94,7 +94,42 @@
         </div>
     </div>
 </nav>
+<!-- Drawer do Carrinho -->
+<div class="cart-drawer-overlay" id="cartDrawer">
+    <aside class="cart-drawer" aria-label="Carrinho de compras">
 
+        <div class="cart-drawer-header">
+            <h2>Seu Carrinho</h2>
+
+            <button
+                type="button"
+                class="cart-drawer-close"
+                id="btnCloseCartDrawer"
+                aria-label="Fechar carrinho">
+                &times;
+            </button>
+        </div>
+
+        <div class="cart-drawer-items" id="cartDrawerItems">
+            <!-- Os itens do carrinho serão exibidos aqui -->
+        </div>
+
+        <div class="cart-drawer-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal</span>
+                <strong id="cartSubtotal">R$ 0,00</strong>
+            </div>
+
+            <button
+                type="button"
+                class="cart-checkout-btn"
+                id="btnCartCheckout">
+                Avançar para o Pagamento
+            </button>
+        </div>
+
+    </aside>
+</div>
 <!-- Modal de Recuperação de Senha -->
 <div class="modal-recovery-overlay" id="recoveryModal">
     <div class="modal-recovery-content">
