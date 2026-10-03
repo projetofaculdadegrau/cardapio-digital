@@ -43,66 +43,138 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== CARRINHO =====
-  let qtdCarrinho = parseInt(localStorage.getItem('carrinhoQtd') || '0', 10);
 
-  /** Atualiza o badge do carrinho na navbar.
-   * Como a navbar é injetada via fetch (assíncrono), usa MutationObserver
-   * para aguardar o elemento #cartCount aparecer no DOM.
-   */
-  function atualizarBadge() {
-    const badge = document.getElementById('cartCount');
+// Carrega os itens do carrinho salvos no navegador
+let carrinhoItens = JSON.parse(localStorage.getItem('carrinhoItens') || '[]');
 
-    if (badge) {
-      badge.textContent = qtdCarrinho;
+/** Retorna a quantidade total de itens do carrinho */
+function obterQuantidadeTotal() {
+  return carrinhoItens.reduce((total, item) => total + item.quantidade, 0);
+}
 
-      // Animação de "bump" a cada incremento
-      badge.classList.remove('badge-bump');
-      void badge.offsetWidth;
-      badge.classList.add('badge-bump');
+/** Atualiza o badge do carrinho na navbar.
+ * Como a navbar é injetada via fetch (assíncrono), usa MutationObserver
+ * para aguardar o elemento #cartCount aparecer no DOM.
+ */
+function atualizarBadge() {
+  const badge = document.getElementById('cartCount');
+
+  if (badge) {
+    badge.textContent = obterQuantidadeTotal();
+
+    // Animação de "bump" a cada incremento
+    badge.classList.remove('badge-bump');
+    void badge.offsetWidth;
+    badge.classList.add('badge-bump');
+  }
+}
+
+/** Converte o preço exibido no produto para número */
+function converterPreco(precoTexto) {
+  return Number(
+    precoTexto
+      .replace('R$', '')
+      .replace(/\./g, '')
+      .replace(',', '.')
+      .trim()
+  ) || 0;
+}
+
+/** Adiciona um produto ao carrinho */
+function adicionarAoCarrinho(card) {
+  const nome = card?.dataset.nome || 'Produto';
+  const precoTexto = card?.dataset.preco || 'R$ 0,00';
+  const imagem = card?.dataset.img || '';
+  const preco = converterPreco(precoTexto);
+
+  const itemExistente = carrinhoItens.find((item) => item.nome === nome);
+
+  if (itemExistente) {
+    itemExistente.quantidade++;
+  } else {
+    carrinhoItens.push({
+      nome,
+      preco,
+      imagem,
+      quantidade: 1
+    });
+  }
+
+  localStorage.setItem('carrinhoItens', JSON.stringify(carrinhoItens));
+
+  atualizarBadge();
+  renderizarCarrinho();
+}
+/** Exibe os itens do carrinho dentro do drawer e calcula o subtotal */
+function renderizarCarrinho() {
+  const lista = document.getElementById('cartDrawerItems');
+  const subtotalElement = document.getElementById('cartSubtotal');
+
+  if (!lista || !subtotalElement) return;
+
+  if (carrinhoItens.length === 0) {
+    lista.innerHTML = '<p>Seu carrinho está vazio.</p>';
+    subtotalElement.textContent = 'R$ 0,00';
+    return;
+  }
+
+  let subtotal = 0;
+
+  lista.innerHTML = carrinhoItens.map((item) => {
+    const totalItem = item.preco * item.quantidade;
+    subtotal += totalItem;
+
+    return `
+      <div class="cart-drawer-item">
+        <strong>${item.nome}</strong>
+        <span>Quantidade: ${item.quantidade}</span>
+        <span>R$ ${totalItem.toFixed(2).replace('.', ',')}</span>
+      </div>
+    `;
+  }).join('');
+
+  subtotalElement.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+}
+
+/** Observa o container da navbar para detectar quando o badge for inserido */
+const navbarContainer = document.getElementById('navbar-container');
+
+if (navbarContainer) {
+  const observer = new MutationObserver(() => {
+    if (document.getElementById('cartCount')) {
+      atualizarBadge();
+      renderizarCarrinho();
+      observer.disconnect();
     }
-  }
-
-  /** Adiciona 1 item ao carrinho e persiste no localStorage */
-  function adicionarAoCarrinho() {
-    qtdCarrinho++;
-    localStorage.setItem('carrinhoQtd', qtdCarrinho);
-    atualizarBadge();
-  }
-
-  // Observa o container da navbar para detectar quando o badge for inserido
-  const navbarContainer = document.getElementById('navbar-container');
-
-  if (navbarContainer) {
-    const observer = new MutationObserver(() => {
-      if (document.getElementById('cartCount')) {
-        atualizarBadge();
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(navbarContainer, {
-      childList: true,
-      subtree: true,
-    });
-  }
-
-  // Delegação de eventos: botões "Adicionar ao carrinho" nos cards
-  // (exclui o botão do modal)
-  document.querySelectorAll('.btn-add:not(#modal-btn-add)').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      adicionarAoCarrinho();
-
-      const original = btn.textContent;
-      btn.textContent = '✔ Adicionado!';
-      btn.style.background = 'linear-gradient(135deg, #27ae60, #1e8449)';
-
-      setTimeout(() => {
-        btn.textContent = original;
-        btn.style.background = '';
-      }, 1200);
-    });
   });
+
+  observer.observe(navbarContainer, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+/** Adiciona os produtos dos cards ao carrinho */
+document.querySelectorAll('.btn-add:not(#modal-btn-add)').forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    const card = btn.closest('.produto-card');
+
+    if (card) {
+      adicionarAoCarrinho(card);
+    }
+
+    const original = btn.textContent;
+    btn.textContent = '✔ Adicionado!';
+    btn.style.background = 'linear-gradient(135deg, #27ae60, #1e8449)';
+
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.style.background = '';
+    }, 1200);
+  });
+});
 
   // ===== MODAL DE DETALHES DO PRODUTO =====
 
@@ -114,13 +186,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalBadge = document.getElementById('modal-badge-preco');
   const btnFechar = document.getElementById('modal-fechar-btn');
   const modalBtnAdd = document.getElementById('modal-btn-add');
+  let produtoSelecionado = null;
 
   /** Abre o modal preenchendo os dados do card clicado */
   function abrirModal(card) {
-    const nome = card.dataset.nome || '';
-    const desc = card.dataset.desc || '';
-    const preco = card.dataset.preco || '';
-    const img = card.dataset.img || '';
+  produtoSelecionado = card;
+
+  const nome = card.dataset.nome || '';
+  const desc = card.dataset.desc || '';
+  const preco = card.dataset.preco || '';
+  const img = card.dataset.img || '';
 
     modalImg.src = img;
     modalImg.alt = nome;
@@ -145,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Botão "Adicionar ao carrinho" dentro do modal
   if (modalBtnAdd) {
     modalBtnAdd.addEventListener('click', () => {
-      adicionarAoCarrinho();
+      adicionarAoCarrinho(produtoSelecionado);
 
       modalBtnAdd.textContent = '✔ Adicionado!';
       modalBtnAdd.style.background = 'linear-gradient(135deg, #27ae60, #1e8449)';

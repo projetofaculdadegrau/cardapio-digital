@@ -3,6 +3,37 @@ function initNavbar() {
   const toggleBtn = document.getElementById('navbarToggle');
   const navbarContent = document.getElementById('navbarContent');
 
+    // Elementos do Drawer do Carrinho
+  const btnCartDrawer = document.getElementById('btnCartDrawer');
+  const cartDrawer = document.getElementById('cartDrawer');
+  const btnCloseCartDrawer = document.getElementById('btnCloseCartDrawer');
+
+  // Abre o drawer do carrinho
+  if (btnCartDrawer && cartDrawer) {
+    btnCartDrawer.addEventListener('click', () => {
+      cartDrawer.classList.add('aberto');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  // Fecha o drawer pelo botão X
+  if (btnCloseCartDrawer && cartDrawer) {
+    btnCloseCartDrawer.addEventListener('click', () => {
+      cartDrawer.classList.remove('aberto');
+      document.body.style.overflow = '';
+    });
+  }
+
+  // Fecha o drawer ao clicar no fundo escuro
+if (cartDrawer) {
+  cartDrawer.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+      cartDrawer.classList.remove('aberto');
+      document.body.style.overflow = '';
+    }
+  });
+}
+
   // Elementos do Popover de Login
   const btnLoginTrigger = document.getElementById('btnLoginTrigger');
   const loginPopover = document.getElementById('loginPopover');
