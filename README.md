@@ -1,15 +1,17 @@
-# Cardápio Digital
+# Cardápio Digital (Projeto da Faculdade Grau)
+
+## Descrição
 
 Muitas empresas de comida atualmente não possuem um site ou sistema oficial para consulta e pedido de comidas. Quando possuem, apresentam erros ou bugs, dificultando o acesso digital de seus clientes. Por isso, resolvemos criar um sistema web que fornece um cardápio digital de lanches, conectando empresas, entregadores e clientes em um ambiente simples, prático e totalmente funcional.
 
 ## Funcionalidades
 
-- Cadastro e login de usuários (empresas, clientes e entregadores)
+- Cadastro e login de usuários 
 - Cadastro, edição e consulta de produtos
-- Categorias de produtos
-- Filtros de produtos e empresas
+- Categorias e filtros de produtos
 - Visualização do cardápio
 - Gerenciamento de pedidos
+- Carrinho de produtos para usuários
 
 ## Tecnologias
 
@@ -19,7 +21,7 @@ Muitas empresas de comida atualmente não possuem um site ou sistema oficial par
 
 ## Como executar
 
-Aqui colocaremos as instruções para rodar o projeto
+Aqui colocaremos as instruções para rodar o projeto.
 
 ## Equipe
 
