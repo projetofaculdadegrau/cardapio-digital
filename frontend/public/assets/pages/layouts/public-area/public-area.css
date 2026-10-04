@@ -179,7 +179,7 @@ h3,
   justify-content: center;
   margin: 24px auto;
   padding: 15px;
-  scroll-margin-top: 100px;
+  scroll-margin-top: 90px;
 }
 
 .filtro {
@@ -878,10 +878,12 @@ h3,
     transform: scale(1);
     opacity: 0.6;
   }
+
   70% {
     transform: scale(1.25);
     opacity: 0;
   }
+
   100% {
     transform: scale(1.25);
     opacity: 0;
