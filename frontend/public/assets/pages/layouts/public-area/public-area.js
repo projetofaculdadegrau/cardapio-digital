@@ -105,35 +105,56 @@ function adicionarAoCarrinho(card) {
   atualizarBadge();
   renderizarCarrinho();
 }
-/** Exibe os itens do carrinho dentro do drawer e calcula o subtotal */
+
+// taxa de entrega fixa (ajuste à vontade)
+const TAXA_ENTREGA = 7.00;
+
+// formata número como "R$ 22,90"
+function formatarReais(valor) {
+  return 'R$ ' + valor.toFixed(2).replace('.', ',');
+}
+
+/** Exibe os itens com botões +/− e remover, e calcula subtotal, taxa e total */
 function renderizarCarrinho() {
   const lista = document.getElementById('cartDrawerItems');
   const subtotalElement = document.getElementById('cartSubtotal');
-
-  if (!lista || !subtotalElement) return;
+  const taxaEl = document.getElementById('cartTaxa');
+  const totalEl = document.getElementById('cartTotal');
+  if (!lista) return;
 
   if (carrinhoItens.length === 0) {
-    lista.innerHTML = '<p>Seu carrinho está vazio.</p>';
-    subtotalElement.textContent = 'R$ 0,00';
+    lista.innerHTML = '<p class="cart-vazio">Seu carrinho está vazio.</p>';
+    if (subtotalElement) subtotalElement.textContent = 'R$ 0,00';
+    if (taxaEl) taxaEl.textContent = 'R$ 0,00';
+    if (totalEl) totalEl.textContent = 'R$ 0,00';
     return;
   }
 
   let subtotal = 0;
-
-  lista.innerHTML = carrinhoItens.map((item) => {
+  lista.innerHTML = carrinhoItens.map((item, index) => {
     const totalItem = item.preco * item.quantidade;
     subtotal += totalItem;
-
     return `
       <div class="cart-drawer-item">
-        <strong>${item.nome}</strong>
-        <span>Quantidade: ${item.quantidade}</span>
-        <span>R$ ${totalItem.toFixed(2).replace('.', ',')}</span>
+        <div class="cart-item-info">
+          <strong>${item.nome}</strong>
+          <span class="cart-item-preco">${formatarReais(totalItem)}</span>
+        </div>
+        <div class="cart-item-controles">
+          <button class="cart-qtd-btn" data-acao="menos" data-index="${index}">−</button>
+          <span class="cart-qtd">${item.quantidade}</span>
+          <button class="cart-qtd-btn" data-acao="mais" data-index="${index}">+</button>
+          <button class="cart-remover" data-acao="remover" data-index="${index}">remover</button>
+        </div>
       </div>
     `;
   }).join('');
 
-  subtotalElement.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+  const taxa = TAXA_ENTREGA;
+  const total = subtotal + taxa;
+  if (subtotalElement) subtotalElement.textContent = formatarReais(subtotal);
+  if (taxaEl) taxaEl.textContent = formatarReais(taxa);
+  if (totalEl) totalEl.textContent = formatarReais(total);
 }
 
 /** Observa o container da navbar para detectar quando o badge for inserido */
@@ -175,6 +196,39 @@ document.querySelectorAll('.btn-add:not(#modal-btn-add)').forEach((btn) => {
     }, 1200);
   });
 });
+
+  /** Cliques nos botões +, − e remover dentro do carrinho (delegação a partir do document, à prova de carregamento tardio) */
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.cart-drawer-items [data-acao]');
+    if (!btn) return;
+
+    const index = Number(btn.dataset.index);
+    const item = carrinhoItens[index];
+    if (!item) return;
+
+    const acao = btn.dataset.acao;
+    if (acao === 'mais') item.quantidade++;
+    else if (acao === 'menos') item.quantidade--;
+    else if (acao === 'remover') item.quantidade = 0;
+
+    if (item.quantidade <= 0) carrinhoItens.splice(index, 1);
+
+    localStorage.setItem('carrinhoItens', JSON.stringify(carrinhoItens));
+    atualizarBadge();
+    renderizarCarrinho();
+  });
+  
+    /** Limpar o carrinho inteiro (com confirmação) */
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#btnLimparCarrinho')) return;
+    if (carrinhoItens.length === 0) return;
+    if (!confirm('Deseja limpar todo o carrinho?')) return;
+
+    carrinhoItens = [];
+    localStorage.setItem('carrinhoItens', JSON.stringify(carrinhoItens));
+    atualizarBadge();
+    renderizarCarrinho();
+  });
 
   // ===== MODAL DE DETALHES DO PRODUTO =====
 
