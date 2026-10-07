@@ -4,7 +4,9 @@ from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security import OAuth2PasswordBearer
 from app.config import settings
 from app.db import engine, Base
+import app.models  # Garante que todos os modelos estejam registrados no Base
 from app.auth import router as auth_router
+from app.products import router as products_router
 
 # Cria as tabelas automaticamente no PostgreSQL
 Base.metadata.create_all(bind=engine)
@@ -25,6 +27,7 @@ app.add_middleware(
 
 # Registra as rotas
 app.include_router(auth_router)
+app.include_router(products_router)
 
 @app.get("/")
 def home():
