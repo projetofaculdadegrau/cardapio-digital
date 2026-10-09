@@ -1,6 +1,8 @@
+from datetime import datetime
+from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from app.models import UserRole
+from app.models import UserRole, OrderStatus
 
 # Contrato de Entrada: Cadastro de Usuário
 class UserCreate(BaseModel):
@@ -93,3 +95,58 @@ class ProductResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# Contratos de Pedidos
+class OrderItemCreate(BaseModel):
+    produto_id: int = Field(..., gt=0)
+    quantidade: int = Field(..., gt=0, description="Quantidade do produto")
+
+
+class OrderCreate(BaseModel):
+    loja_id: int = Field(..., gt=0, description="ID da loja onde o pedido será feito")
+    itens: List[OrderItemCreate] = Field(..., min_length=1, description="Itens do pedido")
+    endereco_entrega: Optional[str] = Field(None, description="Endereço de entrega")
+    observacao: Optional[str] = Field(None, description="Observações gerais do pedido")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "loja_id": 1,
+                "itens": [
+                    {"produto_id": 1, "quantidade": 2},
+                    {"produto_id": 3, "quantidade": 1}
+                ],
+                "endereco_entrega": "Rua das Flores, 123",
+                "observacao": "Caprichar no molho!"
+            }
+        }
+    }
+
+
+class OrderItemResponse(BaseModel):
+    produto_id: int
+    nome_produto: str
+    preco_unitario: float
+    quantidade: int
+
+    class Config:
+        from_attributes = True
+
+
+class OrderResponse(BaseModel):
+    id: int
+    cliente_id: int
+    loja_id: int
+    status: OrderStatus
+    total: float
+    endereco_entrega: Optional[str] = None
+    observacao: Optional[str] = None
+    criado_em: datetime
+    itens: List[OrderItemResponse]
+
+    class Config:
+        from_attributes = True
+        use_enum_values = True
+
+

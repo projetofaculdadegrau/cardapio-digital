@@ -7,6 +7,7 @@ from app.db import engine, Base
 import app.models  # Garante que todos os modelos estejam registrados no Base
 from app.auth import router as auth_router
 from app.products import router as products_router
+from app.orders import router as orders_router
 
 # Cria as tabelas automaticamente no PostgreSQL
 Base.metadata.create_all(bind=engine)
@@ -28,6 +29,7 @@ app.add_middleware(
 # Registra as rotas
 app.include_router(auth_router)
 app.include_router(products_router)
+app.include_router(orders_router)
 
 @app.get("/")
 def home():

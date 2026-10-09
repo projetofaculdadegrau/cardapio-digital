@@ -1,6 +1,7 @@
 import enum
-from sqlalchemy import Column, Integer, String, Boolean, Enum, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Enum, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from app.db import Base
 
 class UserRole(str, enum.Enum):
@@ -42,3 +43,45 @@ class Product(Base):
 
 # Alias em português para compatibilidade
 Produto = Product
+class OrderStatus(str, enum.Enum):
+    RECEBIDO = "RECEBIDO"
+    EM_PREPARO = "EM_PREPARO"
+    A_CAMINHO = "A_CAMINHO"
+    ENTREGUE = "ENTREGUE"
+    CANCELADO = "CANCELADO"
+
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cliente_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    loja_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    status = Column(Enum(OrderStatus, native_enum=False), nullable=False, default=OrderStatus.RECEBIDO)
+    total = Column(Float, nullable=False, default=0.0)
+    endereco_entrega = Column(String, nullable=True)
+    observacao = Column(String, nullable=True)
+    criado_em = Column(DateTime(timezone=True), server_default=func.now())
+
+    cliente = relationship("User", foreign_keys=[cliente_id])
+    loja = relationship("User", foreign_keys=[loja_id])
+    itens = relationship("OrderItem", back_populates="pedido", cascade="all, delete-orphan")
+
+
+class OrderItem(Base):
+    __tablename__ = "order_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    pedido_id = Column(Integer, ForeignKey("orders.id"), nullable=False, index=True)
+    produto_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    nome_produto = Column(String, nullable=False)   # "congela" o nome do produto
+    preco_unitario = Column(Float, nullable=False)  # "congela" o preço do produto
+    quantidade = Column(Integer, nullable=False)
+
+    pedido = relationship("Order", back_populates="itens")
+    produto = relationship("Product")
+
+
+# Alias  em português (seguindo o padrão de Produto = Product)
+Pedido = Order
+ItemPedido = OrderItem
