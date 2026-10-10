@@ -1,10 +1,16 @@
+
 from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
 from app.models import UserRole, OrderStatus
 
-# Contrato de Entrada: Cadastro de Usuário
+
+# =========================
+# AUTENTICAÇÃO E USUÁRIOS
+# =========================
+
 class UserCreate(BaseModel):
     nome: str
     email: EmailStr
@@ -15,73 +21,53 @@ class UserCreate(BaseModel):
     veiculo: Optional[str] = None
     placa_veiculo: Optional[str] = None
 
-# Contrato de Saída: Resposta dos dados do Usuário (sem a senha)
+
+class LoginSchema(BaseModel):
+    email: EmailStr
+    senha: str
+
+
+# Compatibilidade com código que utiliza o nome UserLogin.
+UserLogin = LoginSchema
+
+
 class UserResponse(BaseModel):
     id: int
     nome: str
     email: EmailStr
     role: UserRole
-    is_active: bool
+    is_active: Optional[bool] = True
     telefone: Optional[str] = None
     endereco: Optional[str] = None
     veiculo: Optional[str] = None
     placa_veiculo: Optional[str] = None
 
-    class Config:
-        from_attributes = True
-        use_enum_values = True
+    model_config = ConfigDict(from_attributes=True)
 
-# Contrato para Login (Garante que este nome seja 'LoginSchema')
-class LoginSchema(BaseModel):
-    email: EmailStr
-    senha: str
 
-# Contrato de Retorno do Token
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
-    user: UserResponse
 
 
-# Contratos de Produtos
+# =========================
+# PRODUTOS
+# =========================
+
 class ProductCreate(BaseModel):
-    nome: str = Field(..., min_length=1, max_length=150, description="Nome do produto")
-    descricao: Optional[str] = Field(None, description="Descrição detalhada do produto")
-    preco: float = Field(..., gt=0, description="Preço do produto em reais")
-    categoria: str = Field(..., min_length=1, max_length=100, description="Ex: Lanches, Bebidas, Sobremesas")
-    disponivel: bool = Field(True, description="Indica se o produto está disponível no cardápio")
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "nome": "Pizza Margherita",
-                "descricao": "Molho de tomate artesanal, mussarela e manjericão fresco",
-                "preco": 39.90,
-                "categoria": "Pizzas",
-                "disponivel": True
-            }
-        }
-    }
+    nome: str
+    descricao: Optional[str] = None
+    preco: float = Field(gt=0)
+    categoria: str
+    disponivel: bool = True
 
 
 class ProductUpdate(BaseModel):
-    nome: Optional[str] = Field(None, min_length=1, max_length=150, description="Nome do produto")
-    descricao: Optional[str] = Field(None, description="Descrição detalhada do produto")
-    preco: Optional[float] = Field(None, gt=0, description="Preço do produto em reais")
-    categoria: Optional[str] = Field(None, min_length=1, max_length=100, description="Ex: Lanches, Bebidas, Sobremesas")
-    disponivel: Optional[bool] = Field(None, description="Disponibilidade do produto")
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "nome": "Pizza Margherita Especial",
-                "descricao": "Molho especial, mussarela de búfala e manjericão fresco",
-                "preco": 44.90,
-                "categoria": "Pizzas",
-                "disponivel": True
-            }
-        }
-    }
+    nome: Optional[str] = None
+    descricao: Optional[str] = None
+    preco: Optional[float] = Field(default=None, gt=0)
+    categoria: Optional[str] = None
+    disponivel: Optional[bool] = None
 
 
 class ProductResponse(BaseModel):
@@ -93,60 +79,57 @@ class ProductResponse(BaseModel):
     categoria: str
     disponivel: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
-# Contratos de Pedidos
+# =========================
+# ITENS DOS PEDIDOS
+# =========================
+
 class OrderItemCreate(BaseModel):
-    produto_id: int = Field(..., gt=0)
-    quantidade: int = Field(..., gt=0, description="Quantidade do produto")
-
-
-class OrderCreate(BaseModel):
-    loja_id: int = Field(..., gt=0, description="ID da loja onde o pedido será feito")
-    itens: List[OrderItemCreate] = Field(..., min_length=1, description="Itens do pedido")
-    endereco_entrega: Optional[str] = Field(None, description="Endereço de entrega")
-    observacao: Optional[str] = Field(None, description="Observações gerais do pedido")
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "loja_id": 1,
-                "itens": [
-                    {"produto_id": 1, "quantidade": 2},
-                    {"produto_id": 3, "quantidade": 1}
-                ],
-                "endereco_entrega": "Rua das Flores, 123",
-                "observacao": "Caprichar no molho!"
-            }
-        }
-    }
+    produto_id: int
+    quantidade: int = Field(gt=0)
 
 
 class OrderItemResponse(BaseModel):
+    id: int
+    pedido_id: int
     produto_id: int
     nome_produto: str
     preco_unitario: float
     quantidade: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+# =========================
+# PEDIDOS
+# =========================
+
+class OrderCreate(BaseModel):
+    loja_id: int
+    itens: List[OrderItemCreate]
+    endereco_entrega: Optional[str] = None
+    observacao: Optional[str] = None
+
+
+class OrderStatusUpdate(BaseModel):
+    status: OrderStatus
 
 
 class OrderResponse(BaseModel):
     id: int
     cliente_id: int
     loja_id: int
+    entregador_id: Optional[int] = None
     status: OrderStatus
     total: float
     endereco_entrega: Optional[str] = None
     observacao: Optional[str] = None
-    criado_em: datetime
-    itens: List[OrderItemResponse]
+    criado_em: Optional[datetime] = None
+    itens: List[OrderItemResponse] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
-        use_enum_values = True
-
-
+    model_config = ConfigDict(
+        from_attributes=True,
+        use_enum_values=True,
+    )
