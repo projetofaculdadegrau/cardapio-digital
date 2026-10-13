@@ -1,16 +1,10 @@
-
 from datetime import datetime
 from typing import List, Optional
-
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
-
 from app.models import UserRole, OrderStatus
 
 
-# =========================
 # AUTENTICAÇÃO E USUÁRIOS
-# =========================
-
 class UserCreate(BaseModel):
     nome: str
     email: EmailStr
@@ -50,10 +44,8 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
-# =========================
-# PRODUTOS
-# =========================
 
+# PRODUTOS
 class ProductCreate(BaseModel):
     nome: str
     descricao: Optional[str] = None
@@ -82,10 +74,8 @@ class ProductResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# =========================
-# ITENS DOS PEDIDOS
-# =========================
 
+# ITENS DOS PEDIDOS
 class OrderItemCreate(BaseModel):
     produto_id: int
     quantidade: int = Field(gt=0)
@@ -102,10 +92,8 @@ class OrderItemResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# =========================
-# PEDIDOS
-# =========================
 
+# PEDIDOS
 class OrderCreate(BaseModel):
     loja_id: int
     itens: List[OrderItemCreate]

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+        <p class="text-gray-600 font-medium">A verificar sessão...</p>
+    </div>
+
+    <script>
+        // Verifica se já existe um token e um perfil salvos no navegador
+        const token = localStorage.getItem('access_token');
+        const role = localStorage.getItem('user_role');
+
+        if (!token) {
+            // Se não estiver logado, vai para o login
+            window.location.href = './login/login.html';
+        } else {
+            // Se estiver logado, redireciona para o painel correspondente ao papel (role)
+            if (role === 'LOJA') {
+                window.location.href = './loja/loja.html';
+            } else if (role === 'CLIENTE') {
+                // Futuramente: window.location.href = './cliente/cliente.html';
+                alert('Sessão ativa de Cliente detectada. Redirecionamento em desenvolvimento.');
+                window.location.href = './login/login.html';
+            } else if (role === 'ENTREGADOR') {
+                // Futuramente: window.location.href = './entregador/entregador.html';
+                alert('Sessão ativa de Entregador detectada. Redirecionamento em desenvolvimento.');
+                window.location.href = './login/login.html';
+            } else {
+                window.location.href = './login/login.html';
+            }
+        }
+    </script>
+</body>
+</html>
