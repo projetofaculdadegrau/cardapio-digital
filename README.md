@@ -15,9 +15,9 @@ Muitas empresas de comida atualmente não possuem um site ou sistema oficial par
 
 ## Tecnologias
 
-- Angular
-- Python
-- PostgreSQL
+- HTML, CSS e JavaScript (FrontEnd)
+- Python (BackEnd)
+- PostgreSQL (DB)
 
 ## Como executar
 
