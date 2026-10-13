@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Cardápio Digital - Autenticação</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS CDN + Config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#8f7067",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#f6fff6",
+                        "surface-container-highest": "#eae1da",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#fbf2ea",
+                        "surface-bright": "#fff8f3",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#efe7df",
+                        "inverse-on-surface": "#f8efe8",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffdbd0",
+                        "primary": "#ac2d00",
+                        "inverse-surface": "#34302b",
+                        "surface-variant": "#eae1da",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "secondary": "#ab3500",
+                        "tertiary-container": "#26845b",
+                        "on-tertiary-fixed": "#002112",
+                        "on-surface": "#1f1b17",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#d63c05",
+                        "outline-variant": "#e4beb4",
+                        "on-secondary-container": "#5d1900",
+                        "background": "#fff8f3",
+                        "primary-fixed": "#ffdbd1",
+                        "surface": "#fff8f3",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5b4039",
+                        "tertiary": "#006a44",
+                        "tertiary-fixed": "#9bf5c4",
+                        "surface-container": "#f5ece5",
+                        "secondary-container": "#fe6a34",
+                        "surface-tint": "#b02e00",
+                        "on-primary-container": "#fffbff",
+                        "on-background": "#1f1b17",
+                        "inverse-primary": "#ffb5a0",
+                        "surface-dim": "#e1d9d1",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#3b0900",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        "headline-lg": ["Manrope"],
+                        "label-sm": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "display-hero": ["Manrope"],
+                        "label-lg": ["Manrope"],
+                        "body-sm": ["DM Sans"],
+                        "headline-md": ["Manrope"],
+                        "body-md": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "label-md": ["Manrope"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="login.css"/>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Cabeçalho Principal -->
+    <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
+        <div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+                    <span class="material-symbols-outlined text-[24px]">restaurant_menu</span>
+                </div>
+                <span class="font-headline-sm text-lg sm:text-xl font-bold tracking-tight text-on-surface">Cardápio Digital</span>
+            </div>
+            
+            <nav class="flex items-center gap-2">
+                <button id="nav-btn-login" onclick="mudarAba('login')" class="px-4 py-2 transition-colors bg-primary text-on-primary font-bold rounded-xl text-sm shadow-sm">
+                    Entrar
+                </button>
+                <button id="nav-btn-cadastro" onclick="mudarAba('cadastro')" class="px-4 py-2 rounded-xl text-on-surface-variant font-label-md text-sm hover:bg-surface-container-high hover:text-on-surface transition-colors">
+                    Criar Conta
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="w-full pt-24 pb-12 flex-1 flex flex-col justify-center bg-background">
+        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-4 lg:py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                
+                <!-- LADO ESQUERDO: Painel Visual Gastronômico -->
+                <div class="lg:col-span-7 relative flex flex-col justify-between overflow-hidden rounded-3xl bg-surface-container-low p-8 sm:p-12 lg:p-14 shadow-sm">
+                    <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-secondary-fixed/30 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-primary-fixed/20 blur-3xl pointer-events-none"></div>
+                    
+                    <div class="relative z-10 flex flex-col gap-6">
+                        <div class="inline-flex items-center gap-2 self-start px-3.5 py-1.5 rounded-full bg-surface-container-lowest shadow-sm text-on-surface">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Cardápios digitais interativos e pedidos rápidos</span>
+                        </div>
+                        <div class="space-y-4 max-w-xl">
+                            <h1 class="font-display-hero text-3xl sm:text-5xl text-on-surface tracking-tight leading-tight">
+                                Descubra uma nova <br class="hidden sm:inline"/>forma de pedir.
+                            </h1>
+                            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+                                Cadastre-se para acompanhar seus pedidos em tempo real, salvar pratos favoritos e gerenciar seu estabelecimento com eficiência.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 my-8 lg:my-10 flex items-center justify-center">
+                        <div class="relative w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden shadow-xl bg-surface-container group">
+                            <img alt="Hambúrguer artesanal gourmet" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1000&auto=format&fit=crop"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-on-surface/40 via-transparent to-transparent pointer-events-none"></div>
+                            <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-on-primary">
+                                <span class="font-label-md text-xs bg-inverse-surface/80 backdrop-blur-md px-3 py-1.5 rounded-lg">Criações do Chef</span>
+                                <span class="font-label-sm text-xs flex items-center gap-1 bg-surface-container-lowest/90 backdrop-blur-md text-on-surface px-2.5 py-1 rounded-md">
+                                    <span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    4.9 (420+ avaliações)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 grid grid-cols-3 gap-4 pt-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">timer</span>
+                            </div>
+                            <div>
+                                <p class="font-label-md text-xs text-on-surface font-semibold">Sem esperas</p>
+                                <p class="text-[11px] text-on-surface-variant">Direto na cozinha</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">loyalty</span>
+                            </div>
+                            <div>
+                                <p class="font-label-md text-xs text-on-surface font-semibold">Gestão Completa</p>
+                                <p class="text-[11px] text-on-surface-variant">Painel da Loja</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">room_service</span>
+                            </div>
+                            <div>
+                                <p class="font-label-md text-xs text-on-surface font-semibold">Rastreio Total</p>
+                                <p class="text-[11px] text-on-surface-variant">Tempo real</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LADO DIREITO: Card de Autenticação Dinâmico -->
+                <div class="lg:col-span-5 flex flex-col justify-center">
+                    <div id="auth-card" class="bg-surface-container-lowest rounded-2xl p-7 sm:p-10 shadow-[0_4px_24px_-2px_rgba(36,33,31,0.06)] flex flex-col justify-between border border-surface-container-high/60">
+                        
+                        <div>
+                            <!-- Header do Card Dinâmico -->
+                            <div class="mb-6">
+                                <span id="card-tag" class="font-label-sm text-xs uppercase tracking-wider text-primary font-bold">Acesso ao Sistema</span>
+                                <h2 id="card-title" class="font-headline-lg text-2xl font-extrabold text-on-surface tracking-tight mt-1">Bom ter você de volta!</h2>
+                                <p id="card-subtitle" class="font-body-md text-sm text-on-surface-variant mt-1.5">Entre na sua conta e continue de onde parou.</p>
+                            </div>
+
+                            <!-- Feedback do Sistema -->
+                            <div id="alerta" class="hidden mb-4 p-3 rounded-xl text-xs font-bold text-center"></div>
+
+                            <!-- FORMULÁRIO DE LOGIN -->
+                            <form id="form-login" onsubmit="realizarLogin(event)" class="space-y-4">
+                                <div>
+                                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">E-mail</label>
+                                    <div class="relative flex items-center">
+                                        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">mail</span>
+                                        <input id="login-email" type="email" required placeholder="seu.email@exemplo.com.br" class="w-full pl-11 pr-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-sm outline-none shadow-sm focus:ring-2 focus:ring-primary border border-surface-container-highest transition-all"/>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">Senha</label>
+                                    <div class="relative flex items-center">
+                                        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+                                        <input id="login-senha" type="password" required placeholder="••••••••" class="w-full pl-11 pr-12 py-3 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-sm outline-none shadow-sm focus:ring-2 focus:ring-primary border border-surface-container-highest transition-all"/>
+                                        <button type="button" onclick="alternarVisibilidadeSenha('login-senha', 'eye-login')" class="absolute right-3.5 text-on-surface-variant hover:text-on-surface p-1 rounded-md transition-colors">
+                                            <span id="eye-login" class="material-symbols-outlined text-[20px]">visibility</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-1">
+                                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                                        <input type="checkbox" class="rounded border-surface-container-highest text-primary focus:ring-primary"/>
+                                        <span class="text-xs text-on-surface-variant">Manter conectado</span>
+                                    </label>
+                                    <a href="#" class="text-xs font-bold text-primary hover:underline">Esqueci minha senha</a>
+                                </div>
+
+                                <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-primary hover:bg-primary-container active:scale-[0.98] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer mt-4">
+                                    <span>Entrar na minha conta</span>
+                                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </button>
+                            </form>
+
+                            <!-- FORMULÁRIO DE CADASTRO -->
+                            <form id="form-cadastro" onsubmit="realizarCadastro(event)" class="space-y-3.5 hidden">
+                                <div>
+                                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1">Nome / Estabelecimento</label>
+                                    <div class="relative flex items-center">
+                                        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">person</span>
+                                        <input id="cad-nome" type="text" required placeholder="Nome completo ou da Loja" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 text-sm outline-none shadow-sm border border-surface-container-highest transition-all"/>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1">E-mail</label>
+                                    <div class="relative flex items-center">
+                                        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">mail</span>
+                                        <input id="cad-email" type="email" required placeholder="exemplo@email.com" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 text-sm outline-none shadow-sm border border-surface-container-highest transition-all"/>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1">Senha</label>
+                                    <div class="relative flex items-center">
+                                        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+                                        <input id="cad-senha" type="password" required placeholder="Crie uma senha segura" class="w-full pl-11 pr-12 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 text-sm outline-none shadow-sm border border-surface-container-highest transition-all"/>
+                                        <button type="button" onclick="alternarVisibilidadeSenha('cad-senha', 'eye-cad')" class="absolute right-3.5 text-on-surface-variant hover:text-on-surface p-1 rounded-md transition-colors">
+                                            <span id="eye-cad" class="material-symbols-outlined text-[20px]">visibility</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1">Tipo de Perfil</label>
+                                    <div class="relative flex items-center">
+                                        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">badge</span>
+                                        <select id="cad-role" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface text-sm outline-none shadow-sm border border-surface-container-highest transition-all">
+                                            <option value="CLIENTE">Cliente</option>
+                                            <option value="LOJA">Estabelecimento (Loja)</option>
+                                            <option value="ENTREGADOR">Entregador</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <input id="cad-telefone" type="text" placeholder="Telefone" class="w-full px-3 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface text-sm outline-none shadow-sm border border-surface-container-highest transition-all"/>
+                                    </div>
+                                    <div>
+                                        <input id="cad-endereco" type="text" placeholder="Endereço" class="w-full px-3 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface text-sm outline-none shadow-sm border border-surface-container-highest transition-all"/>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-primary hover:bg-primary-container active:scale-[0.98] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer mt-4">
+                                    <span>Criar minha conta</span>
+                                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Rodapé do Card (Alternância) -->
+                        <div class="pt-6 mt-6 border-t border-surface-container-highest text-center">
+                            <p id="footer-texto" class="text-sm text-on-surface-variant">
+                                Ainda não tem uma conta? 
+                                <button type="button" onclick="mudarAba('cadastro')" class="font-bold text-primary hover:underline ml-1 cursor-pointer">Criar conta</button>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="w-full bg-surface-container-low py-8 shadow-[0_-1px_6px_rgba(0,0,0,0.02)]">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-xs text-on-surface-variant">© 2026 Cardápio Digital. Todos os direitos reservados.</p>
+            <div class="flex items-center gap-6">
+                <a class="text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Ajuda &amp; Suporte</a>
+                <a class="text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Termos de Uso</a>
+                <a class="text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Privacidade</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="login.js"></script>
+</body>
+</html>

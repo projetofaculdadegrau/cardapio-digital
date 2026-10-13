@@ -33,4 +33,4 @@ app.include_router(orders_router)
 
 @app.get("/")
 def home():
-    return {"status": "API Burger Master rodando com sucesso!"}
+    return {"status": "API Cardápio Digital rodando com sucesso!"}
