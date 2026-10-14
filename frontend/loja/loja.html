@@ -123,6 +123,38 @@
         <!-- Alerta de Feedback -->
         <div id="alerta" class="hidden mb-6 p-4 rounded-xl text-xs font-bold text-center"></div>
 
+<!-- ================= ESTEIRA DE PEDIDOS EM TEMPO REAL ================= -->
+<section
+    class="mb-8 bg-surface-container-lowest rounded-2xl p-6 sm:p-8 shadow-[0_4px_24px_-2px_rgba(36,33,31,0.06)] border border-surface-container-high/60">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <span class="text-xs uppercase tracking-wider text-primary font-bold">Monitoramento</span>
+            <div class="flex items-center gap-3 mt-0.5">
+                <h2 class="font-headline-lg text-xl font-extrabold text-on-surface tracking-tight">Esteira de Pedidos</h2>
+                <span id="contador-pedidos"
+                    class="px-3 py-1 rounded-full bg-primary/10 text-xs font-bold text-primary">0 ativos</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div
+                class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-xl text-xs font-medium text-on-surface-variant">
+                <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+                <span id="status-atualizacao">Ao vivo</span>
+            </div>
+            <button onclick="carregarPedidos()"
+                class="px-4 py-2 bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface font-bold rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">refresh</span>
+                <span class="hidden sm:inline">Atualizar</span>
+            </button>
+        </div>
+    </div>
+    <div id="lista-pedidos" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div class="col-span-full text-center py-12 text-on-surface-variant text-sm">
+            <span class="material-symbols-outlined text-4xl mb-2 opacity-40">receipt_long</span>
+            <p>A carregar pedidos recebidos...</p>
+        </div>
+    </div>
+</section>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
             <!-- COLUNA ESQUERDA: Formulário de Cadastro / Edição de Produto (4 Colunas) -->
