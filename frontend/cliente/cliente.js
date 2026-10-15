@@ -15,6 +15,15 @@ let carrinho = [];
 let carrinhoLojaId = null;
 let carrinhoLojaNome = null;
 
+// Método de Pagamento selecionado
+let metodoPagamento = 'dinheiro';
+
+// Configuração de Frete
+const FRETE_CONFIG = {
+    GRATIS_ACIMA: 30.00,   // Frete grátis para pedidos acima deste valor
+    VALOR_FIXO: 5.00       // Valor fixo quando abaixo do limite
+};
+
 // Banco visual de imagens gastronômicas em alta resolução (Unsplash Food)
 const IMAGENS_CATEGORIA = {
     hamburguer: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop",
@@ -592,7 +601,17 @@ function adicionarAoCarrinho(produto) {
     }
 
     salvarCarrinhoStorage();
-    mostrarAlertaToast(`"${produto.nome}" adicionado ao carrinho!`, true);
+    mostrarToast(`"${produto.nome}" adicionado ao carrinho!`, 'sucesso');
+
+    // Animação pop no botão do produto
+    const botoes = document.querySelectorAll(`[onclick*="adicionarAoCarrinhoPorId(${produto.id})"]`);
+    botoes.forEach(btn => {
+        btn.classList.remove('btn-adicionado-pop');
+        void btn.offsetWidth; // reflow para restartar animação
+        btn.classList.add('btn-adicionado-pop');
+        btn.addEventListener('animationend', () => btn.classList.remove('btn-adicionado-pop'), { once: true });
+    });
+
     alternarCarrinho(true);
 }
 
@@ -736,9 +755,28 @@ function atualizarUIcarrinho() {
         }).join('');
     }
 
-    const valorFormatado = subtotalValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    if (subtotalEl) subtotalEl.textContent = valorFormatado;
-    if (totalEl) totalEl.textContent = valorFormatado;
+    const valorSubtotalFormatado = subtotalValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    // Calcula frete
+    const frete = calcularFrete(subtotalValor);
+    const totalComFrete = subtotalValor + frete;
+    const totalFormatado = totalComFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    if (subtotalEl) subtotalEl.textContent = valorSubtotalFormatado;
+
+    // Atualiza exibição do frete
+    const freteEl = document.getElementById('carrinho-frete');
+    if (freteEl) {
+        if (frete === 0) {
+            freteEl.className = 'badge-frete-gratis';
+            freteEl.innerHTML = '<span class="material-symbols-outlined text-[11px]">check</span> Grátis';
+        } else {
+            freteEl.className = 'text-on-surface-variant font-semibold';
+            freteEl.textContent = frete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+    }
+
+    if (totalEl) totalEl.textContent = totalFormatado;
 }
 
 function alternarCarrinho(abrir = null) {
@@ -798,36 +836,95 @@ function fecharModalTrocaLoja() {
 }
 
 /* =====================================================================
+   METODO DE PAGAMENTO
+   ===================================================================== */
+function selecionarPagamento(metodo) {
+    metodoPagamento = metodo;
+    const chips = document.querySelectorAll('.chip-pagamento');
+    chips.forEach(chip => chip.classList.remove('selecionado'));
+    const alvo = document.getElementById(`pag-${metodo}`);
+    if (alvo) alvo.classList.add('selecionado');
+
+    // Limpa erro de pagamento se houver
+    const erroEl = document.getElementById('erro-pagamento');
+    if (erroEl) erroEl.classList.add('hidden');
+}
+
+/* =====================================================================
+   CALCULO DE FRETE FIXO/DINAMICO
+   ===================================================================== */
+function calcularFrete(subtotal) {
+    if (subtotal <= 0) return 0;
+    if (subtotal >= FRETE_CONFIG.GRATIS_ACIMA) return 0;
+    return FRETE_CONFIG.VALOR_FIXO;
+}
+
+/* =====================================================================
    FINALIZAR PEDIDO (POST /pedidos)
    ===================================================================== */
 async function realizarPedido() {
     const token = localStorage.getItem('access_token');
-    
-    // Se não estiver logado, convida a entrar
+
     if (!token) {
-        alert('Para concluir o pedido, você precisa estar conectado à sua conta de Cliente.');
-        window.location.href = '../login/login.html';
+        mostrarToast('Faça login para realizar seu pedido.', 'aviso');
+        setTimeout(() => { window.location.href = '../login/login.html'; }, 1500);
         return;
     }
 
     if (carrinho.length === 0 || !carrinhoLojaId) {
-        alert('Seu carrinho está vazio.');
+        mostrarToast('Seu carrinho está vazio.', 'aviso');
         return;
     }
 
-    const inputEndereco = document.getElementById('pedido-endereco');
-    const inputObservacao = document.getElementById('pedido-observacao');
-    const btnConfirmar = document.getElementById('btn-confirmar-pedido');
-    const btnTexto = document.getElementById('btn-confirmar-texto');
+    const inputEndereco  = document.getElementById('pedido-endereco');
+    const inputObs       = document.getElementById('pedido-observacao');
+    const btnConfirmar   = document.getElementById('btn-confirmar-pedido');
+    const btnTexto       = document.getElementById('btn-confirmar-texto');
+    const btnIcone       = document.getElementById('btn-confirmar-icone');
+    const erroEndereco   = document.getElementById('erro-endereco');
+    const erroPagamento  = document.getElementById('erro-pagamento');
 
-    const endereco = inputEndereco ? inputEndereco.value.trim() : "";
-    const observacao = inputObservacao ? inputObservacao.value.trim() : "";
+    const endereco   = inputEndereco ? inputEndereco.value.trim() : '';
+    const observacao = inputObs      ? inputObs.value.trim()      : '';
+
+    // -- Validação visual --
+    let temErro = false;
 
     if (!endereco) {
-        alert('Por favor, informe o endereço de entrega para prosseguir.');
-        if (inputEndereco) inputEndereco.focus();
-        return;
+        temErro = true;
+        if (inputEndereco) {
+            inputEndereco.classList.add('input-erro');
+            inputEndereco.addEventListener('input', () => {
+                inputEndereco.classList.remove('input-erro');
+                if (erroEndereco) erroEndereco.classList.add('hidden');
+            }, { once: true });
+        }
+        if (erroEndereco) erroEndereco.classList.remove('hidden');
+        mostrarToast('Informe o endereço de entrega.', 'erro');
+    } else {
+        if (inputEndereco) inputEndereco.classList.remove('input-erro');
+        if (erroEndereco)  erroEndereco.classList.add('hidden');
     }
+
+    if (!metodoPagamento) {
+        temErro = true;
+        if (erroPagamento) erroPagamento.classList.remove('hidden');
+        mostrarToast('Selecione a forma de pagamento.', 'erro');
+    } else {
+        if (erroPagamento) erroPagamento.classList.add('hidden');
+    }
+
+    if (temErro) return;
+
+    // Compõe observação final com o método de pagamento
+    const labelPag = { dinheiro: 'Dinheiro', cartao: 'Cartão na entrega', pix: 'Pix' };
+    const pagLabel = labelPag[metodoPagamento] || metodoPagamento;
+    const obsFinal = observacao
+        ? `${observacao} | Pagamento: ${pagLabel}`
+        : `Pagamento: ${pagLabel}`;
+
+    const subtotalValor = carrinho.reduce((acc, i) => acc + i.preco * i.quantidade, 0);
+    const frete = calcularFrete(subtotalValor);
 
     const payload = {
         loja_id: Number(carrinhoLojaId),
@@ -836,15 +933,15 @@ async function realizarPedido() {
             quantidade: Number(item.quantidade)
         })),
         endereco_entrega: endereco,
-        observacao: observacao || null
+        observacao: obsFinal
     };
 
-    try {
-        if (btnConfirmar) {
-            btnConfirmar.disabled = true;
-            if (btnTexto) btnTexto.textContent = "Processando Pedido...";
-        }
+    // -- Estado de carregamento --
+    if (btnConfirmar) btnConfirmar.disabled = true;
+    if (btnIcone)  btnIcone.outerHTML = '<span class="btn-spinner" id="btn-confirmar-icone"></span>';
+    if (btnTexto)  btnTexto.textContent = 'Processando Pedido...';
 
+    try {
         const res = await fetch(`${API_URL}/pedidos`, {
             method: 'POST',
             headers: {
@@ -860,21 +957,27 @@ async function realizarPedido() {
             throw new Error(data.detail || 'Não foi possível registrar seu pedido.');
         }
 
-        // Sucesso
+        // -- Sucesso: limpar carrinho --
         carrinho = [];
         carrinhoLojaId = null;
         carrinhoLojaNome = null;
+        metodoPagamento = 'dinheiro';
         salvarCarrinhoStorage();
         alternarCarrinho(false);
 
         abrirModalSucesso(data.id);
 
     } catch (e) {
-        alert(`Erro ao finalizar pedido: ${e.message}`);
+        mostrarToast(`Erro: ${e.message}`, 'erro');
     } finally {
+        // Restaura botão
         if (btnConfirmar) {
             btnConfirmar.disabled = false;
-            if (btnTexto) btnTexto.textContent = "Confirmar e Realizar Pedido";
+            const spinnerAtual = document.getElementById('btn-confirmar-icone');
+            if (spinnerAtual) {
+                spinnerAtual.outerHTML = '<span class="material-symbols-outlined text-[20px]" id="btn-confirmar-icone">check_circle</span>';
+            }
+            if (btnTexto) btnTexto.textContent = 'Confirmar e Realizar Pedido';
         }
     }
 }
@@ -1021,19 +1124,41 @@ async function carregarMeusPedidos(mostrarLoading = true) {
 }
 
 /* =====================================================================
-   UTILITÁRIOS E REGISTRO GLOBAL
+   UTILITARIOS E REGISTRO GLOBAL
    ===================================================================== */
+
+let toastTimer = null;
+
+function mostrarToast(mensagem, tipo = 'sucesso') {
+    const toast = document.getElementById('toast-flutuante');
+    if (!toast) {
+        // Fallback para ambientes sem o toast no DOM
+        console.log(`[Toast ${tipo}]:`, mensagem);
+        return;
+    }
+
+    const icones = {
+        sucesso: '<span class="material-symbols-outlined" style="font-size:18px">check_circle</span>',
+        erro:    '<span class="material-symbols-outlined" style="font-size:18px">error</span>',
+        aviso:   '<span class="material-symbols-outlined" style="font-size:18px">warning</span>'
+    };
+
+    clearTimeout(toastTimer);
+    toast.className = `toast-${tipo}`; // limpa classes anteriores
+    toast.innerHTML = `${icones[tipo] || ''} <span>${escapeHtml(mensagem)}</span>`;
+
+    // Trigga reflow para reiniciar transição se já estava visível
+    void toast.offsetWidth;
+    toast.classList.add('toast-visivel');
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove('toast-visivel');
+    }, 3200);
+}
+
+/** Alias de compatibilidade para código legado que chama mostrarAlertaToast */
 function mostrarAlertaToast(mensagem, sucesso = false) {
-    const alerta = document.getElementById('alerta-global');
-    if (!alerta) return;
-
-    alerta.textContent = mensagem;
-    alerta.className = `rounded-2xl p-3.5 text-xs font-bold text-center card-animate shadow-md ${sucesso ? 'bg-tertiary-container/30 text-tertiary border border-tertiary/20' : 'bg-error-container text-on-error-container'}`;
-    alerta.classList.remove('hidden');
-
-    setTimeout(() => {
-        alerta.classList.add('hidden');
-    }, 3000);
+    mostrarToast(mensagem, sucesso ? 'sucesso' : 'erro');
 }
 
 function escapeHtml(str) {
@@ -1062,6 +1187,7 @@ window.alterarQuantidade = alterarQuantidade;
 window.removerDoCarrinho = removerDoCarrinho;
 window.limparCarrinhoConfirmado = limparCarrinhoConfirmado;
 window.realizarPedido = realizarPedido;
+window.selecionarPagamento = selecionarPagamento;
 window.abrirModalPedidos = abrirModalPedidos;
 window.fecharModalPedidos = fecharModalPedidos;
 window.abrirModalTrocaLoja = abrirModalTrocaLoja;
