@@ -65,6 +65,7 @@ class ProductUpdate(BaseModel):
 class ProductResponse(BaseModel):
     id: int
     loja_id: int
+    loja_nome: Optional[str] = None
     nome: str
     descricao: Optional[str] = None
     preco: float
@@ -72,6 +73,17 @@ class ProductResponse(BaseModel):
     disponivel: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class LojaPublicaResponse(BaseModel):
+    id: int
+    nome: str
+    email: EmailStr
+    telefone: Optional[str] = None
+    endereco: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 
 

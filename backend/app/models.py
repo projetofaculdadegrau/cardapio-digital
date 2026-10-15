@@ -65,6 +65,10 @@ class Product(Base):
 
     loja = relationship("User", back_populates="produtos")
 
+    @property
+    def loja_nome(self) -> str:
+        return self.loja.nome if self.loja else ""
+
 
 Produto = Product
 
