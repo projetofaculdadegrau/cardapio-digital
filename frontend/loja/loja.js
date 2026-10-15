@@ -216,7 +216,7 @@ const STATUS_CONFIG = {
 // O que a LOJA pode fazer em cada status (botões de avançar o pedido)
 const ACOES_LOJA = {
     PENDENTE: [
-        { texto: 'Aceitar', status: 'EM_PREPARO', estilo: 'bg-primary hover:bg-primary-container text-white', icone: 'restaurant' },
+        { texto: 'Aceitar e Preparar', status: 'EM_PREPARO', estilo: 'bg-primary hover:bg-primary-container text-white', icone: 'restaurant' },
         { texto: 'Recusar', status: 'CANCELADO',  estilo: 'bg-surface-container hover:bg-error-container hover:text-on-error-container text-on-surface-variant', icone: 'close' }
     ],
     EM_PREPARO: [
