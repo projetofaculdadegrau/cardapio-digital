@@ -1,9 +1,10 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app.models import User, Product, UserRole
-from app.schemas import ProductCreate, ProductUpdate, ProductResponse
+from app.schemas import ProductCreate, ProductUpdate, ProductResponse, LojaPublicaResponse
 from app.auth import get_current_user
 
 router = APIRouter(prefix="/produtos", tags=["Produtos / Cardápio"])
@@ -53,6 +54,53 @@ def criar_produto(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro interno ao criar produto: {str(e)}"
         )
+
+
+@router.get("", response_model=List[ProductResponse])
+def listar_todos_produtos(
+    loja_id: Optional[int] = Query(None, description="Filtrar por loja específica"),
+    categoria: Optional[str] = Query(None, description="Filtrar por categoria"),
+    busca: Optional[str] = Query(None, description="Buscar por nome ou descrição do prato"),
+    apenas_disponiveis: bool = Query(True, description="Filtrar apenas pratos ativos (disponivel = True)"),
+    db: Session = Depends(get_db)
+):
+    """
+    Vitrine pública de produtos/cardápio:
+    - Lista pratos de todas as lojas ou filtrados por loja_id.
+    - Suporta busca textual e filtro por categoria.
+    - Por padrão exibe produtos ativos (disponivel: true).
+    """
+    query = db.query(Product)
+
+    if apenas_disponiveis:
+        query = query.filter(Product.disponivel == True)
+
+    if loja_id is not None:
+        query = query.filter(Product.loja_id == loja_id)
+
+    if categoria and categoria.strip():
+        query = query.filter(func.lower(Product.categoria) == categoria.strip().lower())
+
+    if busca and busca.strip():
+        termo = f"%{busca.strip()}%"
+        query = query.filter(
+            (Product.nome.ilike(termo)) | (Product.descricao.ilike(termo))
+        )
+
+    return query.order_by(Product.categoria.asc(), Product.nome.asc()).all()
+
+
+@router.get("/lojas", response_model=List[LojaPublicaResponse])
+def listar_lojas_produtos(db: Session = Depends(get_db)):
+    """
+    Lista todos os estabelecimentos (lojas) parceiros ativos.
+    """
+    return (
+        db.query(User)
+        .filter(User.role == UserRole.LOJA, User.is_active == True)
+        .order_by(User.nome.asc())
+        .all()
+    )
 
 
 @router.get("/loja/{loja_id}", response_model=List[ProductResponse])

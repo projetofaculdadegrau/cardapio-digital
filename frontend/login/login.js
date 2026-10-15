@@ -126,7 +126,7 @@ async function realizarLogin(event) {
             if (userRole === 'LOJA') {
                 window.location.assign('../loja/loja.html');
             } else if (userRole === 'CLIENTE') {
-                alert(`Login de CLIENTE efetuado com sucesso! Painel do cliente em breve.`);
+                window.location.assign('../cliente/index.html');
             } else if (userRole === 'ENTREGADOR') {
                 alert(`Login de ENTREGADOR efetuado com sucesso! Painel de entregas em breve.`);
             }

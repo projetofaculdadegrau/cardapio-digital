@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cardápio Digital - Vitrine & Pedidos do Cliente</title>
+
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@200..800&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN + Config (Design System Material 3) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#8f7067",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#f6fff6",
+                        "surface-container-highest": "#eae1da",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#fbf2ea",
+                        "surface-bright": "#fff8f3",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#efe7df",
+                        "inverse-on-surface": "#f8efe8",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffdbd0",
+                        "primary": "#ac2d00",
+                        "inverse-surface": "#34302b",
+                        "surface-variant": "#eae1da",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "secondary": "#ab3500",
+                        "tertiary-container": "#26845b",
+                        "on-tertiary-fixed": "#002112",
+                        "on-surface": "#1f1b17",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#d63c05",
+                        "outline-variant": "#e4beb4",
+                        "on-secondary-container": "#5d1900",
+                        "background": "#fff8f3",
+                        "primary-fixed": "#ffdbd1",
+                        "surface": "#fff8f3",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5b4039",
+                        "tertiary": "#006a44",
+                        "tertiary-fixed": "#9bf5c4",
+                        "surface-container": "#f5ece5",
+                        "secondary-container": "#fe6a34",
+                        "surface-tint": "#b02e00",
+                    },
+                    fontFamily: {
+                        sans: ['"DM Sans"', "sans-serif"],
+                        display: ['"Manrope"', "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="cliente.css" />
+</head>
+
+<body
+    class="bg-background text-on-surface font-sans min-h-screen flex flex-col selection:bg-primary selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-surface-container-high shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+
+            <!-- Logo & Identidade -->
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div
+                        class="w-11 h-11 rounded-2xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
+                        <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-display font-black text-xl tracking-tight text-on-surface">Cardápio<span
+                                    class="text-primary">Digital</span></span>
+                            <span
+                                class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">Cliente</span>
+                        </div>
+                        <p class="text-[11px] text-on-surface-variant hidden sm:block">Os melhores pratos na sua porta
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Campo de Busca Desktop -->
+            <div class="hidden md:flex flex-1 max-w-md mx-4">
+                <div class="relative w-full">
+                    <span
+                        class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input type="text" id="input-busca-desktop" placeholder="Buscar prato, categoria ou ingrediente..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-surface-container-low border border-surface-container-high text-sm text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                    <button id="btn-limpar-busca-desktop" type="button" onclick="limparBusca()"
+                        class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-1"
+                        title="Limpar busca">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ações do Cliente (Meus Pedidos, Carrinho e Perfil) -->
+            <div class="flex items-center gap-2 sm:gap-3">
+
+                <!-- Botão Meus Pedidos -->
+                <button id="btn-meus-pedidos" onclick="abrirModalPedidos()"
+                    class="flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-2xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-surface-container-high transition-colors font-medium text-xs sm:text-sm">
+                    <span class="material-symbols-outlined text-[20px] text-primary">receipt_long</span>
+                    <span class="hidden sm:inline">Meus Pedidos</span>
+                </button>
+
+                <!-- Botão Carrinho de Compras -->
+                <button id="btn-abrir-carrinho" onclick="alternarCarrinho()"
+                    class="relative flex items-center gap-2 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-primary hover:bg-primary-container text-white transition-all shadow-md shadow-primary/20 hover:shadow-lg font-bold text-xs sm:text-sm">
+                    <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+                    <span class="hidden sm:inline">Carrinho</span>
+                    <!-- Contador do Carrinho -->
+                    <span id="carrinho-badge"
+                        class="hidden items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-white text-primary text-[11px] font-black shadow-xs">
+                        0
+                    </span>
+                </button>
+
+                <!-- Perfil / Logout ou Botão Entrar -->
+                <div id="usuario-logado-container"
+                    class="hidden items-center gap-2 pl-1 sm:pl-2 border-l border-surface-container-high">
+                    <div class="hidden lg:flex flex-col text-right">
+                        <span id="cliente-nome-header"
+                            class="text-xs font-bold text-on-surface truncate max-w-[120px]">Cliente</span>
+                        <span class="text-[10px] text-tertiary font-semibold flex items-center justify-end gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Online
+                        </span>
+                    </div>
+                    <button onclick="realizarLogout()"
+                        class="p-2.5 rounded-2xl bg-surface-container-low hover:bg-error-container hover:text-on-error-container text-on-surface-variant transition-colors"
+                        title="Encerrar sessão">
+                        <span class="material-symbols-outlined text-[20px]">logout</span>
+                    </button>
+                </div>
+
+                <div id="usuario-visitante-container"
+                    class="flex items-center gap-2 pl-1 sm:pl-2 border-l border-surface-container-high">
+                    <a href="../login/login.html"
+                        class="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-primary hover:bg-primary-container text-white text-xs font-bold transition-all shadow-xs">
+                        <span class="material-symbols-outlined text-[18px]">login</span>
+                        <span>Entrar</span>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Barra de Busca Mobile -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative w-full">
+                <span
+                    class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input type="text" id="input-busca-mobile" placeholder="Buscar pratos ou categorias..."
+                    class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-surface-container-low border border-surface-container-high text-sm text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                <button id="btn-limpar-busca-mobile" type="button" onclick="limparBusca()"
+                    class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-1"
+                    title="Limpar busca">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <!-- Alerta Global / Toast inline de status -->
+        <div id="alerta-global" class="hidden rounded-2xl p-4 text-xs font-bold text-center card-animate shadow-xs">
+        </div>
+
+        <!-- Hero Banner Acolhedor -->
+        <section
+            class="hero-banner relative overflow-hidden rounded-3xl bg-primary bg-gradient-to-r from-primary via-primary-container to-secondary p-6 sm:p-10 text-white shadow-xl shadow-primary/20">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none">
+            </div>
+            <div class="relative z-10 max-w-2xl">
+                <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-sm text-xs font-bold tracking-wide uppercase mb-3 text-white">
+                    <span class="material-symbols-outlined text-sm text-amber-300">local_fire_department</span> Cardápio Ao Vivo
+                </span>
+                <h1 class="font-display font-extrabold text-2xl sm:text-4xl tracking-tight leading-tight mb-2 text-white drop-shadow-xs">
+                    O que você gostaria de pedir hoje?
+                </h1>
+                <p class="text-white/90 text-sm sm:text-base leading-relaxed mb-6 font-normal">
+                    Navegue pelos cardápios dos melhores restaurantes parceiros, monte seu carrinho e acompanhe a
+                    entrega em tempo real.
+                </p>
+
+                <div class="flex flex-wrap items-center gap-3 text-xs font-medium">
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm border border-white/15 text-white font-semibold shadow-xs">
+                        <span class="material-symbols-outlined text-[16px] text-emerald-300">check_circle</span>
+                        Pratos 100% disponíveis
+                    </span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm border border-white/15 text-white font-semibold shadow-xs">
+                        <span class="material-symbols-outlined text-[16px] text-amber-300">bolt</span> Pedidos
+                        rápidos
+                    </span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm border border-white/15 text-white font-semibold shadow-xs">
+                        <span class="material-symbols-outlined text-[16px] text-cyan-300">moped</span> Entrega
+                        direta
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção: Estabelecimentos Parceiros (Lojas) -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded-xl bg-primary/10 text-primary">
+                        <span class="material-symbols-outlined text-[22px]">storefront</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-lg sm:text-xl text-on-surface">Restaurantes Parceiros
+                        </h2>
+                        <p class="text-xs text-on-surface-variant">Selecione uma loja para ver o cardápio exclusivo</p>
+                    </div>
+                </div>
+
+                <!-- Botão para limpar filtro de loja (quando houver uma ativa) -->
+                <button id="btn-limpar-loja" onclick="selecionarLoja(null)"
+                    class="hidden items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-container px-3 py-1.5 rounded-xl bg-primary/10 transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">clear_all</span>
+                    Ver Todas as Lojas
+                </button>
+            </div>
+
+            <!-- Carrossel de Lojas -->
+            <div id="container-lojas" class="flex gap-4 overflow-x-auto pb-2 pt-1 no-scrollbar scroll-smooth">
+                <!-- Skeleton Lojas -->
+                <div
+                    class="w-64 h-24 rounded-2xl bg-surface-container-low border border-surface-container-high/60 animate-pulse shrink-0">
+                </div>
+                <div
+                    class="w-64 h-24 rounded-2xl bg-surface-container-low border border-surface-container-high/60 animate-pulse shrink-0">
+                </div>
+                <div
+                    class="w-64 h-24 rounded-2xl bg-surface-container-low border border-surface-container-high/60 animate-pulse shrink-0">
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção: Filtros por Categoria -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="font-display font-bold text-base text-on-surface">Filtrar por Categoria</h3>
+                <span id="label-loja-ativa" class="text-xs font-medium text-on-surface-variant hidden">
+                    Filtrando por: <b class="text-primary" id="nome-loja-ativa"></b>
+                </span>
+            </div>
+
+            <div id="container-categorias" class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <!-- Chip Todos padrão -->
+                <button onclick="selecionarCategoria(null)" data-categoria=""
+                    class="chip-categoria active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow-xs shrink-0 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">fastfood</span>
+                    Todos os Pratos
+                </button>
+            </div>
+        </section>
+
+        <!-- Seção: Vitrine de Pratos / Cardápio -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between border-b border-surface-container-high pb-3">
+                <div class="flex items-center gap-2">
+                    <h2 class="font-display font-bold text-lg sm:text-xl text-on-surface">Vitrine de Cardápios</h2>
+                    <span id="contador-produtos"
+                        class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant">
+                        Carregando...
+                    </span>
+                </div>
+
+                <div class="text-xs text-on-surface-variant font-medium">
+                    Itens disponíveis para entrega
+                </div>
+            </div>
+
+            <!-- Grid de Produtos -->
+            <div id="grid-produtos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- Skeleton loader de pratos -->
+                <div
+                    class="rounded-3xl bg-surface-container-low border border-surface-container-high/60 p-4 space-y-3 animate-pulse">
+                    <div class="w-full h-44 rounded-2xl bg-surface-container-high"></div>
+                    <div class="h-4 w-3/4 rounded bg-surface-container-high"></div>
+                    <div class="h-3 w-full rounded bg-surface-container-high"></div>
+                    <div class="h-6 w-1/3 rounded bg-surface-container-high"></div>
+                </div>
+                <div
+                    class="rounded-3xl bg-surface-container-low border border-surface-container-high/60 p-4 space-y-3 animate-pulse">
+                    <div class="w-full h-44 rounded-2xl bg-surface-container-high"></div>
+                    <div class="h-4 w-3/4 rounded bg-surface-container-high"></div>
+                    <div class="h-3 w-full rounded bg-surface-container-high"></div>
+                    <div class="h-6 w-1/3 rounded bg-surface-container-high"></div>
+                </div>
+            </div>
+
+            <!-- Empty State quando não houver pratos -->
+            <div id="empty-state-produtos"
+                class="hidden text-center py-16 px-4 bg-surface-container-low rounded-3xl border border-dashed border-surface-container-high">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+                    <span class="material-symbols-outlined text-3xl">search_off</span>
+                </div>
+                <h3 class="font-display font-bold text-lg text-on-surface mb-1">Nenhum prato encontrado</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto mb-5">
+                    Não encontramos itens que correspondam ao filtro ou busca selecionada no momento.
+                </p>
+                <button onclick="resetarFiltros()"
+                    class="px-5 py-2.5 rounded-2xl bg-primary hover:bg-primary-container text-white text-xs font-bold transition-all shadow-sm">
+                    Ver todos os pratos disponíveis
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer
+        class="mt-auto border-t border-surface-container-high bg-surface-container-low py-8 text-center text-xs text-on-surface-variant">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="font-bold text-on-surface">Cardápio Digital</p>
+            <p>Conectando Estabelecimentos, Clientes e Entregadores em uma experiência integrada.</p>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- DRAWER / GAVETA DO CARRINHO DE COMPRAS                               -->
+    <!-- ===================================================================== -->
+    <div id="drawer-carrinho" class="fixed inset-0 z-50 hidden transition-opacity duration-300">
+        <!-- Backdrop -->
+        <div id="drawer-backdrop" onclick="alternarCarrinho(false)"
+            class="absolute inset-0 bg-black/40 backdrop-blur-sm">
+        </div>
+
+        <!-- Painel Lateral -->
+        <div id="drawer-painel"
+            class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-surface border-l border-surface-container-high shadow-2xl flex flex-col z-10 translate-x-full transition-transform duration-300">
+
+            <!-- Topo do Carrinho -->
+            <div
+                class="p-5 border-b border-surface-container-high flex items-center justify-between bg-surface-container-low">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded-xl bg-primary text-white">
+                        <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-base text-on-surface">Seu Carrinho</h3>
+                        <p id="carrinho-subtitulo" class="text-xs text-on-surface-variant">0 itens adicionados</p>
+                    </div>
+                </div>
+                <button onclick="alternarCarrinho(false)"
+                    class="p-2 rounded-xl hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors"
+                    title="Fechar carrinho">
+                    <span class="material-symbols-outlined text-[22px]">close</span>
+                </button>
+            </div>
+
+            <!-- Identificação da Loja do Pedido -->
+            <div id="carrinho-loja-info"
+                class="hidden px-5 py-2.5 bg-primary/10 border-b border-primary/20 flex items-center justify-between text-xs">
+                <span class="text-on-surface-variant flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px] text-primary">store</span>
+                    Loja: <strong id="carrinho-loja-nome" class="text-primary font-bold"></strong>
+                </span>
+                <button onclick="limparCarrinhoConfirmado()"
+                    class="text-[11px] text-on-surface-variant hover:text-error font-semibold hover:underline">
+                    Esvaziar
+                </button>
+            </div>
+
+            <!-- Lista de Itens do Carrinho -->
+            <div id="carrinho-itens-container" class="flex-1 overflow-y-auto p-5 space-y-3">
+                <!-- Se vazio -->
+                <div id="carrinho-vazio"
+                    class="h-full flex flex-col items-center justify-center text-center p-6 text-on-surface-variant">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center mb-3 text-on-surface-variant/60">
+                        <span class="material-symbols-outlined text-3xl">remove_shopping_cart</span>
+                    </div>
+                    <h4 class="font-display font-bold text-sm text-on-surface mb-1">Seu carrinho está vazio</h4>
+                    <p class="text-xs mb-4">Escolha pratos deliciosos na vitrine e monte seu pedido!</p>
+                    <button onclick="alternarCarrinho(false)"
+                        class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs">
+                        Explorar Cardápio
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rodapé / Checkout -->
+            <div id="carrinho-checkout-container"
+                class="hidden p-5 border-t border-surface-container-high bg-surface-container-low space-y-4">
+
+                <!-- Formulário de Entrega -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px] text-primary">home_pin</span> Endereço de
+                            Entrega
+                        </label>
+                        <input type="text" id="pedido-endereco" placeholder="Rua, número, complemento, bairro..."
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-surface-container-high text-xs text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px] text-primary">edit_note</span>
+                            Observações do Pedido (Opcional)
+                        </label>
+                        <textarea id="pedido-observacao" rows="2"
+                            placeholder="Ex: sem cebola, ponto da carne, troco para 50..."
+                            class="w-full px-3.5 py-2 rounded-xl bg-surface border border-surface-container-high text-xs text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Resumo Financeiro -->
+                <div class="space-y-1.5 pt-2 border-t border-surface-container-high text-xs">
+                    <div class="flex justify-between text-on-surface-variant">
+                        <span>Subtotal</span>
+                        <span id="carrinho-subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between text-on-surface-variant">
+                        <span>Taxa de entrega</span>
+                        <span class="text-tertiary font-bold">Grátis</span>
+                    </div>
+                    <div
+                        class="flex justify-between text-sm font-black text-on-surface pt-1 border-t border-surface-container-high/60">
+                        <span>Total a Pagar</span>
+                        <span id="carrinho-total" class="text-primary text-base font-extrabold">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <!-- Botão Enviar Pedido -->
+                <button id="btn-confirmar-pedido" onclick="realizarPedido()"
+                    class="w-full py-3.5 px-4 rounded-2xl bg-primary hover:bg-primary-container text-white font-bold text-sm transition-all shadow-md shadow-primary/20 hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                    <span id="btn-confirmar-texto">Confirmar e Realizar Pedido</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL DE HISTÓRICO: MEUS PEDIDOS                                      -->
+    <!-- ===================================================================== -->
+    <div id="modal-pedidos"
+        class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div
+            class="w-full max-w-3xl bg-surface rounded-3xl border border-surface-container-high shadow-2xl flex flex-col max-h-[90vh] card-animate overflow-hidden">
+
+            <!-- Cabeçalho do Modal -->
+            <div
+                class="p-5 border-b border-surface-container-high flex items-center justify-between bg-surface-container-low">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded-xl bg-primary/10 text-primary">
+                        <span class="material-symbols-outlined text-[22px]">receipt_long</span>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-base sm:text-lg text-on-surface">Histórico de Pedidos
+                        </h3>
+                        <p class="text-xs text-on-surface-variant">Acompanhe seus pedidos e status de entrega em tempo
+                            real</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="carregarMeusPedidos()"
+                        class="p-2 rounded-xl hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors"
+                        title="Atualizar lista">
+                        <span class="material-symbols-outlined text-[20px]">refresh</span>
+                    </button>
+                    <button onclick="fecharModalPedidos()"
+                        class="p-2 rounded-xl hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors"
+                        title="Fechar">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de Pedidos do Cliente -->
+            <div id="lista-meus-pedidos" class="flex-1 overflow-y-auto p-5 space-y-4">
+                <div class="text-center py-12 text-on-surface-variant text-xs">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                    <p>Carregando seus pedidos...</p>
+                </div>
+            </div>
+
+            <!-- Rodapé do Modal -->
+            <div class="p-4 border-t border-surface-container-high bg-surface-container-low flex justify-end">
+                <button onclick="fecharModalPedidos()"
+                    class="px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold transition-colors">
+                    Fechar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL DE SUCESSO DO PEDIDO                                            -->
+    <!-- ===================================================================== -->
+    <div id="modal-sucesso"
+        class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div
+            class="w-full max-w-md bg-surface rounded-3xl border border-surface-container-high shadow-2xl p-6 sm:p-8 text-center card-animate space-y-4">
+            <div
+                class="w-16 h-16 rounded-full bg-tertiary-container/20 text-tertiary flex items-center justify-center mx-auto mb-1">
+                <span class="material-symbols-outlined text-4xl">done_all</span>
+            </div>
+            <h3 class="font-display font-extrabold text-xl text-on-surface">Pedido Confirmado!</h3>
+            <p class="text-xs sm:text-sm text-on-surface-variant">
+                Seu pedido <strong id="sucesso-pedido-id" class="text-primary font-bold">#---</strong> foi enviado para
+                a cozinha do restaurante e está sendo processado.
+            </p>
+            <div
+                class="p-4 rounded-2xl bg-surface-container-low border border-surface-container-high text-xs space-y-1 text-left">
+                <p><span class="text-on-surface-variant">Previsão:</span> <strong>30 - 45 min</strong></p>
+                <p><span class="text-on-surface-variant">Status:</span> <span
+                        class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-700">PENDENTE</span>
+                </p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="fecharModalSucessoEVerPedidos()"
+                    class="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20 hover:bg-primary-container transition-all">
+                    Acompanhar Pedido
+                </button>
+                <button onclick="fecharModalSucesso()"
+                    class="px-4 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-bold text-xs transition-colors">
+                    Continuar Comprando
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL DE TROCA DE LOJA NO CARRINHO                                    -->
+    <!-- ===================================================================== -->
+    <div id="modal-troca-loja"
+        class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div
+            class="w-full max-w-sm bg-surface rounded-3xl border border-surface-container-high shadow-2xl p-6 text-center card-animate space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
+                <span class="material-symbols-outlined text-2xl">warning</span>
+            </div>
+            <h4 class="font-display font-bold text-base text-on-surface">Deseja limpar seu carrinho?</h4>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                Você já tem itens de outro restaurante no carrinho. Um pedido só pode conter itens de um único
+                estabelecimento por vez.
+            </p>
+            <div class="flex gap-2 pt-2">
+                <button id="btn-confirmar-troca-loja"
+                    class="flex-1 py-2.5 rounded-xl bg-primary text-white font-bold text-xs shadow-sm hover:bg-primary-container transition-all">
+                    Limpar e Adicionar
+                </button>
+                <button onclick="fecharModalTrocaLoja()"
+                    class="flex-1 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-bold text-xs transition-colors">
+                    Manter Atual
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Lógica do Cliente -->
+    <script src="cliente.js"></script>
+</body>
+
+</html>

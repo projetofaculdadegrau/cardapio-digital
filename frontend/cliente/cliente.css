@@ -1,0 +1,76 @@
+/* Design complementar para a Vitrine e Interface do Cliente */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #eae1da;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #d63c05;
+}
+
+.card-animate {
+    animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(172, 45, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(172, 45, 0, 0);
+    }
+}
+
+.pulse-badge {
+    animation: pulseGlow 2s infinite;
+}
+
+/* Transição do Drawer do Carrinho */
+.drawer-backdrop {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-panel {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Esconder barra de rolagem horizontal em chips de categorias */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Hero Banner com contraste perfeito e gradiente resiliente */
+.hero-banner {
+    background: #ac2d00 !important;
+    background: linear-gradient(135deg, #ac2d00 0%, #d63c05 45%, #ab3500 100%) !important;
+    color: #ffffff !important;
+}
+
+.hero-banner * {
+    color-scheme: dark;
+}
