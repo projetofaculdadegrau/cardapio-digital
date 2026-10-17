@@ -56,18 +56,13 @@ docker compose up -d
 ---
 
 ### 3. Inicialização do Backend (FastAPI)
-Abra o terminal na pasta do backend:
-
-```bash
-cd backend
-```
 
 Crie e ative um ambiente virtual Python:
 
 * **No Windows:**
   ```bash
   python -m venv venv
-  venv\Scripts\activate
+  .\backend\venv\Scripts\Activate.ps1
   ```
 * **No Linux / macOS:**
   ```bash
@@ -79,10 +74,15 @@ Instale as dependências do projeto:
 ```bash
 pip install -r requirements.txt
 ```
+Abra o terminal na pasta do backend:
+
+```bash
+cd backend
+```
 
 Inicie o servidor da API com o Uvicorn:
 ```bash
-uvicorn main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 *(O servidor backend rodará em `http://127.0.0.1:8000`)*
 
