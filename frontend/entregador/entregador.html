@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Entregador</title>
+    <link rel="stylesheet" href="entregador.css">
+    <script src="entregador.js" defer></script>
+</head>
+<body>
+    <header class="topo">
+        <div>
+            <p class="subtitulo">CARDÁPIO DIGITAL</p>
+            <h1>Painel do Entregador</h1>
+            <p id="boas-vindas">Gerencie suas entregas.</p>
+        </div>
+        <button id="botao-sair" class="botao botao-secundario" type="button">
+            Sair
+        </button>
+    </header>
+
+    <main class="conteudo">
+        <div id="mensagem" class="mensagem" role="status" aria-live="polite"></div>
+
+        <section>
+            <div class="secao-titulo">
+                <div>
+                    <h2>Entregas disponíveis</h2>
+                    <p>Pedidos prontos para retirada.</p>
+                </div>
+                <button id="botao-atualizar" class="botao botao-secundario" type="button">
+                    Atualizar
+                </button>
+            </div>
+            <div id="lista-disponiveis" class="lista-entregas">
+                <p class="vazio">Carregando entregas...</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="secao-titulo">
+                <div>
+                    <h2>Minhas entregas</h2>
+                    <p>Pedidos aceitos e ainda em andamento.</p>
+                </div>
+            </div>
+            <div id="lista-minhas-entregas" class="lista-entregas">
+                <p class="vazio">Carregando suas entregas...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Cardápio Digital · Painel do Entregador</p>
+        <p id="ultima-atualizacao"></p>
+    </footer>
+</body>
+</html>
