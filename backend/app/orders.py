@@ -247,6 +247,29 @@ def listar_pedidos_disponiveis(
 
 
 # --------------------------------------------------
+# ENTREGADOR: listar entregas atribuídas ao usuário
+# --------------------------------------------------
+
+@router.get(
+    "/entregador/minhas-entregas",
+    response_model=List[OrderResponse],
+)
+def listar_minhas_entregas(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_entregador),
+):
+    return (
+        db.query(Order)
+        .filter(
+            Order.entregador_id == current_user.id,
+            Order.status == OrderStatus.A_CAMINHO,
+        )
+        .order_by(Order.id.asc())
+        .all()
+    )
+
+
+# --------------------------------------------------
 # ENTREGADOR: aceitar entrega
 # --------------------------------------------------
 

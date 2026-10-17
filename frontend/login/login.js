@@ -128,8 +128,8 @@ async function realizarLogin(event) {
             } else if (userRole === 'CLIENTE') {
                 window.location.assign('../cliente/index.html');
             } else if (userRole === 'ENTREGADOR') {
-                alert(`Login de ENTREGADOR efetuado com sucesso! Painel de entregas em breve.`);
-            }
+    window.location.assign('../entregador/entregador.html');
+}
         }, 800);
 
     } catch (error) {
