@@ -54,5 +54,22 @@
         <p>Cardápio Digital · Painel do Entregador</p>
         <p id="ultima-atualizacao"></p>
     </footer>
+
+    <script>
+        (function () {
+            const token = localStorage.getItem('access_token');
+            const role = localStorage.getItem('user_role');
+
+            if (!token || role !== 'ENTREGADOR') {
+                if (token && role === 'LOJA') {
+                    window.location.replace('../loja/loja.html');
+                } else if (token && role === 'CLIENTE') {
+                    window.location.replace('../cliente/index.html');
+                } else {
+                    window.location.replace('../login/login.html');
+                }
+            }
+        })();
+    </script>
 </body>
 </html>
