@@ -626,6 +626,25 @@
     <!-- Toast Flutuante Global -->
     <div id="toast-flutuante" role="status" aria-live="polite"></div>
 
+    <script>
+        (function () {
+            const token = localStorage.getItem('access_token');
+            const role = localStorage.getItem('user_role');
+
+            // Se não houver token ou se o usuário estiver logado com perfil de LOJA ou ENTREGADOR, bloqueia e manda pro login
+            if (!token || role !== 'CLIENTE') {
+                // Se for LOJA, manda pro painel da loja; se for entregador, manda pro entregador, senão login
+                if (token && role === 'LOJA') {
+                    window.location.replace('../loja/loja.html');
+                } else if (token && role === 'ENTREGADOR') {
+                    window.location.replace('../entregador/entregador.html');
+                } else {
+                    window.location.replace('../login/login.html');
+                }
+            }
+        })();
+    </script>
+    
     <!-- Script de Lógica do Cliente -->
     <script src="cliente.js"></script>
 </body>

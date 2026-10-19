@@ -196,9 +196,10 @@ def atualizar_status_pedido(
         )
 
     transicoes_validas = {
-        OrderStatus.PENDENTE: {OrderStatus.EM_PREPARO},
-        OrderStatus.RECEBIDO: {OrderStatus.EM_PREPARO},
-        OrderStatus.EM_PREPARO: {OrderStatus.PRONTO_PARA_ENVIO},
+        OrderStatus.PENDENTE: {OrderStatus.EM_PREPARO, OrderStatus.CANCELADO},
+        OrderStatus.RECEBIDO: {OrderStatus.EM_PREPARO, OrderStatus.CANCELADO},
+        OrderStatus.EM_PREPARO: {OrderStatus.PRONTO_PARA_ENVIO, OrderStatus.CANCELADO},
+        OrderStatus.PRONTO_PARA_ENVIO: {OrderStatus.CANCELADO},
     }
 
     status_permitidos = transicoes_validas.get(pedido.status, set())

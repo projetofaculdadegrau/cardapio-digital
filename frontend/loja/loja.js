@@ -202,28 +202,27 @@ async function deletarProduto(id) {
    ESTEIRA DE PEDIDOS EM TEMPO REAL
    ===================================================================== */
 
-// Aparência de cada status (cor do selo + ícone + nome amigável)
+// Aparência de cada status para a Loja
 const STATUS_CONFIG = {
-    PENDENTE:          { label: 'Pendente',   cor: 'bg-amber-100 text-amber-700',     icone: 'schedule' },
-    RECEBIDO:          { label: 'Recebido',   cor: 'bg-slate-100 text-slate-700',     icone: 'inventory_2' },
-    EM_PREPARO:        { label: 'Em preparo', cor: 'bg-blue-100 text-blue-700',       icone: 'cooking' },
-    PRONTO_PARA_ENVIO: { label: 'Pronto',     cor: 'bg-violet-100 text-violet-700',   icone: 'check_circle' },
-    A_CAMINHO:         { label: 'A caminho',  cor: 'bg-cyan-100 text-cyan-700',       icone: 'local_shipping' },
-    ENTREGUE:          { label: 'Entregue',   cor: 'bg-emerald-100 text-emerald-700', icone: 'done_all' },
-    CANCELADO:         { label: 'Cancelado',  cor: 'bg-red-100 text-red-700',         icone: 'cancel' }
+    PENDENTE:            { label: 'Pendente',   cor: 'bg-amber-100 text-amber-700',    icone: 'schedule' },
+    RECEBIDO:            { label: 'Recebido',   cor: 'bg-slate-100 text-slate-700',    icone: 'inventory_2' },
+    EM_PREPARO:          { label: 'Em preparo', cor: 'bg-blue-100 text-blue-700',      icone: 'cooking' },
+    PRONTO_PARA_ENVIO:   { label: 'Pronto para entrega', cor: 'bg-violet-100 text-violet-700', icone: 'check_circle' }, // <-- Ajustado aqui
+    A_CAMINHO:           { label: 'A caminho',  cor: 'bg-cyan-100 text-cyan-700',      icone: 'local_shipping' },
+    ENTREGUE:            { label: 'Entregue',   cor: 'bg-emerald-100 text-emerald-700', icone: 'done_all' },
+    CANCELADO:           { label: 'Cancelado',  cor: 'bg-red-100 text-red-700',        icone: 'cancel' }
 };
 
-// O que a LOJA pode fazer em cada status (botões de avançar o pedido)
+// Ações disponíveis para a Loja em cada etapa
 const ACOES_LOJA = {
     PENDENTE: [
         { texto: 'Aceitar e Preparar', status: 'EM_PREPARO', estilo: 'bg-primary hover:bg-primary-container text-white', icone: 'restaurant' },
         { texto: 'Recusar', status: 'CANCELADO',  estilo: 'bg-surface-container hover:bg-error-container hover:text-on-error-container text-on-surface-variant', icone: 'close' }
     ],
     EM_PREPARO: [
-        { texto: 'Marcar como pronto', status: 'PRONTO_PARA_ENVIO', estilo: 'bg-primary hover:bg-primary-container text-white', icone: 'check' }
+        { texto: 'Pronto para entrega', status: 'PRONTO_PARA_ENVIO', estilo: 'bg-primary hover:bg-primary-container text-white', icone: 'check' } // <-- Ajustado o texto do botão
     ],
-        PRONTO_PARA_ENVIO: []  // a loja termina em "Pronto"; "A caminho" é fase do entregador
-    
+    PRONTO_PARA_ENVIO: []  // Aguardando o entregador aceitar a corrida
 };
 
 let ultimoJsonPedidos = null;

@@ -279,7 +279,24 @@
         </div>
     </footer>
 
+    <script>
+            (function () {
+                const token = localStorage.getItem('access_token');
+                const role = localStorage.getItem('user_role');
+
+                if (!token || role !== 'LOJA') {
+                    if (token && role === 'CLIENTE') {
+                        window.location.replace('../cliente/index.html');
+                    } else if (token && role === 'ENTREGADOR') {
+                        window.location.replace('../entregador/entregador.html');
+                    } else {
+                        window.location.replace('../login/login.html');
+                    }
+                }
+            })();
+    </script>
+    
     <script src="loja.js"></script>
-</body>
+    </body>
 
 </html>
