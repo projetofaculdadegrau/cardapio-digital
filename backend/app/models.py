@@ -61,6 +61,7 @@ class Product(Base):
     descricao = Column(String, nullable=True)
     preco = Column(Float, nullable=False)
     categoria = Column(String, nullable=False)
+    imagem = Column(String, nullable=True)
     disponivel = Column(Boolean, default=True, nullable=False)
 
     loja = relationship("User", back_populates="produtos")

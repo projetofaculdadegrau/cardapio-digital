@@ -1,6 +1,8 @@
+import os
 from typing import List
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from app.config import settings
 from app.db import engine, Base, get_db
@@ -28,6 +30,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Configuração e montagem do diretório estático de uploads
+UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "..", "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+app.mount("/static/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
 # Registra as rotas
 app.include_router(auth_router)
 app.include_router(products_router)
@@ -37,7 +44,6 @@ app.include_router(orders_router)
 def home():
     return {"status": "API Cardápio Digital rodando com sucesso!"}
 
-
 @app.get("/lojas", response_model=List[LojaPublicaResponse], tags=["Lojas / Estabelecimentos"])
 def listar_lojas_publicas(db: Session = Depends(get_db)):
     return (
@@ -45,4 +51,4 @@ def listar_lojas_publicas(db: Session = Depends(get_db)):
         .filter(User.role == UserRole.LOJA, User.is_active == True)
         .order_by(User.nome.asc())
         .all()
-    )
+    )

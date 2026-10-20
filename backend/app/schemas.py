@@ -44,14 +44,18 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
-
 # PRODUTOS
-class ProductCreate(BaseModel):
+class ProductBase(BaseModel):
     nome: str
     descricao: Optional[str] = None
     preco: float = Field(gt=0)
     categoria: str
+    imagem: Optional[str] = None
     disponivel: bool = True
+
+
+class ProductCreate(ProductBase):
+    pass
 
 
 class ProductUpdate(BaseModel):
@@ -59,6 +63,7 @@ class ProductUpdate(BaseModel):
     descricao: Optional[str] = None
     preco: Optional[float] = Field(default=None, gt=0)
     categoria: Optional[str] = None
+    imagem: Optional[str] = None
     disponivel: Optional[bool] = None
 
 
@@ -70,6 +75,7 @@ class ProductResponse(BaseModel):
     descricao: Optional[str] = None
     preco: float
     categoria: str
+    imagem: Optional[str] = None
     disponivel: bool
 
     model_config = ConfigDict(from_attributes=True)
@@ -83,8 +89,6 @@ class LojaPublicaResponse(BaseModel):
     endereco: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
-
-
 
 
 # ITENS DOS PEDIDOS

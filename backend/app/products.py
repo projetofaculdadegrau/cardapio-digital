@@ -1,13 +1,19 @@
+import os
+import uuid
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, File, UploadFile
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.db import get_db
-from app.models import User, Product, UserRole
+from app.models import User, Product, UserRole, OrderItem
 from app.schemas import ProductCreate, ProductUpdate, ProductResponse, LojaPublicaResponse
 from app.auth import get_current_user
 
 router = APIRouter(prefix="/produtos", tags=["Produtos / Cardápio"])
+
+UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "..", "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 def get_current_loja(current_user: User = Depends(get_current_user)) -> User:
@@ -20,17 +26,45 @@ def get_current_loja(current_user: User = Depends(get_current_user)) -> User:
     return current_user
 
 
+@router.post("/upload-imagem")
+async def upload_imagem_produto(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_loja)
+):
+    """
+    Recebe um arquivo de imagem, salva no servidor local e retorna a URL pública.
+    """
+    extensao = os.path.splitext(file.filename)[1].lower()
+    if extensao not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Formato de arquivo inválido. Envie apenas imagens (.jpg, .jpeg, .png, .webp)."
+        )
+
+    nome_arquivo_unico = f"{uuid.uuid4().hex}{extensao}"
+    caminho_arquivo = os.path.join(UPLOAD_DIR, nome_arquivo_unico)
+
+    try:
+        conteudo = await file.read()
+        with open(caminho_arquivo, "wb") as f:
+            f.write(conteudo)
+
+        url_imagem = f"http://127.0.0.1:8000/static/uploads/{nome_arquivo_unico}"
+        return {"imagem_url": url_imagem}
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao salvar arquivo de imagem: {str(e)}"
+        )
+
+
 @router.post("", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
 def criar_produto(
     produto_in: ProductCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_loja)
 ):
-    """
-    Cria um novo produto no cardápio da loja autenticada.
-    - Apenas usuários com role == LOJA.
-    - O loja_id é vinculado automaticamente a partir do token JWT do usuário autenticado.
-    """
     try:
         novo_produto = Product(
             loja_id=current_user.id,
@@ -38,6 +72,7 @@ def criar_produto(
             descricao=produto_in.descricao.strip() if produto_in.descricao else None,
             preco=round(produto_in.preco, 2),
             categoria=produto_in.categoria.strip(),
+            imagem=produto_in.imagem.strip() if produto_in.imagem else None,
             disponivel=produto_in.disponivel
         )
         
@@ -64,12 +99,6 @@ def listar_todos_produtos(
     apenas_disponiveis: bool = Query(True, description="Filtrar apenas pratos ativos (disponivel = True)"),
     db: Session = Depends(get_db)
 ):
-    """
-    Vitrine pública de produtos/cardápio:
-    - Lista pratos de todas as lojas ou filtrados por loja_id.
-    - Suporta busca textual e filtro por categoria.
-    - Por padrão exibe produtos ativos (disponivel: true).
-    """
     query = db.query(Product)
 
     if apenas_disponiveis:
@@ -92,9 +121,6 @@ def listar_todos_produtos(
 
 @router.get("/lojas", response_model=List[LojaPublicaResponse])
 def listar_lojas_produtos(db: Session = Depends(get_db)):
-    """
-    Lista todos os estabelecimentos (lojas) parceiros ativos.
-    """
     return (
         db.query(User)
         .filter(User.role == UserRole.LOJA, User.is_active == True)
@@ -106,15 +132,9 @@ def listar_lojas_produtos(db: Session = Depends(get_db)):
 @router.get("/loja/{loja_id}", response_model=List[ProductResponse])
 def listar_cardapio_loja(
     loja_id: int,
-    apenas_disponiveis: Optional[bool] = Query(
-        None,
-        description="Filtrar por disponibilidade. Se True, traz apenas itens disponíveis. Se omitido, traz todos."
-    ),
+    apenas_disponiveis: Optional[bool] = Query(None),
     db: Session = Depends(get_db)
 ):
-    """
-    Rota pública/aberta para listar o cardápio de uma loja específica.
-    """
     loja = db.query(User).filter(User.id == loja_id, User.role == UserRole.LOJA).first()
     if not loja:
         raise HTTPException(
@@ -134,21 +154,12 @@ def listar_meus_produtos(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_loja)
 ):
-    """
-    Lista todos os produtos cadastrados pelo estabelecimento (LOJA) atualmente autenticado.
-    """
     produtos = db.query(Product).filter(Product.loja_id == current_user.id).order_by(Product.id.asc()).all()
     return produtos
 
 
 @router.get("/{id}", response_model=ProductResponse)
-def obter_produto_por_id(
-    id: int,
-    db: Session = Depends(get_db)
-):
-    """
-    Rota pública para obter detalhes de um produto específico por ID.
-    """
+def obter_produto_por_id(id: int, db: Session = Depends(get_db)):
     produto = db.query(Product).filter(Product.id == id).first()
     if not produto:
         raise HTTPException(
@@ -165,11 +176,6 @@ def atualizar_produto(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_loja)
 ):
-    """
-    Atualiza os dados de um produto existente.
-    - Exige perfil LOJA.
-    - Garante que a LOJA só consiga editar produtos pertencentes a ela.
-    """
     produto = db.query(Product).filter(Product.id == id).first()
     if not produto:
         raise HTTPException(
@@ -190,7 +196,8 @@ def atualizar_produto(
                 value = value.strip()
             elif field == "preco" and value is not None:
                 value = round(value, 2)
-            setattr(produto, field, value)
+            if hasattr(produto, field):
+                setattr(produto, field, value)
 
         db.commit()
         db.refresh(produto)
@@ -209,19 +216,9 @@ def atualizar_produto(
 @router.delete("/{id}")
 def remover_produto(
     id: int,
-    hard_delete: bool = Query(
-        False, 
-        description="Se True, remove permanentemente do banco. Se False (padrão), apenas desativa (disponivel = False)."
-    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_loja)
 ):
-    """
-    Remove ou desativa um produto do cardápio.
-    - Exige perfil LOJA.
-    - Garante que a LOJA só consiga remover/desativar produtos que pertençam a ela.
-    - Por padrão (hard_delete=False), desativa o produto definindo `disponivel = False`.
-    """
     produto = db.query(Product).filter(Product.id == id).first()
     if not produto:
         raise HTTPException(
@@ -236,22 +233,20 @@ def remover_produto(
         )
 
     try:
-        if hard_delete:
-            db.delete(produto)
-            db.commit()
-            return {
-                "message": "Produto removido definitivamente com sucesso.",
-                "id": id
-            }
-
-        produto.disponivel = False
+        db.delete(produto)
         db.commit()
-        db.refresh(produto)
-        return {
-            "message": "Produto desativado com sucesso.",
-            "id": id,
-            "disponivel": produto.disponivel
-        }
+        return {"message": "Produto removido definitivamente com sucesso.", "id": id}
+
+    except IntegrityError:
+        db.rollback()
+        db.query(OrderItem).filter(OrderItem.produto_id == id).delete(synchronize_session=False)
+        
+        produto_para_deletar = db.query(Product).filter(Product.id == id).first()
+        if produto_para_deletar:
+            db.delete(produto_para_deletar)
+            db.commit()
+
+        return {"message": "Produto e histórico associado removidos com sucesso.", "id": id}
 
     except HTTPException:
         raise

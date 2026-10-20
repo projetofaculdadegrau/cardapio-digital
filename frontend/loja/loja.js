@@ -97,17 +97,48 @@ async function salvarProduto(event) {
     event.preventDefault();
 
     const id = document.getElementById('produto-id').value;
+    const fileInput = document.getElementById('prod-imagem-file');
+    let imagemUrl = document.getElementById('prod-imagem-url') ? document.getElementById('prod-imagem-url').value : '';
+
+    // 1. Se um novo arquivo de imagem foi selecionado no input file, realiza o upload primeiro
+    if (fileInput && fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const uploadResp = await fetch(`${API_URL}/produtos/upload-imagem`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                },
+                body: formData
+            });
+
+            if (!uploadResp.ok) {
+                const err = await uploadResp.json();
+                throw new Error(err.detail || 'Falha ao realizar upload da imagem.');
+            }
+
+            const uploadData = await uploadResp.json();
+            imagemUrl = uploadData.imagem_url;
+        } catch (error) {
+            mostrarAlerta(`Erro no upload da imagem: ${error.message}`);
+            return;
+        }
+    }
+
+    // 2. Monta o payload do produto
     const payload = {
         nome: document.getElementById('prod-nome').value.trim(),
         descricao: document.getElementById('prod-descricao').value.trim(),
         preco: parseFloat(document.getElementById('prod-preco').value),
         categoria: document.getElementById('prod-categoria').value.trim(),
-        imagem: document.getElementById('prod-imagem').value.trim() || null,
+        imagem: imagemUrl || null,
         disponivel: document.getElementById('prod-disponivel').checked
     };
 
     const metodo = id ? 'PUT' : 'POST';
-    const url = id ? `${API_URL}/produtos/${id}` : `${API_URL}/produtos/`;
+    const url = id ? `${API_URL}/produtos/${id}` : `${API_URL}/produtos`;
 
     try {
         const response = await fetch(url, {
@@ -137,7 +168,14 @@ function prepararEdicao(p) {
     document.getElementById('prod-descricao').value = p.descricao || '';
     document.getElementById('prod-preco').value = p.preco;
     document.getElementById('prod-categoria').value = p.categoria;
-    document.getElementById('prod-imagem').value = p.imagem || '';
+
+    if (document.getElementById('prod-imagem-url')) {
+        document.getElementById('prod-imagem-url').value = p.imagem || '';
+    }
+    if (document.getElementById('prod-imagem-file')) {
+        document.getElementById('prod-imagem-file').value = '';
+    }
+
     document.getElementById('prod-disponivel').checked = p.disponivel;
 
     document.getElementById('form-titulo').textContent = 'Editar Produto';
@@ -152,6 +190,14 @@ function prepararEdicao(p) {
 function resetarFormulario() {
     document.getElementById('form-produto').reset();
     document.getElementById('produto-id').value = '';
+
+    if (document.getElementById('prod-imagem-url')) {
+        document.getElementById('prod-imagem-url').value = '';
+    }
+    if (document.getElementById('prod-imagem-file')) {
+        document.getElementById('prod-imagem-file').value = '';
+    }
+
     document.getElementById('form-titulo').textContent = 'Novo Produto';
     document.getElementById('btn-salvar').innerHTML = `
         <span class="material-symbols-outlined text-[18px]">add_circle</span>
