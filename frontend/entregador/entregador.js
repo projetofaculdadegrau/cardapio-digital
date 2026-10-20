@@ -1,4 +1,4 @@
-﻿const API_URL = "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:8000";
 const INTERVALO_ATUALIZACAO = 15000;
 
 let atualizacaoEmAndamento = false;
@@ -59,10 +59,29 @@ function realizarLogout() {
     window.location.href = "../login/index.html";
 }
 
-function mostrarMensagem(texto, erro = false) {
+function mostrarMensagem(texto, tipoOuErro = false) {
+    let tipo = 'sucesso';
+    if (tipoOuErro === true || tipoOuErro === 'erro' || tipoOuErro === 'error') {
+        tipo = 'erro';
+    } else if (tipoOuErro === 'edicao' || tipoOuErro === 'alteracao') {
+        tipo = 'edicao';
+    } else if (tipoOuErro === 'exclusao') {
+        tipo = 'exclusao';
+    } else if (tipoOuErro === 'aviso') {
+        tipo = 'aviso';
+    } else if (typeof tipoOuErro === 'string') {
+        tipo = tipoOuErro;
+    }
+
+    if (typeof mostrarToast === 'function') {
+        mostrarToast(texto, tipo);
+    }
+
     const elemento = document.getElementById("mensagem");
+    if (!elemento) return;
     elemento.textContent = texto;
-    elemento.className = `mensagem visivel ${erro ? "erro" : "sucesso"}`;
+    const isError = tipo === 'erro' || tipo === 'exclusao';
+    elemento.className = `mensagem visivel ${isError ? "erro" : "sucesso"}`;
 }
 
 function limparMensagem() {

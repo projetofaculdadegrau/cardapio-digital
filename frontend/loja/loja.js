@@ -20,11 +20,27 @@ document.addEventListener("DOMContentLoaded", () => {
     iniciarMonitoramentoPedidos();
 });
 
-function mostrarAlerta(mensagem, sucesso = false) {
+function mostrarAlerta(mensagem, tipoOuSucesso = false) {
+    let tipo = 'erro';
+    if (tipoOuSucesso === true || tipoOuSucesso === 'sucesso' || tipoOuSucesso === 'cadastro') {
+        tipo = 'sucesso';
+    } else if (tipoOuSucesso === 'edicao' || tipoOuSucesso === 'alteracao' || tipoOuSucesso === 'info') {
+        tipo = 'edicao';
+    } else if (tipoOuSucesso === 'exclusao') {
+        tipo = 'exclusao';
+    } else if (tipoOuSucesso === 'aviso') {
+        tipo = 'aviso';
+    }
+
+    if (typeof mostrarToast === 'function') {
+        mostrarToast(mensagem, tipo);
+    }
+
     const alerta = document.getElementById('alerta');
     if (!alerta) return;
     alerta.textContent = mensagem;
-    alerta.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center card-animate ${sucesso ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
+    const isSuccess = tipo === 'sucesso' || tipo === 'edicao';
+    alerta.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center card-animate ${isSuccess ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
     alerta.classList.remove('hidden');
     setTimeout(() => alerta.classList.add('hidden'), 4000);
 }
@@ -75,13 +91,13 @@ async function carregarProdutos() {
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <button onclick='prepararEdicao(${JSON.stringify(p)})' class="p-2 rounded-xl bg-surface hover:bg-surface-container text-on-surface transition-colors" title="Editar">
+                    <button onclick='abrirModalEditarProduto(${JSON.stringify(p)})' class="p-2 rounded-xl bg-surface hover:bg-surface-container text-on-surface transition-colors cursor-pointer" title="Editar Produto">
                         <span class="material-symbols-outlined text-[18px]">edit</span>
                     </button>
-                    <button onclick="alternarDisponibilidade(${p.id}, ${p.disponivel})" class="p-2 rounded-xl bg-surface hover:bg-surface-container text-on-surface transition-colors" title="Alternar Disponibilidade">
+                    <button onclick="alternarDisponibilidade(${p.id}, ${p.disponivel})" class="p-2 rounded-xl bg-surface hover:bg-surface-container text-on-surface transition-colors cursor-pointer" title="Alternar Disponibilidade">
                         <span class="material-symbols-outlined text-[18px]">visibility</span>
                     </button>
-                    <button onclick="deletarProduto(${p.id})" class="p-2 rounded-xl bg-surface hover:bg-error-container hover:text-on-error-container text-on-surface-variant transition-colors" title="Excluir">
+                    <button onclick="deletarProduto(${p.id})" class="p-2 rounded-xl bg-surface hover:bg-error-container hover:text-on-error-container text-on-surface-variant transition-colors cursor-pointer" title="Excluir">
                         <span class="material-symbols-outlined text-[18px]">delete</span>
                     </button>
                 </div>
@@ -153,38 +169,13 @@ async function salvarProduto(event) {
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || 'Erro ao salvar produto.');
 
-        mostrarAlerta(id ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!', true);
+        mostrarAlerta(id ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!', id ? 'edicao' : 'cadastro');
         resetarFormulario();
         carregarProdutos();
 
     } catch (error) {
         mostrarAlerta(error.message);
     }
-}
-
-function prepararEdicao(p) {
-    document.getElementById('produto-id').value = p.id;
-    document.getElementById('prod-nome').value = p.nome;
-    document.getElementById('prod-descricao').value = p.descricao || '';
-    document.getElementById('prod-preco').value = p.preco;
-    document.getElementById('prod-categoria').value = p.categoria;
-
-    if (document.getElementById('prod-imagem-url')) {
-        document.getElementById('prod-imagem-url').value = p.imagem || '';
-    }
-    if (document.getElementById('prod-imagem-file')) {
-        document.getElementById('prod-imagem-file').value = '';
-    }
-
-    document.getElementById('prod-disponivel').checked = p.disponivel;
-
-    document.getElementById('form-titulo').textContent = 'Editar Produto';
-    document.getElementById('btn-salvar').innerHTML = `
-        <span class="material-symbols-outlined text-[18px]">save</span>
-        <span>Salvar Alterações</span>
-    `;
-    document.getElementById('btn-cancelar-edicao').classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function resetarFormulario() {
@@ -206,6 +197,124 @@ function resetarFormulario() {
     document.getElementById('btn-cancelar-edicao').classList.add('hidden');
 }
 
+/* ================= MODAL DE EDIÇÃO DE PRODUTO ================= */
+function abrirModalEditarProduto(p) {
+    const modal = document.getElementById('modal-editar-produto');
+    if (!modal) return;
+
+    document.getElementById('modal-prod-id').value = p.id;
+    document.getElementById('modal-prod-nome').value = p.nome;
+    document.getElementById('modal-prod-descricao').value = p.descricao || '';
+    document.getElementById('modal-prod-preco').value = p.preco;
+    document.getElementById('modal-prod-categoria').value = p.categoria;
+    document.getElementById('modal-prod-imagem-url').value = p.imagem || '';
+    document.getElementById('modal-prod-imagem-file').value = '';
+    document.getElementById('modal-prod-disponivel').checked = !!p.disponivel;
+
+    const imgPreview = document.getElementById('modal-prod-preview-img');
+    const semImgMsg = document.getElementById('modal-prod-sem-img');
+    if (p.imagem) {
+        imgPreview.src = p.imagem;
+        imgPreview.classList.remove('hidden');
+        semImgMsg.classList.add('hidden');
+    } else {
+        imgPreview.src = '';
+        imgPreview.classList.add('hidden');
+        semImgMsg.classList.remove('hidden');
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+}
+
+function fecharModalEditarProduto() {
+    const modal = document.getElementById('modal-editar-produto');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    document.body.classList.remove('overflow-hidden');
+}
+
+function fecharModalEditarProdutoSeClicarFora(event) {
+    if (event.target.id === 'modal-editar-produto') {
+        fecharModalEditarProduto();
+    }
+}
+
+async function salvarProdutoModal(event) {
+    event.preventDefault();
+
+    const id = document.getElementById('modal-prod-id').value;
+    const fileInput = document.getElementById('modal-prod-imagem-file');
+    let imagemUrl = document.getElementById('modal-prod-imagem-url').value;
+    const btnSalvar = document.getElementById('modal-btn-salvar');
+
+    const originalBtnHtml = btnSalvar.innerHTML;
+    btnSalvar.disabled = true;
+    btnSalvar.innerHTML = `
+        <span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+        <span>Salvando...</span>
+    `;
+
+    try {
+        // 1. Se arquivo de imagem foi selecionado, envia primeiro
+        if (fileInput && fileInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const uploadResp = await fetch(`${API_URL}/produtos/upload-imagem`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                },
+                body: formData
+            });
+
+            if (!uploadResp.ok) {
+                const err = await uploadResp.json();
+                throw new Error(err.detail || 'Falha ao realizar upload da imagem.');
+            }
+
+            const uploadData = await uploadResp.json();
+            imagemUrl = uploadData.imagem_url;
+        }
+
+        // 2. Envia os dados atualizados
+        const payload = {
+            nome: document.getElementById('modal-prod-nome').value.trim(),
+            descricao: document.getElementById('modal-prod-descricao').value.trim(),
+            preco: parseFloat(document.getElementById('modal-prod-preco').value),
+            categoria: document.getElementById('modal-prod-categoria').value.trim(),
+            imagem: imagemUrl || null,
+            disponivel: document.getElementById('modal-prod-disponivel').checked
+        };
+
+        const response = await fetch(`${API_URL}/produtos/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar produto.');
+
+        fecharModalEditarProduto();
+        mostrarAlerta('Produto atualizado com sucesso!', 'edicao');
+        carregarProdutos();
+
+    } catch (error) {
+        mostrarAlerta(error.message);
+    } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.innerHTML = originalBtnHtml;
+    }
+}
+
 async function alternarDisponibilidade(id, atual) {
     try {
         const response = await fetch(`${API_URL}/produtos/${id}`, {
@@ -218,6 +327,7 @@ async function alternarDisponibilidade(id, atual) {
         });
 
         if (!response.ok) throw new Error('Erro ao atualizar status.');
+        mostrarAlerta(`Disponibilidade alterada para ${!atual ? 'Disponível' : 'Indisponível'}.`, 'alteracao');
         carregarProdutos();
     } catch (error) {
         mostrarAlerta(error.message);
@@ -237,7 +347,7 @@ async function deletarProduto(id) {
 
         if (!response.ok) throw new Error('Erro ao excluir produto.');
 
-        mostrarAlerta('Produto removido com sucesso!', true);
+        mostrarAlerta('Produto removido com sucesso!', 'exclusao');
         carregarProdutos();
     } catch (error) {
         mostrarAlerta(error.message);
@@ -403,7 +513,7 @@ async function atualizarStatusPedido(pedidoId, novoStatus) {
         if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar o pedido.');
 
         const label = (STATUS_CONFIG[novoStatus] || {}).label || novoStatus;
-        mostrarAlerta(`Pedido #${pedidoId} atualizado para "${label}".`, true);
+        mostrarAlerta(`Pedido #${pedidoId} atualizado para "${label}".`, novoStatus === 'CANCELADO' ? 'exclusao' : 'alteracao');
 
         ultimoJsonPedidos = null;
         carregarPedidos();

@@ -1,4 +1,4 @@
-﻿/* Design complementar para a Vitrine e Interface do Cliente */
+/* Design complementar para a Vitrine e Interface do Cliente */
 
 ::-webkit-scrollbar {
     width: 6px;
@@ -84,9 +84,13 @@
     opacity: 1;
 }
 
-#toast-flutuante.toast-sucesso { background: #26845b; color: #fff; border: 1px solid rgba(255,255,255,0.15); }
-#toast-flutuante.toast-erro    { background: #ba1a1a; color: #fff; border: 1px solid rgba(255,255,255,0.15); }
-#toast-flutuante.toast-aviso   { background: #ffc85e; color: #5a3a00; border: 1px solid #f5c842; }
+#toast-flutuante.toast-sucesso,
+#toast-flutuante.toast-cadastro  { background: #26845b; color: #fff; border: 1px solid rgba(255,255,255,0.18); }
+#toast-flutuante.toast-edicao,
+#toast-flutuante.toast-alteracao { background: #0284c7; color: #fff; border: 1px solid rgba(255,255,255,0.20); }
+#toast-flutuante.toast-erro,
+#toast-flutuante.toast-exclusao  { background: #ba1a1a; color: #fff; border: 1px solid rgba(255,255,255,0.18); }
+#toast-flutuante.toast-aviso     { background: #ffc85e; color: #5a3a00; border: 1px solid #f5c842; }
 
 /* ANIMACAO DO BOTAO ADICIONAR */
 @keyframes addedPop {

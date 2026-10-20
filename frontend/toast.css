@@ -1,0 +1,68 @@
+/* =====================================================================
+   SISTEMA DE TOASTS FLUTUANTES GLOBAL
+   Padronizado para todas as páginas (login, cliente, loja, entregador)
+   Cores dinâmicas:
+     - Verde: Sucesso / Cadastro / Conclusão
+     - Azul: Edições / Alterações / Informação
+     - Vermelho: Exclusões / Erros
+     - Amarelo: Avisos / Alertas
+   ===================================================================== */
+
+#toast-flutuante {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    z-index: 99999;
+    min-width: 260px;
+    max-width: 88vw;
+    padding: 0.8rem 1.25rem;
+    border-radius: 1.25rem;
+    font-size: 0.825rem;
+    font-weight: 700;
+    font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    text-align: center;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.22);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    pointer-events: none;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    line-height: 1.35;
+}
+
+#toast-flutuante.toast-visivel {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* Cores dinâmicas por evento */
+#toast-flutuante.toast-sucesso,
+#toast-flutuante.toast-cadastro {
+    background: #26845b;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#toast-flutuante.toast-edicao,
+#toast-flutuante.toast-alteracao,
+#toast-flutuante.toast-info {
+    background: #0284c7;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#toast-flutuante.toast-erro,
+#toast-flutuante.toast-exclusao {
+    background: #ba1a1a;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#toast-flutuante.toast-aviso {
+    background: #ffc85e;
+    color: #5a3a00;
+    border: 1px solid #f5c842;
+}

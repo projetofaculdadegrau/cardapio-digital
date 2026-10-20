@@ -142,10 +142,12 @@ function inicializarBusca() {
     const inputMobile = document.getElementById('input-busca-mobile');
     const btnLimparDesktop = document.getElementById('btn-limpar-busca-desktop');
     const btnLimparMobile = document.getElementById('btn-limpar-busca-mobile');
+    const formDesktop = document.getElementById('form-busca-desktop');
+    const formMobile = document.getElementById('form-busca-mobile');
 
     const handleInput = (e) => {
         termoBusca = e.target.value.trim();
-        
+
         // Sincroniza ambos os campos de busca
         if (inputDesktop && inputDesktop !== e.target) inputDesktop.value = termoBusca;
         if (inputMobile && inputMobile !== e.target) inputMobile.value = termoBusca;
@@ -159,8 +161,67 @@ function inicializarBusca() {
         }, 200);
     };
 
-    if (inputDesktop) inputDesktop.addEventListener('input', handleInput);
-    if (inputMobile) inputMobile.addEventListener('input', handleInput);
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const input = event.target.querySelector('input');
+        if (!input || !input.value.trim()) return;
+        buscarNaVitrine();
+    };
+
+    if (inputDesktop) {
+        inputDesktop.addEventListener('input', handleInput);
+        inputDesktop.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                if (!inputDesktop.value.trim()) {
+                    event.preventDefault();
+                    return;
+                }
+                event.preventDefault();
+                buscarNaVitrine();
+            }
+        });
+    }
+
+    if (inputMobile) {
+        inputMobile.addEventListener('input', handleInput);
+        inputMobile.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                if (!inputMobile.value.trim()) {
+                    event.preventDefault();
+                    return;
+                }
+                event.preventDefault();
+                buscarNaVitrine();
+            }
+        });
+    }
+
+    if (formDesktop) formDesktop.addEventListener('submit', handleSubmit);
+    if (formMobile) formMobile.addEventListener('submit', handleSubmit);
+}
+
+function buscarNaVitrine() {
+    const inputDesktop = document.getElementById('input-busca-desktop');
+    const inputMobile = document.getElementById('input-busca-mobile');
+
+    const inputAtivo = document.activeElement && (document.activeElement.id === 'input-busca-desktop' || document.activeElement.id === 'input-busca-mobile')
+        ? document.activeElement
+        : (inputDesktop && inputDesktop.value.trim() ? inputDesktop : inputMobile);
+
+    if (!inputAtivo || !inputAtivo.value.trim()) {
+        return;
+    }
+
+    termoBusca = inputAtivo.value.trim();
+    if (inputDesktop && inputDesktop !== inputAtivo) inputDesktop.value = termoBusca;
+    if (inputMobile && inputMobile !== inputAtivo) inputMobile.value = termoBusca;
+
+    aplicarFiltrosEExibir();
+
+    const vitrine = document.getElementById('vitrine-cardapios');
+    if (vitrine) {
+        vitrine.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 function limparBusca() {
@@ -633,12 +694,15 @@ function alterarQuantidade(produtoId, delta) {
 }
 
 function removerDoCarrinho(produtoId) {
+    const item = carrinho.find(i => Number(i.id) === Number(produtoId));
+    const nome = item ? item.nome : 'Item';
     carrinho = carrinho.filter(i => Number(i.id) !== Number(produtoId));
     if (carrinho.length === 0) {
         carrinhoLojaId = null;
         carrinhoLojaNome = null;
     }
     salvarCarrinhoStorage();
+    mostrarToast(`"${nome}" removido do carrinho.`, 'exclusao');
 }
 
 function limparCarrinhoConfirmado() {
@@ -647,6 +711,7 @@ function limparCarrinhoConfirmado() {
         carrinhoLojaId = null;
         carrinhoLojaNome = null;
         salvarCarrinhoStorage();
+        mostrarToast('Carrinho esvaziado.', 'exclusao');
     }
 }
 
@@ -1132,20 +1197,29 @@ let toastTimer = null;
 function mostrarToast(mensagem, tipo = 'sucesso') {
     const toast = document.getElementById('toast-flutuante');
     if (!toast) {
-        // Fallback para ambientes sem o toast no DOM
         console.log(`[Toast ${tipo}]:`, mensagem);
         return;
     }
 
+    const tipoNormalizado = (function(t) {
+        const str = String(t || 'sucesso').toLowerCase();
+        if (str === 'cadastro' || str === 'sucesso') return 'sucesso';
+        if (str === 'edicao' || str === 'edição' || str === 'alteracao' || str === 'alteração' || str === 'info') return 'edicao';
+        if (str === 'exclusao' || str === 'exclusão' || str === 'erro' || str === 'delete') return 'erro';
+        if (str === 'aviso' || str === 'warn' || str === 'warning') return 'aviso';
+        return 'sucesso';
+    })(tipo);
+
     const icones = {
         sucesso: '<span class="material-symbols-outlined" style="font-size:18px">check_circle</span>',
+        edicao:  '<span class="material-symbols-outlined" style="font-size:18px">edit</span>',
         erro:    '<span class="material-symbols-outlined" style="font-size:18px">error</span>',
         aviso:   '<span class="material-symbols-outlined" style="font-size:18px">warning</span>'
     };
 
     clearTimeout(toastTimer);
-    toast.className = `toast-${tipo}`; // limpa classes anteriores
-    toast.innerHTML = `${icones[tipo] || ''} <span>${escapeHtml(mensagem)}</span>`;
+    toast.className = `toast-${tipoNormalizado}`; // limpa classes anteriores
+    toast.innerHTML = `${icones[tipoNormalizado] || ''} <span>${escapeHtml(mensagem)}</span>`;
 
     // Trigga reflow para reiniciar transição se já estava visível
     void toast.offsetWidth;
