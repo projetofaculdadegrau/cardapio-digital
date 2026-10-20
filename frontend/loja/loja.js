@@ -31,7 +31,7 @@ function mostrarAlerta(mensagem, sucesso = false) {
 
 function realizarLogout() {
     localStorage.clear();
-    window.location.href = '../login/login.html';
+    window.location.href = '../login/index.html';
 }
 
 async function carregarProdutos() {

@@ -33,6 +33,7 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ## Roadmap de Lançamentos
 
+- **v0.2.0** -> Backend + Banco de dados (Concluído)
 - **v0.3.0** -> Integrações
 - **v0.4.0** -> Testes e ajustes
 - **v1.0.0** -> Versão final

@@ -2,8 +2,9 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.db import get_db
-from app.models import User, Product, UserRole
+from app.models import User, Product, UserRole, OrderItem
 from app.schemas import ProductCreate, ProductUpdate, ProductResponse, LojaPublicaResponse
 from app.auth import get_current_user
 
@@ -209,18 +210,13 @@ def atualizar_produto(
 @router.delete("/{id}")
 def remover_produto(
     id: int,
-    hard_delete: bool = Query(
-        False, 
-        description="Se True, remove permanentemente do banco. Se False (padrão), apenas desativa (disponivel = False)."
-    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_loja)
 ):
     """
-    Remove ou desativa um produto do cardápio.
-    - Exige perfil LOJA.
-    - Garante que a LOJA só consiga remover/desativar produtos que pertençam a ela.
-    - Por padrão (hard_delete=False), desativa o produto definindo `disponivel = False`.
+    Exclui um produto do cardápio definitivamente.
+    Caso o produto esteja atrelado a itens de pedidos legados,
+    desvincula as referências e conclui a exclusão do produto.
     """
     produto = db.query(Product).filter(Product.id == id).first()
     if not produto:
@@ -236,22 +232,24 @@ def remover_produto(
         )
 
     try:
-        if hard_delete:
-            db.delete(produto)
-            db.commit()
-            return {
-                "message": "Produto removido definitivamente com sucesso.",
-                "id": id
-            }
-
-        produto.disponivel = False
+        # Tenta a exclusão direta do produto
+        db.delete(produto)
         db.commit()
-        db.refresh(produto)
-        return {
-            "message": "Produto desativado com sucesso.",
-            "id": id,
-            "disponivel": produto.disponivel
-        }
+        return {"message": "Produto removido definitivamente com sucesso.", "id": id}
+
+    except IntegrityError:
+        # Se falhar por estar associado a itens de pedidos (order_items),
+        # desvincula os registros dependentes e conclui a exclusão física.
+        db.rollback()
+        db.query(OrderItem).filter(OrderItem.produto_id == id).delete(synchronize_session=False)
+        
+        # Apaga o produto definitivamente
+        produto_para_deletar = db.query(Product).filter(Product.id == id).first()
+        if produto_para_deletar:
+            db.delete(produto_para_deletar)
+            db.commit()
+
+        return {"message": "Produto e histórico associado removidos com sucesso.", "id": id}
 
     except HTTPException:
         raise
