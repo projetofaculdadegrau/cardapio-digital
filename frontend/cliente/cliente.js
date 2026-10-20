@@ -633,12 +633,15 @@ function alterarQuantidade(produtoId, delta) {
 }
 
 function removerDoCarrinho(produtoId) {
+    const item = carrinho.find(i => Number(i.id) === Number(produtoId));
+    const nome = item ? item.nome : 'Item';
     carrinho = carrinho.filter(i => Number(i.id) !== Number(produtoId));
     if (carrinho.length === 0) {
         carrinhoLojaId = null;
         carrinhoLojaNome = null;
     }
     salvarCarrinhoStorage();
+    mostrarToast(`"${nome}" removido do carrinho.`, 'exclusao');
 }
 
 function limparCarrinhoConfirmado() {
@@ -647,6 +650,7 @@ function limparCarrinhoConfirmado() {
         carrinhoLojaId = null;
         carrinhoLojaNome = null;
         salvarCarrinhoStorage();
+        mostrarToast('Carrinho esvaziado.', 'exclusao');
     }
 }
 
@@ -1132,20 +1136,29 @@ let toastTimer = null;
 function mostrarToast(mensagem, tipo = 'sucesso') {
     const toast = document.getElementById('toast-flutuante');
     if (!toast) {
-        // Fallback para ambientes sem o toast no DOM
         console.log(`[Toast ${tipo}]:`, mensagem);
         return;
     }
 
+    const tipoNormalizado = (function(t) {
+        const str = String(t || 'sucesso').toLowerCase();
+        if (str === 'cadastro' || str === 'sucesso') return 'sucesso';
+        if (str === 'edicao' || str === 'edição' || str === 'alteracao' || str === 'alteração' || str === 'info') return 'edicao';
+        if (str === 'exclusao' || str === 'exclusão' || str === 'erro' || str === 'delete') return 'erro';
+        if (str === 'aviso' || str === 'warn' || str === 'warning') return 'aviso';
+        return 'sucesso';
+    })(tipo);
+
     const icones = {
         sucesso: '<span class="material-symbols-outlined" style="font-size:18px">check_circle</span>',
+        edicao:  '<span class="material-symbols-outlined" style="font-size:18px">edit</span>',
         erro:    '<span class="material-symbols-outlined" style="font-size:18px">error</span>',
         aviso:   '<span class="material-symbols-outlined" style="font-size:18px">warning</span>'
     };
 
     clearTimeout(toastTimer);
-    toast.className = `toast-${tipo}`; // limpa classes anteriores
-    toast.innerHTML = `${icones[tipo] || ''} <span>${escapeHtml(mensagem)}</span>`;
+    toast.className = `toast-${tipoNormalizado}`; // limpa classes anteriores
+    toast.innerHTML = `${icones[tipoNormalizado] || ''} <span>${escapeHtml(mensagem)}</span>`;
 
     // Trigga reflow para reiniciar transição se já estava visível
     void toast.offsetWidth;

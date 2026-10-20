@@ -20,11 +20,27 @@ document.addEventListener("DOMContentLoaded", () => {
     iniciarMonitoramentoPedidos();
 });
 
-function mostrarAlerta(mensagem, sucesso = false) {
+function mostrarAlerta(mensagem, tipoOuSucesso = false) {
+    let tipo = 'erro';
+    if (tipoOuSucesso === true || tipoOuSucesso === 'sucesso' || tipoOuSucesso === 'cadastro') {
+        tipo = 'sucesso';
+    } else if (tipoOuSucesso === 'edicao' || tipoOuSucesso === 'alteracao' || tipoOuSucesso === 'info') {
+        tipo = 'edicao';
+    } else if (tipoOuSucesso === 'exclusao') {
+        tipo = 'exclusao';
+    } else if (tipoOuSucesso === 'aviso') {
+        tipo = 'aviso';
+    }
+
+    if (typeof mostrarToast === 'function') {
+        mostrarToast(mensagem, tipo);
+    }
+
     const alerta = document.getElementById('alerta');
     if (!alerta) return;
     alerta.textContent = mensagem;
-    alerta.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center card-animate ${sucesso ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
+    const isSuccess = tipo === 'sucesso' || tipo === 'edicao';
+    alerta.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center card-animate ${isSuccess ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
     alerta.classList.remove('hidden');
     setTimeout(() => alerta.classList.add('hidden'), 4000);
 }
@@ -153,7 +169,7 @@ async function salvarProduto(event) {
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || 'Erro ao salvar produto.');
 
-        mostrarAlerta(id ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!', true);
+        mostrarAlerta(id ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!', id ? 'edicao' : 'cadastro');
         resetarFormulario();
         carregarProdutos();
 
@@ -288,7 +304,7 @@ async function salvarProdutoModal(event) {
         if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar produto.');
 
         fecharModalEditarProduto();
-        mostrarAlerta('Produto atualizado com sucesso!', true);
+        mostrarAlerta('Produto atualizado com sucesso!', 'edicao');
         carregarProdutos();
 
     } catch (error) {
@@ -311,6 +327,7 @@ async function alternarDisponibilidade(id, atual) {
         });
 
         if (!response.ok) throw new Error('Erro ao atualizar status.');
+        mostrarAlerta(`Disponibilidade alterada para ${!atual ? 'Disponível' : 'Indisponível'}.`, 'alteracao');
         carregarProdutos();
     } catch (error) {
         mostrarAlerta(error.message);
@@ -330,7 +347,7 @@ async function deletarProduto(id) {
 
         if (!response.ok) throw new Error('Erro ao excluir produto.');
 
-        mostrarAlerta('Produto removido com sucesso!', true);
+        mostrarAlerta('Produto removido com sucesso!', 'exclusao');
         carregarProdutos();
     } catch (error) {
         mostrarAlerta(error.message);
@@ -496,7 +513,7 @@ async function atualizarStatusPedido(pedidoId, novoStatus) {
         if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar o pedido.');
 
         const label = (STATUS_CONFIG[novoStatus] || {}).label || novoStatus;
-        mostrarAlerta(`Pedido #${pedidoId} atualizado para "${label}".`, true);
+        mostrarAlerta(`Pedido #${pedidoId} atualizado para "${label}".`, novoStatus === 'CANCELADO' ? 'exclusao' : 'alteracao');
 
         ultimoJsonPedidos = null;
         carregarPedidos();

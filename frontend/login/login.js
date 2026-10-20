@@ -63,11 +63,27 @@ function alternarVisibilidadeSenha(inputId, iconId) {
     }
 }
 
-function mostrarAlerta(mensagem, sucesso = false) {
+function mostrarAlerta(mensagem, tipoOuSucesso = false) {
+    let tipo = 'erro';
+    if (tipoOuSucesso === true || tipoOuSucesso === 'sucesso' || tipoOuSucesso === 'cadastro') {
+        tipo = 'sucesso';
+    } else if (tipoOuSucesso === 'edicao' || tipoOuSucesso === 'alteracao' || tipoOuSucesso === 'info') {
+        tipo = 'edicao';
+    } else if (tipoOuSucesso === 'exclusao') {
+        tipo = 'exclusao';
+    } else if (tipoOuSucesso === 'aviso') {
+        tipo = 'aviso';
+    }
+
+    if (typeof mostrarToast === 'function') {
+        mostrarToast(mensagem, tipo);
+    }
+
     const alerta = document.getElementById('alerta');
     if (!alerta) return;
     alerta.textContent = mensagem;
-    alerta.className = `mb-4 p-3 rounded-xl text-xs font-bold text-center card-animate ${sucesso ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
+    const isSuccess = tipo === 'sucesso';
+    alerta.className = `mb-4 p-3 rounded-xl text-xs font-bold text-center card-animate ${isSuccess ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
     alerta.classList.remove('hidden');
 }
 
