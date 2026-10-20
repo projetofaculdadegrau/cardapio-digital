@@ -142,10 +142,12 @@ function inicializarBusca() {
     const inputMobile = document.getElementById('input-busca-mobile');
     const btnLimparDesktop = document.getElementById('btn-limpar-busca-desktop');
     const btnLimparMobile = document.getElementById('btn-limpar-busca-mobile');
+    const formDesktop = document.getElementById('form-busca-desktop');
+    const formMobile = document.getElementById('form-busca-mobile');
 
     const handleInput = (e) => {
         termoBusca = e.target.value.trim();
-        
+
         // Sincroniza ambos os campos de busca
         if (inputDesktop && inputDesktop !== e.target) inputDesktop.value = termoBusca;
         if (inputMobile && inputMobile !== e.target) inputMobile.value = termoBusca;
@@ -159,8 +161,67 @@ function inicializarBusca() {
         }, 200);
     };
 
-    if (inputDesktop) inputDesktop.addEventListener('input', handleInput);
-    if (inputMobile) inputMobile.addEventListener('input', handleInput);
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const input = event.target.querySelector('input');
+        if (!input || !input.value.trim()) return;
+        buscarNaVitrine();
+    };
+
+    if (inputDesktop) {
+        inputDesktop.addEventListener('input', handleInput);
+        inputDesktop.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                if (!inputDesktop.value.trim()) {
+                    event.preventDefault();
+                    return;
+                }
+                event.preventDefault();
+                buscarNaVitrine();
+            }
+        });
+    }
+
+    if (inputMobile) {
+        inputMobile.addEventListener('input', handleInput);
+        inputMobile.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                if (!inputMobile.value.trim()) {
+                    event.preventDefault();
+                    return;
+                }
+                event.preventDefault();
+                buscarNaVitrine();
+            }
+        });
+    }
+
+    if (formDesktop) formDesktop.addEventListener('submit', handleSubmit);
+    if (formMobile) formMobile.addEventListener('submit', handleSubmit);
+}
+
+function buscarNaVitrine() {
+    const inputDesktop = document.getElementById('input-busca-desktop');
+    const inputMobile = document.getElementById('input-busca-mobile');
+
+    const inputAtivo = document.activeElement && (document.activeElement.id === 'input-busca-desktop' || document.activeElement.id === 'input-busca-mobile')
+        ? document.activeElement
+        : (inputDesktop && inputDesktop.value.trim() ? inputDesktop : inputMobile);
+
+    if (!inputAtivo || !inputAtivo.value.trim()) {
+        return;
+    }
+
+    termoBusca = inputAtivo.value.trim();
+    if (inputDesktop && inputDesktop !== inputAtivo) inputDesktop.value = termoBusca;
+    if (inputMobile && inputMobile !== inputAtivo) inputMobile.value = termoBusca;
+
+    aplicarFiltrosEExibir();
+
+    const vitrine = document.getElementById('vitrine-cardapios');
+    if (vitrine) {
+        vitrine.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 function limparBusca() {

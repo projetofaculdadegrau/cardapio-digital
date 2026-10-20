@@ -99,7 +99,7 @@
 
             <!-- Campo de Busca Desktop -->
             <div class="hidden md:flex flex-1 max-w-md mx-4">
-                <div class="relative w-full">
+                <form id="form-busca-desktop" class="relative w-full" autocomplete="off">
                     <span
                         class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
                     <input type="text" id="input-busca-desktop" placeholder="Buscar prato, categoria ou ingrediente..."
@@ -109,7 +109,7 @@
                         title="Limpar busca">
                         <span class="material-symbols-outlined text-[18px]">close</span>
                     </button>
-                </div>
+                </form>
             </div>
 
             <!-- Ações do Cliente (Meus Pedidos, Carrinho e Perfil) -->
@@ -166,7 +166,7 @@
 
         <!-- Barra de Busca Mobile -->
         <div class="md:hidden px-4 pb-3">
-            <div class="relative w-full">
+            <form id="form-busca-mobile" class="relative w-full" autocomplete="off">
                 <span
                     class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
                 <input type="text" id="input-busca-mobile" placeholder="Buscar pratos ou categorias..."
@@ -176,7 +176,7 @@
                     title="Limpar busca">
                     <span class="material-symbols-outlined text-[18px]">close</span>
                 </button>
-            </div>
+            </form>
         </div>
     </header>
 
@@ -279,7 +279,7 @@
         </section>
 
         <!-- Seção: Vitrine de Pratos / Cardápio -->
-        <section class="space-y-4">
+        <section id="vitrine-cardapios" class="space-y-4">
             <div class="flex items-center justify-between border-b border-surface-container-high pb-3">
                 <div class="flex items-center gap-2">
                     <h2 class="font-display font-bold text-lg sm:text-xl text-on-surface">Vitrine de Cardápios</h2>
