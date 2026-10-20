@@ -274,6 +274,17 @@ const ACOES_LOJA = {
 let ultimoJsonPedidos = null;
 let intervaloPedidos = null;
 
+// Escapa texto do usuário antes de injetar no HTML (previne XSS)
+function escaparHtml(texto) {
+    if (texto == null) return '';
+    return String(texto)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 async function carregarPedidos() {
     const container = document.getElementById('lista-pedidos');
     const contador = document.getElementById('contador-pedidos');
@@ -323,7 +334,7 @@ function montarCardPedido(p) {
 
     const itensHtml = (p.itens || []).map(item => `
         <div class="flex items-center justify-between text-xs text-on-surface-variant">
-            <span><span class="font-bold text-on-surface">${item.quantidade}x</span> ${item.nome_produto}</span>
+            <span><span class="font-bold text-on-surface">${item.quantidade}x</span> ${escaparHtml(item.nome_produto)}</span>
             <span>R$ ${(Number(item.preco_unitario) * item.quantidade).toFixed(2)}</span>
         </div>
     `).join('');
@@ -361,11 +372,11 @@ function montarCardPedido(p) {
             ${p.observacao ? `
                 <div class="flex items-start gap-1.5 mb-3 p-2 rounded-lg bg-amber-50 text-amber-800 text-xs">
                     <span class="material-symbols-outlined text-[16px]">sticky_note_2</span>
-                    <span>${p.observacao}</span>
+                    <span>${escaparHtml(p.observacao)}</span>
                 </div>` : ''}
             <div class="flex items-center gap-1.5 text-xs text-on-surface-variant mb-2">
                 <span class="material-symbols-outlined text-[16px]">location_on</span>
-                <span class="line-clamp-1">${p.endereco_entrega || 'Sem endereço'}</span>
+                <span class="line-clamp-1">${escaparHtml(p.endereco_entrega) || 'Sem endereço'}</span>
             </div>
             <div class="flex items-center justify-between mt-auto pt-2">
                 <span class="text-xs text-on-surface-variant">Total</span>
