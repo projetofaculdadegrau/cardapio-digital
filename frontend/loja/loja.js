@@ -48,7 +48,7 @@ async function carregarProdutos() {
         if (!response.ok) throw new Error('Erro ao buscar produtos.');
 
         const produtos = await response.json();
-        contadorBadge.textContent = `${produtos.length} ${produtos.length === 1 ? 'item' : 'itens'}`;
+        if (contadorBadge) contadorBadge.textContent = `${produtos.length} ${produtos.length === 1 ? 'item' : 'itens'}`;
 
         if (produtos.length === 0) {
             listaContainer.innerHTML = `
