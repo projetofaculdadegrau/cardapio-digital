@@ -19,19 +19,19 @@
 
         if (!token) {
             // Se não estiver logado, vai para o login
-            window.location.href = './login/login.html';
+            window.location.href = './login/index.html';
         } else {
             // Se estiver logado, redireciona para o painel correspondente ao papel (role)
             if (role === 'LOJA') {
-                window.location.href = './loja/loja.html';
+                window.location.href = './loja/index.html';
             } else if (role === 'CLIENTE') {
                 window.location.href = './cliente/index.html';
             } else if (role === 'ENTREGADOR') {
                 // Futuramente: window.location.href = './entregador/entregador.html';
                 alert('Sessão ativa de Entregador detectada. Redirecionamento em desenvolvimento.');
-                window.location.href = './login/login.html';
+                window.location.href = './login/index.html';
             } else {
-                window.location.href = './login/login.html';
+                window.location.href = './login/index.html';
             }
         }
     </script>

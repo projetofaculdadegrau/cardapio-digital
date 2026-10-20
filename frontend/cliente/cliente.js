@@ -130,7 +130,7 @@ function realizarLogout() {
         localStorage.removeItem('user_nome');
         localStorage.removeItem('user_id');
         localStorage.removeItem('cardapio_carrinho_cliente');
-        window.location.href = '../login/login.html';
+        window.location.href = '../login/index.html';
     }
 }
 
@@ -867,7 +867,7 @@ async function realizarPedido() {
 
     if (!token) {
         mostrarToast('Faça login para realizar seu pedido.', 'aviso');
-        setTimeout(() => { window.location.href = '../login/login.html'; }, 1500);
+        setTimeout(() => { window.location.href = '../login/index.html'; }, 1500);
         return;
     }
 
@@ -1012,7 +1012,7 @@ function abrirModalPedidos() {
     const token = localStorage.getItem('access_token');
     if (!token) {
         alert('Faça login com sua conta para visualizar seu histórico de pedidos.');
-        window.location.href = '../login/login.html';
+        window.location.href = '../login/index.html';
         return;
     }
 
