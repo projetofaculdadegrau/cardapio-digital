@@ -214,13 +214,9 @@
                     </div>
 
                     <div>
-                        <label class="block font-label-md text-xs font-bold text-on-surface mb-1">URL da Imagem</label>
-                        <div class="relative flex items-center">
-                            <span
-                                class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">image</span>
-                            <input id="prod-imagem" type="url" placeholder="https://exemplo.com/foto.jpg"
-                                class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 text-sm outline-none shadow-sm border border-surface-container-highest focus:ring-2 focus:ring-primary transition-all" />
-                        </div>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Imagem do Produto</label>
+                        <input type="file" id="prod-imagem-file" accept="image/*" class="w-full text-xs text-on-surface file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary file:text-white hover:file:bg-primary-container cursor-pointer"/>
+                        <input type="hidden" id="prod-imagem-url"/>
                     </div>
 
                     <div class="flex items-center gap-3 pt-2">
