@@ -157,6 +157,18 @@ async function realizarCadastro(event) {
     event.preventDefault();
     esconderAlerta();
 
+    const telInput = document.getElementById('cad-telefone');
+    if (telInput) {
+        const numerosTel = telInput.value.replace(/\D/g, "");
+        if (numerosTel.length > 0 && numerosTel.length !== 10 && numerosTel.length !== 11) {
+            telInput.setCustomValidity("Digite um telefone válido com DDD: 10 dígitos para fixo ou 11 para celular.");
+            telInput.reportValidity();
+            return;
+        } else {
+            telInput.setCustomValidity("");
+        }
+    }
+
     const roleSelect = document.getElementById('cad-role');
     const selectedRole = roleSelect.options[roleSelect.selectedIndex].value;
 
@@ -165,7 +177,7 @@ async function realizarCadastro(event) {
         email: document.getElementById('cad-email').value.trim(),
         senha: document.getElementById('cad-senha').value,
         role: selectedRole,
-        telefone: document.getElementById('cad-telefone').value.trim() || null,
+        telefone: document.getElementById('cad-telefone').value.replace(/\D/g, "") || null,
         endereco: document.getElementById('cad-endereco').value.trim() || null
     };
 
@@ -192,6 +204,106 @@ async function realizarCadastro(event) {
     }
 }
 
+// Formata o telefone conforme a quantidade de números
+function formatarTelefone(valor) {
+  const numeros = valor
+    .replace(/\D/g, "")
+    .slice(0, 11);
+
+  if (numeros.length === 0) {
+    return "";
+  }
+
+  if (numeros.length <= 2) {
+    return `(${numeros}`;
+  }
+
+  const ddd = numeros.slice(0, 2);
+  const numero = numeros.slice(2);
+
+  // Até 10 dígitos: telefone fixo
+  if (numeros.length <= 10) {
+    if (numero.length <= 4) {
+      return `(${ddd}) ${numero}`;
+    }
+
+    return `(${ddd}) ${numero.slice(0, 4)}-${numero.slice(4)}`;
+  }
+
+  // 11 dígitos: celular
+  return `(${ddd}) ${numero.slice(0, 5)}-${numero.slice(5)}`;
+}
+
+// Retorna a posição do cursor após determinada quantidade de dígitos
+function posicaoDoCursor(valor, quantidade) {
+  if (quantidade === 0) {
+    return 0;
+  }
+
+  let contagem = 0;
+
+  for (let i = 0; i < valor.length; i++) {
+    if (/\d/.test(valor[i])) {
+      contagem++;
+    }
+
+    if (contagem === quantidade) {
+      return i + 1;
+    }
+  }
+
+  return valor.length;
+}
+
+function inicializarFormatacaoTelefone() {
+  const telefone = document.getElementById("cad-telefone");
+  const formulario = document.getElementById("form-cadastro");
+
+  if (!telefone || !formulario) return;
+
+  // Formata automaticamente ao digitar ou colar
+  telefone.addEventListener("input", function () {
+    telefone.setCustomValidity("");
+
+    const cursor = telefone.selectionStart ?? telefone.value.length;
+
+    const digitosAntesDoCursor = telefone.value
+      .slice(0, cursor)
+      .replace(/\D/g, "")
+      .length;
+
+    telefone.value = formatarTelefone(telefone.value);
+
+    const novaPosicao = posicaoDoCursor(
+      telefone.value,
+      Math.min(
+        digitosAntesDoCursor,
+        telefone.value.replace(/\D/g, "").length
+      )
+    );
+
+    telefone.setSelectionRange(novaPosicao, novaPosicao);
+  });
+
+  // Valida se o telefone está completo ao enviar o formulário (se informado)
+  formulario.addEventListener("submit", function (event) {
+    const numeros = telefone.value.replace(/\D/g, "");
+
+    if (numeros.length > 0 && numeros.length !== 10 && numeros.length !== 11) {
+      event.preventDefault();
+
+      telefone.setCustomValidity(
+        "Digite um telefone válido com DDD: 10 dígitos para fixo ou 11 para celular."
+      );
+
+      telefone.reportValidity();
+    } else {
+      telefone.setCustomValidity("");
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     mudarAba('login');
+    inicializarFormatacaoTelefone();
 });
