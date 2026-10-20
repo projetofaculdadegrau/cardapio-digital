@@ -56,7 +56,7 @@ function realizarLogout() {
     localStorage.removeItem("user_role");
     localStorage.removeItem("user_nome");
     localStorage.removeItem("user_id");
-    window.location.href = "../login/login.html";
+    window.location.href = "../login/index.html";
 }
 
 function mostrarMensagem(texto, erro = false) {

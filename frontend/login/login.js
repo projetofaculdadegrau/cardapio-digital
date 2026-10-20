@@ -124,11 +124,11 @@ async function realizarLogin(event) {
 
         setTimeout(() => {
             if (userRole === 'LOJA') {
-                window.location.assign('../loja/loja.html');
+                window.location.assign('../loja/index.html');
             } else if (userRole === 'CLIENTE') {
                 window.location.assign('../cliente/index.html');
             } else if (userRole === 'ENTREGADOR') {
-    window.location.assign('../entregador/entregador.html');
+    window.location.assign('../entregador/index.html');
 }
         }, 800);
 
