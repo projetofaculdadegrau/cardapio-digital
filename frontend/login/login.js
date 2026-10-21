@@ -157,6 +157,21 @@ async function realizarCadastro(event) {
     event.preventDefault();
     esconderAlerta();
 
+    const senha = document.getElementById('cad-senha').value;
+    const confirmarSenha = document.getElementById('cad-confirmar-senha').value;
+    
+    // Validação de força de senha
+    if (senha !== confirmarSenha) {
+        mostrarAlerta('As senhas informadas não coincidem.');
+        return;
+    }
+
+    const senhaForteRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+    if (!senhaForteRegex.test(senha)) {
+        mostrarAlerta('A senha deve atender a todos os requisitos de segurança.');
+        return;
+    }
+
     const telInput = document.getElementById('cad-telefone');
     if (telInput) {
         const numerosTel = telInput.value.replace(/\D/g, "");
@@ -201,6 +216,55 @@ async function realizarCadastro(event) {
 
     } catch (error) {
         mostrarAlerta(error.message);
+    }
+}
+
+function inicializarValidadorSenhaEmTempoReal() {
+    const inputSenha = document.getElementById('cad-senha');
+    const inputConfirma = document.getElementById('cad-confirmar-senha');
+
+    if (!inputSenha) return;
+
+    inputSenha.addEventListener('input', () => {
+        const val = inputSenha.value;
+
+        // Regras
+        const temTamanho = val.length >= 6;
+        const temMaiuscula = /[A-Z]/.test(val);
+        const temMinuscula = /[a-z]/.test(val);
+        const temNumero = /\d/.test(val);
+
+        atualizarRequisitoUI('req-length', temTamanho);
+        atualizarRequisitoUI('req-upper', temMaiuscula);
+        atualizarRequisitoUI('req-lower', temMinuscula);
+        atualizarRequisitoUI('req-number', temNumero);
+    });
+
+    if (inputConfirma) {
+        inputConfirma.addEventListener('input', () => {
+            const matchError = document.getElementById('match-error');
+            if (inputConfirma.value && inputConfirma.value !== inputSenha.value) {
+                matchError.classList.remove('hidden');
+                inputConfirma.classList.add('border-error');
+            } else {
+                matchError.classList.add('hidden');
+                inputConfirma.classList.remove('border-error');
+            }
+        });
+    }
+}
+
+function atualizarRequisitoUI(elementId, atendido) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const icon = el.querySelector('span');
+
+    if (atendido) {
+        el.className = "flex items-center gap-1 text-tertiary font-medium transition-colors";
+        icon.textContent = "check_circle";
+    } else {
+        el.className = "flex items-center gap-1 text-on-surface-variant/70 transition-colors";
+        icon.textContent = "radio_button_unchecked";
     }
 }
 
@@ -306,4 +370,5 @@ function inicializarFormatacaoTelefone() {
 document.addEventListener("DOMContentLoaded", () => {
     mudarAba('login');
     inicializarFormatacaoTelefone();
+    inicializarValidadorSenhaEmTempoReal();
 });

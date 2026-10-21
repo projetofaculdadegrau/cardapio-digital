@@ -249,6 +249,39 @@
                                             <span id="eye-cad" class="material-symbols-outlined text-[20px]">visibility</span>
                                         </button>
                                     </div>
+                                    
+                                    <!-- Requisitos de Senha em Tempo Real -->
+                                    <div id="password-requirements" class="mt-2 grid grid-cols-2 gap-1.5 text-[11px]">
+                                        <div id="req-length" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                                            <span>Mínimo 6 caracteres</span>
+                                        </div>
+                                        <div id="req-upper" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                                            <span>1 letra maiúscula</span>
+                                        </div>
+                                        <div id="req-lower" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                                            <span>1 letra minúscula</span>
+                                        </div>
+                                        <div id="req-number" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                                            <span>1 número</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Novo Campo: Confirmar Senha -->
+                                <div>
+                                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1">Confirmar Senha</label>
+                                    <div class="relative flex items-center">
+                                        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock_reset</span>
+                                        <input id="cad-confirmar-senha" type="password" required placeholder="Repita a senha criada" class="w-full pl-11 pr-12 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 text-sm outline-none shadow-sm border border-surface-container-highest transition-all"/>
+                                        <button type="button" onclick="alternarVisibilidadeSenha('cad-confirmar-senha', 'eye-cad-conf')" class="absolute right-3.5 text-on-surface-variant hover:text-on-surface p-1 rounded-md transition-colors">
+                                            <span id="eye-cad-conf" class="material-symbols-outlined text-[20px]">visibility</span>
+                                        </button>
+                                    </div>
+                                    <p id="match-error" class="text-[11px] text-error mt-1 hidden font-semibold">As senhas não coincidem.</p>
                                 </div>
 
                                 <div>
