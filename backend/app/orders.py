@@ -120,7 +120,14 @@ def criar_pedido(
                 )
             )
 
-        novo_pedido.total = round(total, 2)
+        # Regra de cálculo de frete (equivalente ao frontend)
+        FRETE_GRATIS_ACIMA = 30.00
+        VALOR_FRETE_FIXO = 5.00
+        
+        taxa_entrega = 0.0 if total >= FRETE_GRATIS_ACIMA else VALOR_FRETE_FIXO
+        
+        # O total do pedido passa a incluir os produtos + a taxa de entrega
+        novo_pedido.total = round(total + taxa_entrega, 2)
 
         db.add(novo_pedido)
         db.commit()

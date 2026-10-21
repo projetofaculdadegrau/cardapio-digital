@@ -8,6 +8,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     DateTime,
+    Numeric,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -59,7 +60,7 @@ class Product(Base):
     )
     nome = Column(String, nullable=False)
     descricao = Column(String, nullable=True)
-    preco = Column(Float, nullable=False)
+    preco = Column(Numeric(precision=10, scale=2), nullable=False)
     categoria = Column(String, nullable=False)
     imagem = Column(String, nullable=True)
     disponivel = Column(Boolean, default=True, nullable=False)
@@ -112,7 +113,7 @@ class Order(Base):
         nullable=False,
         default=OrderStatus.PENDENTE,
     )
-    total = Column(Float, nullable=False, default=0.0)
+    total = Column(Numeric(precision=10, scale=2), nullable=False)
     endereco_entrega = Column(String, nullable=True)
     observacao = Column(String, nullable=True)
     criado_em = Column(DateTime(timezone=True), server_default=func.now())
@@ -144,7 +145,7 @@ class OrderItem(Base):
         nullable=False,
     )
     nome_produto = Column(String, nullable=False)
-    preco_unitario = Column(Float, nullable=False)
+    preco_unitario = Column(Numeric(precision=10, scale=2), nullable=False)
     quantidade = Column(Integer, nullable=False)
 
     pedido = relationship("Order", back_populates="itens")

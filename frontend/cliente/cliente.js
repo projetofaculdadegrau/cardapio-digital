@@ -1065,7 +1065,11 @@ function abrirModalPedidos() {
 
     carregarMeusPedidos();
 
-    clearInterval(intervaloMeusPedidos);
+    // Limpa qualquer intervalo preexistente antes de iniciar um novo
+    if (intervaloMeusPedidos) {
+        clearInterval(intervaloMeusPedidos);
+    }
+
     intervaloMeusPedidos = setInterval(() => {
         carregarMeusPedidos(false);
     }, 5000);
@@ -1077,7 +1081,11 @@ function fecharModalPedidos() {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     }
-    clearInterval(intervaloMeusPedidos);
+    // Limpeza rigorosa para evitar memory leak
+    if (intervaloMeusPedidos) {
+        clearInterval(intervaloMeusPedidos);
+        intervaloMeusPedidos = null;
+    }
 }
 
 async function carregarMeusPedidos(mostrarLoading = true) {
@@ -1288,3 +1296,9 @@ window.fecharModalSucessoEVerPedidos = fecharModalSucessoEVerPedidos;
 window.carregarMeusPedidos = carregarMeusPedidos;
 window.realizarLogout = realizarLogout;
 window.cancelarPedidoCliente = cancelarPedidoCliente;
+
+window.addEventListener('beforeunload', () => {
+    if (intervaloMeusPedidos) {
+        clearInterval(intervaloMeusPedidos);
+    }
+});
