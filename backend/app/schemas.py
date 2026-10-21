@@ -1,8 +1,8 @@
+import re
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from app.models import UserRole, OrderStatus
-
 
 # AUTENTICAÇÃO E USUÁRIOS
 class UserCreate(BaseModel):
@@ -14,6 +14,19 @@ class UserCreate(BaseModel):
     endereco: Optional[str] = None
     veiculo: Optional[str] = None
     placa_veiculo: Optional[str] = None
+
+    @field_validator('senha')
+    @classmethod
+    def validar_forca_senha(cls, v: str) -> str:
+        if len(v) < 6: # ou 8, conforme o nível de exigência
+            raise ValueError('A senha deve ter pelo menos 6 caracteres.')
+        if not re.search(r"[A-Z]", v): # pyright: ignore[reportUndefinedVariable]
+            raise ValueError('A senha deve conter pelo menos uma letra maiúscula.')
+        if not re.search(r"[a-z]", v): # pyright: ignore[reportUndefinedVariable]
+            raise ValueError('A senha deve conter pelo menos uma letra minúscula.')
+        if not re.search(r"\d", v): # pyright: ignore[reportUndefinedVariable]
+            raise ValueError('A senha deve conter pelo menos um número.')
+        return v
 
 
 class LoginSchema(BaseModel):
@@ -42,13 +55,14 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    user: UserResponse
 
 
 # PRODUTOS
 class ProductBase(BaseModel):
     nome: str
     descricao: Optional[str] = None
-    preco: float = Field(gt=0)
+    preco: float = Field(gt=0) # pyright: ignore[reportUndefinedVariable]
     categoria: str
     imagem: Optional[str] = None
     disponivel: bool = True
@@ -61,7 +75,7 @@ class ProductCreate(ProductBase):
 class ProductUpdate(BaseModel):
     nome: Optional[str] = None
     descricao: Optional[str] = None
-    preco: Optional[float] = Field(default=None, gt=0)
+    preco: Optional[float] = Field(default=None, gt=0) # pyright: ignore[reportUndefinedVariable]
     categoria: Optional[str] = None
     imagem: Optional[str] = None
     disponivel: Optional[bool] = None
@@ -94,7 +108,7 @@ class LojaPublicaResponse(BaseModel):
 # ITENS DOS PEDIDOS
 class OrderItemCreate(BaseModel):
     produto_id: int
-    quantidade: int = Field(gt=0)
+    quantidade: int = Field(gt=0) # pyright: ignore[reportUndefinedVariable]
 
 
 class OrderItemResponse(BaseModel):
@@ -131,7 +145,7 @@ class OrderResponse(BaseModel):
     endereco_entrega: Optional[str] = None
     observacao: Optional[str] = None
     criado_em: Optional[datetime] = None
-    itens: List[OrderItemResponse] = Field(default_factory=list)
+    itens: List[OrderItemResponse] = Field(default_factory=list) # pyright: ignore[reportUndefinedVariable]
 
     model_config = ConfigDict(
         from_attributes=True,
