@@ -157,6 +157,47 @@ def listar_meus_pedidos(
 
 
 # --------------------------------------------------
+# CLIENTE: cancelar próprio pedido (se ainda pendente)
+# --------------------------------------------------
+
+@router.patch("/{pedido_id}/cancelar", response_model=OrderResponse)
+def cancelar_pedido_cliente(
+    pedido_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_cliente),
+):
+    pedido = db.query(Order).filter(
+        Order.id == pedido_id,
+        Order.cliente_id == current_user.id,
+    ).first()
+
+    if not pedido:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Pedido não encontrado para este usuário.",
+        )
+
+    # Cliente só pode cancelar se o pedido ainda estiver pendente ou recebido
+    if pedido.status not in {OrderStatus.PENDENTE, OrderStatus.RECEBIDO}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="O pedido não pode mais ser cancelado pois já está em preparo ou finalizado.",
+        )
+
+    pedido.status = OrderStatus.CANCELADO
+
+    try:
+        db.commit()
+        db.refresh(pedido)
+        return pedido
+    except Exception:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro ao cancelar o pedido.",
+        )
+
+# --------------------------------------------------
 # LOJA: listar pedidos da loja autenticada
 # --------------------------------------------------
 

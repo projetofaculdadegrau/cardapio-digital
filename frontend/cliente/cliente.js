@@ -49,9 +49,7 @@ const STATUS_PEDIDO = {
     CANCELADO:           { label: 'Cancelado',  cor: 'bg-red-100 text-red-800 border-red-200',         icone: 'cancel' }
 };
 
-/* =====================================================================
-   INICIALIZAÇÃO & AUTENTICAÇÃO FLEXÍVEL
-   ===================================================================== */
+/* INICIALIZAÇÃO & AUTENTICAÇÃO FLEXÍVEL */
 document.addEventListener("DOMContentLoaded", () => {
     configurarSessaoUsuario();
     restaurarCarrinho();
@@ -134,9 +132,7 @@ function realizarLogout() {
     }
 }
 
-/* =====================================================================
-   BUSCA E FILTROS DINÂMICOS
-   ===================================================================== */
+/* BUSCA E FILTROS DINÂMICOS */
 function inicializarBusca() {
     const inputDesktop = document.getElementById('input-busca-desktop');
     const inputMobile = document.getElementById('input-busca-mobile');
@@ -249,9 +245,7 @@ function resetarFiltros() {
     aplicarFiltrosEExibir();
 }
 
-/* =====================================================================
-   CONSUMO DA API: ESTABELECIMENTOS (LOJAS)
-   ===================================================================== */
+/* CONSUMO DA API: ESTABELECIMENTOS (LOJAS)*/
 async function carregarLojas() {
     const container = document.getElementById('container-lojas');
     if (!container) return;
@@ -352,9 +346,7 @@ function atualizarSelecaoLojaUI(lojaNome = "") {
     renderizarLojas(todasLojas);
 }
 
-/* =====================================================================
-   CONSUMO DA API: PRODUTOS (CRITÉRIO: DISPONÍVEL = TRUE)
-   ===================================================================== */
+/* CONSUMO DA API: PRODUTOS (CRITÉRIO: DISPONÍVEL = TRUE) */
 async function carregarProdutos() {
     const gridContainer = document.getElementById('grid-produtos');
     const contadorBadge = document.getElementById('contador-produtos');
@@ -472,9 +464,7 @@ function obterImagemProduto(produto) {
     return IMAGENS_CATEGORIA.prato;
 }
 
-/* =====================================================================
-   RENDERIZAÇÃO DA VITRINE E BOTÃO ADICIONAR
-   ===================================================================== */
+/* RENDERIZAÇÃO DA VITRINE E BOTÃO ADICIONAR */
 function aplicarFiltrosEExibir() {
     const gridContainer = document.getElementById('grid-produtos');
     const emptyState = document.getElementById('empty-state-produtos');
@@ -604,9 +594,7 @@ function adicionarAoCarrinhoPorId(produtoId) {
     });
 }
 
-/* =====================================================================
-   CARRINHO DE COMPRAS E PERSISTÊNCIA
-   ===================================================================== */
+/* CARRINHO DE COMPRAS E PERSISTÊNCIA */
 function restaurarCarrinho() {
     try {
         const salvo = localStorage.getItem('cardapio_carrinho_cliente');
@@ -865,9 +853,7 @@ function alternarCarrinho(abrir = null) {
     }
 }
 
-/* =====================================================================
-   MODAL DE TROCA DE LOJA NO CARRINHO
-   ===================================================================== */
+/* MODAL DE TROCA DE LOJA NO CARRINHO */
 function abrirModalTrocaLoja() {
     const modal = document.getElementById('modal-troca-loja');
     const btn = document.getElementById('btn-confirmar-troca-loja');
@@ -898,9 +884,7 @@ function fecharModalTrocaLoja() {
     pendenteTrocaProduto = null;
 }
 
-/* =====================================================================
-   METODO DE PAGAMENTO
-   ===================================================================== */
+/* METODO DE PAGAMENTO */
 function selecionarPagamento(metodo) {
     metodoPagamento = metodo;
     const chips = document.querySelectorAll('.chip-pagamento');
@@ -913,18 +897,14 @@ function selecionarPagamento(metodo) {
     if (erroEl) erroEl.classList.add('hidden');
 }
 
-/* =====================================================================
-   CALCULO DE FRETE FIXO/DINAMICO
-   ===================================================================== */
+/* CALCULO DE FRETE FIXO/DINAMICO */
 function calcularFrete(subtotal) {
     if (subtotal <= 0) return 0;
     if (subtotal >= FRETE_CONFIG.GRATIS_ACIMA) return 0;
     return FRETE_CONFIG.VALOR_FIXO;
 }
 
-/* =====================================================================
-   FINALIZAR PEDIDO (POST /pedidos)
-   ===================================================================== */
+/* FINALIZAR PEDIDO (POST /pedidos) */
 async function realizarPedido() {
     const token = localStorage.getItem('access_token');
 
@@ -1068,9 +1048,7 @@ function fecharModalSucessoEVerPedidos() {
     abrirModalPedidos();
 }
 
-/* =====================================================================
-   MEUS PEDIDOS (HISTÓRICO E TEMPO REAL)
-   ===================================================================== */
+/* MEUS PEDIDOS (HISTÓRICO E TEMPO REAL) */
 function abrirModalPedidos() {
     const token = localStorage.getItem('access_token');
     if (!token) {
@@ -1107,12 +1085,12 @@ async function carregarMeusPedidos(mostrarLoading = true) {
     const token = localStorage.getItem('access_token');
     if (!container || !token) return;
 
-    if (mostrarLoading) {
-        container.innerHTML = `
-            <div class="text-center py-12 text-on-surface-variant text-xs">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-                <p>Buscando seus pedidos...</p>
-            </div>`;
+    if (mostrarLoading && container.children.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12 text-on-surface-variant text-xs">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                    <p>Buscando seus pedidos...</p>
+                </div>`;
     }
 
     try {
@@ -1139,6 +1117,17 @@ async function carregarMeusPedidos(mostrarLoading = true) {
             const dataHora = ped.criado_em ? new Date(ped.criado_em).toLocaleString('pt-BR') : 'Data não informada';
             const totalFormatado = Number(ped.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+            const podeCancelar = ped.status === 'PENDENTE' || ped.status === 'RECEBIDO';
+            const botaoCancelarHtml = podeCancelar ? `
+                <button 
+                    type="button"
+                    onclick="cancelarPedidoCliente(${ped.id})"
+                    class="px-3 py-1.5 rounded-xl bg-error-container/60 hover:bg-error-container text-on-error-container text-xs font-bold transition-all cursor-pointer flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[15px]">cancel</span>
+                    Cancelar Pedido
+                </button>
+            ` : '';
+
             const itensHtml = (ped.itens || []).map(i => `
                 <div class="flex justify-between text-xs py-1 border-b border-surface-container-high/40 last:border-none">
                     <span class="text-on-surface font-medium">${i.quantidade}x ${escapeHtml(i.nome_produto)}</span>
@@ -1163,14 +1152,17 @@ async function carregarMeusPedidos(mostrarLoading = true) {
                         ${itensHtml || '<p class="text-xs text-on-surface-variant">Itens do pedido</p>'}
                     </div>
 
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-surface-container-high/60 text-xs">
                         <span class="text-on-surface-variant flex items-center gap-1 truncate max-w-xs">
                             <span class="material-symbols-outlined text-[15px] text-primary">pin_drop</span>
                             ${escapeHtml(ped.endereco_entrega || 'Endereço padrão')}
                         </span>
-                        <div class="text-right">
-                            <span class="text-on-surface-variant">Total:</span>
-                            <strong class="font-display font-black text-sm sm:text-base text-primary ml-1">${totalFormatado}</strong>
+                        <div class="flex items-center gap-3">
+                            ${botaoCancelarHtml}
+                            <div class="text-right">
+                                <span class="text-on-surface-variant">Total:</span>
+                                <strong class="font-display font-black text-sm sm:text-base text-primary ml-1">${totalFormatado}</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1186,9 +1178,36 @@ async function carregarMeusPedidos(mostrarLoading = true) {
     }
 }
 
-/* =====================================================================
-   UTILITARIOS E REGISTRO GLOBAL
-   ===================================================================== */
+async function cancelarPedidoCliente(pedidoId) {
+    if (!confirm(`Deseja realmente cancelar o pedido #${pedidoId}?`)) {
+        return;
+    }
+
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    try {
+        const res = await fetch(`${API_URL}/pedidos/${pedidoId}/cancelar`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.detail || 'Não foi possível cancelar o pedido.');
+        }
+
+        mostrarToast(`Pedido #${pedidoId} cancelado com sucesso.`, 'aviso');
+        carregarMeusPedidos(false); // Atualiza a lista sem mostrar o loading bruto
+    } catch (e) {
+        mostrarToast(`Erro: ${e.message}`, 'erro');
+    }
+}
+
+/* UTILITARIOS E REGISTRO GLOBAL */
 
 let toastTimer = null;
 
@@ -1268,3 +1287,4 @@ window.fecharModalSucesso = fecharModalSucesso;
 window.fecharModalSucessoEVerPedidos = fecharModalSucessoEVerPedidos;
 window.carregarMeusPedidos = carregarMeusPedidos;
 window.realizarLogout = realizarLogout;
+window.cancelarPedidoCliente = cancelarPedidoCliente;
