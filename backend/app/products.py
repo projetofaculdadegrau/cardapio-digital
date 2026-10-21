@@ -10,7 +10,9 @@ from app.models import User, Product, UserRole, OrderItem
 from app.schemas import ProductCreate, ProductUpdate, ProductResponse, LojaPublicaResponse
 from app.auth import get_current_user
 
+
 router = APIRouter(prefix="/produtos", tags=["Produtos / Cardápio"])
+
 
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "..", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
