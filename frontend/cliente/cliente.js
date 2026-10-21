@@ -777,7 +777,7 @@ function atualizarUIcarrinho() {
     if (containerItens) {
         containerItens.innerHTML = carrinho.map(item => {
             const precoFormatado = Number(item.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            const itemTotal = Number(item.preco * item.quantidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const subtotalItem = Number(item.preco * item.quantidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             return `
                 <div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-low border border-surface-container-high/60 gap-3 card-animate">
@@ -789,7 +789,7 @@ function atualizarUIcarrinho() {
                     <div class="flex-1 min-w-0">
                         <h5 class="text-xs font-bold text-on-surface truncate">${escapeHtml(item.nome)}</h5>
                         <p class="text-[11px] text-on-surface-variant">${precoFormatado} un.</p>
-                        <span class="text-xs font-black text-primary block mt-0.5">${itemTotal}</span>
+                        <span class="text-xs font-black text-primary block mt-0.5">${subtotalItem}</span>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button 
@@ -820,24 +820,22 @@ function atualizarUIcarrinho() {
         }).join('');
     }
 
+    // Cálculo unificado de subtotal, frete e totais finais
     const valorSubtotalFormatado = subtotalValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-    // Calcula frete
-    const frete = calcularFrete(subtotalValor);
-    const totalComFrete = subtotalValor + frete;
-    const totalFormatado = totalComFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const freteValor = subtotalValor >= FRETE_CONFIG.GRATIS_ACIMA ? 0 : FRETE_CONFIG.VALOR_FIXO;
+    const totalFinal = subtotalValor + freteValor;
+    const totalFormatado = totalFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     if (subtotalEl) subtotalEl.textContent = valorSubtotalFormatado;
 
-    // Atualiza exibição do frete
     const freteEl = document.getElementById('carrinho-frete');
     if (freteEl) {
-        if (frete === 0) {
+        if (freteValor === 0) {
             freteEl.className = 'badge-frete-gratis';
             freteEl.innerHTML = '<span class="material-symbols-outlined text-[11px]">check</span> Grátis';
         } else {
             freteEl.className = 'text-on-surface-variant font-semibold';
-            freteEl.textContent = frete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            freteEl.textContent = freteValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
     }
 
