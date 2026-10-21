@@ -3,7 +3,6 @@ from typing import List, Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from app.models import UserRole, OrderStatus
 
-
 # AUTENTICAÇÃO E USUÁRIOS
 class UserCreate(BaseModel):
     nome: str
@@ -42,6 +41,7 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    user: UserResponse
 
 
 # PRODUTOS
