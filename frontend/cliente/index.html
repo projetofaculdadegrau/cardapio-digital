@@ -256,7 +256,7 @@
         </section>
 
         <!-- Seção: Filtros por Categoria -->
-        <section class="space-y-3">
+        <section id="secao-filtros-categoria" class="space-y-3">
             <div class="flex items-center justify-between">
                 <h3 class="font-display font-bold text-base text-on-surface">Filtrar por Categoria</h3>
                 <span id="label-loja-ativa" class="text-xs font-medium text-on-surface-variant hidden">
@@ -394,9 +394,8 @@
                     </div>
                     <h4 class="font-display font-bold text-sm text-on-surface mb-1">Seu carrinho está vazio</h4>
                     <p class="text-xs mb-4">Escolha pratos deliciosos na vitrine e monte seu pedido!</p>
-                    <button onclick="alternarCarrinho(false)"
-                        class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs">
-                        Explorar Cardápio
+                    <button onclick="alternarCarrinho(false, true)"
+                        class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs">Explorar Cardápio
                     </button>
                 </div>
             </div>

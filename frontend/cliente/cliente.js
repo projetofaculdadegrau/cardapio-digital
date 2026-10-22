@@ -745,7 +745,7 @@ function atualizarUIcarrinho() {
                     <p class="text-xs mb-4">Escolha pratos deliciosos na vitrine e monte seu pedido!</p>
                     <button 
                         type="button"
-                        onclick="alternarCarrinho(false)" 
+                        onclick="alternarCarrinho(false, true)" 
                         class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs hover:bg-primary-container transition-all cursor-pointer">
                         Explorar Cardápio
                     </button>
@@ -830,9 +830,32 @@ function atualizarUIcarrinho() {
     if (totalEl) totalEl.textContent = totalFormatado;
 }
 
-function alternarCarrinho(abrir = null) {
+function irParaVitrineCardapios() {
+    const vitrine = document.getElementById('secao-filtros-categoria');
+    if (!vitrine) return;
+
+    window.location.hash = '#secao-filtros-categoria';
+
+    requestAnimationFrame(() => {
+        const topo = vitrine.getBoundingClientRect().top + window.scrollY - 88;
+        window.scrollTo({
+            top: topo,
+            behavior: 'smooth'
+        });
+
+        setTimeout(() => {
+            vitrine.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);
+    });
+}
+
+function alternarCarrinho(abrir = null, irParaCardapio = false) {
     const drawer = document.getElementById('drawer-carrinho');
     const painel = document.getElementById('drawer-painel');
+
     if (!drawer || !painel) return;
 
     const estaFechado = drawer.classList.contains('hidden');
@@ -841,14 +864,20 @@ function alternarCarrinho(abrir = null) {
     if (novoEstadoAberto) {
         drawer.classList.remove('hidden');
         drawer.classList.add('flex');
+
         setTimeout(() => {
             painel.classList.remove('translate-x-full');
         }, 15);
     } else {
         painel.classList.add('translate-x-full');
+
         setTimeout(() => {
             drawer.classList.add('hidden');
             drawer.classList.remove('flex');
+
+            if (irParaCardapio) {
+                irParaVitrineCardapios();
+            }
         }, 250);
     }
 }
