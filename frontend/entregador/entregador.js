@@ -115,8 +115,8 @@ async function requisicaoAPI(caminho, opcoes = {}) {
     return dados;
 }
 
-async function atualizarPainel() {
-    if (atualizacaoEmAndamento || acaoEmAndamento) return;
+async function atualizarPainel(forcar = false) {
+    if ((atualizacaoEmAndamento || acaoEmAndamento) && !forcar) return;
 
     atualizacaoEmAndamento = true;
     const botaoAtualizar = document.getElementById("botao-atualizar");
@@ -293,7 +293,8 @@ async function executarAcao(pedidoId, acao) {
                 : `Pedido #${pedidoId} marcado como entregue.`
         );
 
-        await atualizarPainel();
+        acaoEmAndamento = false;
+        await atualizarPainel(true);
     } catch (erro) {
         mostrarMensagem(erro.message || "Não foi possível concluir a operação.", true);
     } finally {
