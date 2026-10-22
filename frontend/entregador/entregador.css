@@ -142,28 +142,6 @@ section {
     color: #174d36;
 }
 
-.mensagem {
-    display: none;
-    margin-bottom: 20px;
-    padding: 13px 16px;
-    border-radius: 8px;
-    overflow-wrap: anywhere;
-}
-
-.mensagem.visivel {
-    display: block;
-}
-
-.mensagem.erro {
-    background: #ffebeb;
-    color: #8b1e1e;
-}
-
-.mensagem.sucesso {
-    background: #e2f5e8;
-    color: #175b34;
-}
-
 .vazio {
     padding: 24px;
     margin: 0;

@@ -1052,7 +1052,9 @@ function fecharModalSucessoEVerPedidos() {
 function abrirModalPedidos() {
     const token = localStorage.getItem('access_token');
     if (!token) {
-        alert('Faça login com sua conta para visualizar seu histórico de pedidos.');
+        if (typeof mostrarToast === 'function') {
+            mostrarToast('Faça login com sua conta para visualizar seu histórico de pedidos.', 'aviso');
+        }
         window.location.href = '../login/index.html';
         return;
     }

@@ -76,18 +76,10 @@ function mostrarMensagem(texto, tipoOuErro = false) {
     if (typeof mostrarToast === 'function') {
         mostrarToast(texto, tipo);
     }
-
-    const elemento = document.getElementById("mensagem");
-    if (!elemento) return;
-    elemento.textContent = texto;
-    const isError = tipo === 'erro' || tipo === 'exclusao';
-    elemento.className = `mensagem visivel ${isError ? "erro" : "sucesso"}`;
 }
 
 function limparMensagem() {
-    const elemento = document.getElementById("mensagem");
-    elemento.textContent = "";
-    elemento.className = "mensagem";
+    // Mantém compatibilidade com código antigo sem renderizar caixa inline no body.
 }
 
 async function requisicaoAPI(caminho, opcoes = {}) {
