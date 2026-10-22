@@ -2,6 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db import get_db
+from decimal import Decimal
 from app.models import (
     User,
     Product,
@@ -84,7 +85,7 @@ def criar_pedido(
             observacao=pedido_in.observacao,
         )
 
-        total = 0.0
+        total = Decimal('0.00')
 
         for item in pedido_in.itens:
             produto = db.query(Product).filter(
@@ -120,14 +121,14 @@ def criar_pedido(
                 )
             )
 
-        # Regra de cálculo de frete (equivalente ao frontend)
-        FRETE_GRATIS_ACIMA = 30.00
-        VALOR_FRETE_FIXO = 5.00
+        # Regra de cálculo de frete utilizando Decimal
+        FRETE_GRATIS_ACIMA = Decimal('30.00')
+        VALOR_FRETE_FIXO = Decimal('5.00')
         
-        taxa_entrega = 0.0 if total >= FRETE_GRATIS_ACIMA else VALOR_FRETE_FIXO
+        taxa_entrega = Decimal('0.00') if total >= FRETE_GRATIS_ACIMA else VALOR_FRETE_FIXO
         
-        # O total do pedido passa a incluir os produtos + a taxa de entrega
-        novo_pedido.total = round(total + taxa_entrega, 2)
+        # O total do pedido passa a incluir os produtos + a taxa de entrega com arredondamento seguro
+        novo_pedido.total = (total + taxa_entrega).quantize(Decimal('0.01'))
 
         db.add(novo_pedido)
         db.commit()
