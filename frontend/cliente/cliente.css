@@ -47,6 +47,29 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+.modal-produto-scroll {
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 0.35rem;
+}
+
+.modal-produto-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-produto-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-produto-scroll::-webkit-scrollbar-thumb {
+    background: rgba(172, 45, 0, 0.35);
+    border-radius: 9999px;
+}
+
+.modal-produto-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(172, 45, 0, 0.55);
+}
+
 .hero-banner {
     background: #ac2d00 !important;
     background: linear-gradient(135deg, #ac2d00 0%, #d63c05 45%, #ab3500 100%) !important;

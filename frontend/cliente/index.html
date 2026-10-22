@@ -329,6 +329,18 @@
 
     </main>
 
+    <!-- ===================================================================== -->
+    <!-- MODAL DE VISUALIZAÇÃO DO PRODUTO                                      -->
+    <!-- ===================================================================== -->
+    <div id="modal-produto"
+        class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        aria-modal="true" role="dialog" aria-labelledby="modal-produto-titulo">
+        <div class="w-full max-w-3xl bg-surface rounded-3xl border border-surface-container-high shadow-2xl overflow-hidden card-animate"
+            onclick="event.stopPropagation()">
+            <div id="modal-produto-conteudo"></div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer
         class="mt-auto border-t border-surface-container-high bg-surface-container-low py-8 text-center text-xs text-on-surface-variant">
