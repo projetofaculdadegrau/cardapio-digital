@@ -56,6 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarBusca();
     carregarLojas();
     carregarProdutos();
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            fecharModalProduto();
+        }
+    });
 });
 
 function configurarSessaoUsuario() {
@@ -517,7 +523,7 @@ function aplicarFiltrosEExibir() {
         const lojaNome = p.loja_nome || `Loja #${p.loja_id}`;
 
         return `
-            <div class="group flex flex-col justify-between rounded-3xl bg-surface-container-low border border-surface-container-high/60 overflow-hidden hover:shadow-xl hover:border-primary/40 transition-all duration-300 card-animate">
+            <div data-produto-card data-produto-id="${p.id}" class="group flex flex-col justify-between rounded-3xl bg-surface-container-low border border-surface-container-high/60 overflow-hidden hover:shadow-xl hover:border-primary/40 transition-all duration-300 card-animate cursor-pointer">
                 
                 <!-- Imagem com Badges -->
                 <div class="relative w-full h-48 overflow-hidden bg-surface-container">
@@ -560,7 +566,8 @@ function aplicarFiltrosEExibir() {
 
                         <button 
                             type="button"
-                            onclick="adicionarAoCarrinhoPorId(${p.id})" 
+                            data-acao="adicionar-carrinho"
+                            onclick="event.stopPropagation(); adicionarAoCarrinhoPorId(${p.id})" 
                             class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-primary hover:bg-primary-container text-white text-xs font-bold shadow-md shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                             title="Adicionar ao carrinho">
                             <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
@@ -572,6 +579,93 @@ function aplicarFiltrosEExibir() {
             </div>
         `;
     }).join('');
+
+    gridContainer.querySelectorAll('[data-produto-card]').forEach(card => {
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('[data-acao="adicionar-carrinho"]')) return;
+
+            const produtoId = Number(card.dataset.produtoId);
+            const produto = todosProdutos.find(item => Number(item.id) === produtoId);
+
+            if (produto) {
+                abrirModalProduto(produto);
+            }
+        });
+    });
+}
+
+function abrirModalProduto(produto) {
+    const modal = document.getElementById('modal-produto');
+    const conteudo = document.getElementById('modal-produto-conteudo');
+
+    if (!modal || !conteudo || !produto) return;
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            fecharModalProduto();
+        }
+    });
+
+    const imagemUrl = obterImagemProduto(produto);
+    const precoFormatado = Number(produto.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const categoria = produto.categoria || 'Gourmet';
+    const descricao = produto.descricao || 'Receita especial preparada com ingredientes selecionados.';
+    const lojaNome = produto.loja_nome || `Loja #${produto.loja_id}`;
+
+    conteudo.innerHTML = `
+        <div class="overflow-hidden">
+            <div class="relative w-full h-56 sm:h-72 bg-surface-container">
+                <img src="${imagemUrl}" alt="${escapeHtml(produto.nome)}" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
+                <span class="absolute top-4 left-4 px-2.5 py-1 rounded-xl text-[10px] font-bold bg-black/60 backdrop-blur-md text-white border border-white/10 uppercase tracking-wider">
+                    ${escapeHtml(categoria)}
+                </span>
+            </div>
+
+            <div class="p-5 sm:p-6">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-[0.14em]">${escapeHtml(lojaNome)}</p>
+                        <h3 id="modal-produto-titulo" class="font-display font-black text-2xl text-on-surface mt-1 leading-tight">
+                            ${escapeHtml(produto.nome)}
+                        </h3>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-[10px] uppercase font-bold text-on-surface-variant block">Preço</span>
+                        <span class="font-display font-extrabold text-xl text-primary">${precoFormatado}</span>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <h4 class="text-xs font-bold uppercase tracking-wide text-on-surface-variant">Descrição</h4>
+                    <div class="modal-produto-scroll mt-2">
+                        <p class="text-sm leading-relaxed text-on-surface whitespace-pre-line">${escapeHtml(descricao)}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <button type="button" onclick="event.stopPropagation(); adicionarAoCarrinhoPorId(${produto.id}); fecharModalProduto();" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-primary hover:bg-primary-container text-white text-sm font-bold shadow-md shadow-primary/20 transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                        Adicionar ao Carrinho
+                    </button>
+                    <button type="button" onclick="fecharModalProduto()" class="px-4 py-3 rounded-2xl bg-surface-container hover:bg-surface-container-high text-on-surface text-sm font-bold transition-colors">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function fecharModalProduto() {
+    const modal = document.getElementById('modal-produto');
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
 }
 
 function adicionarAoCarrinhoPorId(produtoId) {
@@ -745,7 +839,7 @@ function atualizarUIcarrinho() {
                     <p class="text-xs mb-4">Escolha pratos deliciosos na vitrine e monte seu pedido!</p>
                     <button 
                         type="button"
-                        onclick="alternarCarrinho(false)" 
+                        onclick="alternarCarrinho(false, true)" 
                         class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs hover:bg-primary-container transition-all cursor-pointer">
                         Explorar Cardápio
                     </button>
@@ -830,9 +924,32 @@ function atualizarUIcarrinho() {
     if (totalEl) totalEl.textContent = totalFormatado;
 }
 
-function alternarCarrinho(abrir = null) {
+function irParaVitrineCardapios() {
+    const vitrine = document.getElementById('secao-filtros-categoria');
+    if (!vitrine) return;
+
+    window.location.hash = '#secao-filtros-categoria';
+
+    requestAnimationFrame(() => {
+        const topo = vitrine.getBoundingClientRect().top + window.scrollY - 88;
+        window.scrollTo({
+            top: topo,
+            behavior: 'smooth'
+        });
+
+        setTimeout(() => {
+            vitrine.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);
+    });
+}
+
+function alternarCarrinho(abrir = null, irParaCardapio = false) {
     const drawer = document.getElementById('drawer-carrinho');
     const painel = document.getElementById('drawer-painel');
+
     if (!drawer || !painel) return;
 
     const estaFechado = drawer.classList.contains('hidden');
@@ -841,14 +958,20 @@ function alternarCarrinho(abrir = null) {
     if (novoEstadoAberto) {
         drawer.classList.remove('hidden');
         drawer.classList.add('flex');
+
         setTimeout(() => {
             painel.classList.remove('translate-x-full');
         }, 15);
     } else {
         painel.classList.add('translate-x-full');
+
         setTimeout(() => {
             drawer.classList.add('hidden');
             drawer.classList.remove('flex');
+
+            if (irParaCardapio) {
+                irParaVitrineCardapios();
+            }
         }, 250);
     }
 }
@@ -1052,7 +1175,9 @@ function fecharModalSucessoEVerPedidos() {
 function abrirModalPedidos() {
     const token = localStorage.getItem('access_token');
     if (!token) {
-        alert('Faça login com sua conta para visualizar seu histórico de pedidos.');
+        if (typeof mostrarToast === 'function') {
+            mostrarToast('Faça login com sua conta para visualizar seu histórico de pedidos.', 'aviso');
+        }
         window.location.href = '../login/index.html';
         return;
     }

@@ -5,7 +5,7 @@ function mudarAba(aba) {
     const fCadastro = document.getElementById('form-cadastro');
     const btnNavLogin = document.getElementById('nav-btn-login');
     const btnNavCadastro = document.getElementById('nav-btn-cadastro');
-    
+
     const cardTag = document.getElementById('card-tag');
     const cardTitle = document.getElementById('card-title');
     const cardSubtitle = document.getElementById('card-subtitle');
@@ -77,19 +77,12 @@ function mostrarAlerta(mensagem, tipoOuSucesso = false) {
 
     if (typeof mostrarToast === 'function') {
         mostrarToast(mensagem, tipo);
+        return;
     }
-
-    const alerta = document.getElementById('alerta');
-    if (!alerta) return;
-    alerta.textContent = mensagem;
-    const isSuccess = tipo === 'sucesso';
-    alerta.className = `mb-4 p-3 rounded-xl text-xs font-bold text-center card-animate ${isSuccess ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
-    alerta.classList.remove('hidden');
 }
 
 function esconderAlerta() {
-    const alerta = document.getElementById('alerta');
-    if (alerta) alerta.classList.add('hidden');
+    // Mantém compatibilidade com chamadas antigas sem renderizar alertas inline no body.
 }
 
 async function realizarLogin(event) {
@@ -117,8 +110,8 @@ async function realizarLogin(event) {
             userRole = typeof data.user.role === 'object' ? (data.user.role.value || data.user.role.name) : data.user.role;
             userNome = data.user.nome || userNome;
             userId = data.user.id || '';
-        } 
-        
+        }
+
         if (!userRole && data.access_token) {
             try {
                 const payloadBase64 = data.access_token.split('.')[1];
@@ -144,8 +137,8 @@ async function realizarLogin(event) {
             } else if (userRole === 'CLIENTE') {
                 window.location.assign('../cliente/index.html');
             } else if (userRole === 'ENTREGADOR') {
-    window.location.assign('../entregador/index.html');
-}
+                window.location.assign('../entregador/index.html');
+            }
         }, 800);
 
     } catch (error) {
@@ -159,7 +152,7 @@ async function realizarCadastro(event) {
 
     const senha = document.getElementById('cad-senha').value;
     const confirmarSenha = document.getElementById('cad-confirmar-senha').value;
-    
+
     // Validação de força de senha
     if (senha !== confirmarSenha) {
         mostrarAlerta('As senhas informadas não coincidem.');
@@ -208,7 +201,7 @@ async function realizarCadastro(event) {
 
         mostrarAlerta(`Conta de ${data.role || selectedRole} criada com sucesso! Faça login.`, true);
         document.getElementById('form-cadastro').reset();
-        
+
         setTimeout(() => {
             mudarAba('login');
             document.getElementById('login-email').value = payload.email;
@@ -270,101 +263,101 @@ function atualizarRequisitoUI(elementId, atendido) {
 
 // Formata o telefone conforme a quantidade de números
 function formatarTelefone(valor) {
-  const numeros = valor
-    .replace(/\D/g, "")
-    .slice(0, 11);
+    const numeros = valor
+        .replace(/\D/g, "")
+        .slice(0, 11);
 
-  if (numeros.length === 0) {
-    return "";
-  }
-
-  if (numeros.length <= 2) {
-    return `(${numeros}`;
-  }
-
-  const ddd = numeros.slice(0, 2);
-  const numero = numeros.slice(2);
-
-  // Até 10 dígitos: telefone fixo
-  if (numeros.length <= 10) {
-    if (numero.length <= 4) {
-      return `(${ddd}) ${numero}`;
+    if (numeros.length === 0) {
+        return "";
     }
 
-    return `(${ddd}) ${numero.slice(0, 4)}-${numero.slice(4)}`;
-  }
+    if (numeros.length <= 2) {
+        return `(${numeros}`;
+    }
 
-  // 11 dígitos: celular
-  return `(${ddd}) ${numero.slice(0, 5)}-${numero.slice(5)}`;
+    const ddd = numeros.slice(0, 2);
+    const numero = numeros.slice(2);
+
+    // Até 10 dígitos: telefone fixo
+    if (numeros.length <= 10) {
+        if (numero.length <= 4) {
+            return `(${ddd}) ${numero}`;
+        }
+
+        return `(${ddd}) ${numero.slice(0, 4)}-${numero.slice(4)}`;
+    }
+
+    // 11 dígitos: celular
+    return `(${ddd}) ${numero.slice(0, 5)}-${numero.slice(5)}`;
 }
 
 // Retorna a posição do cursor após determinada quantidade de dígitos
 function posicaoDoCursor(valor, quantidade) {
-  if (quantidade === 0) {
-    return 0;
-  }
-
-  let contagem = 0;
-
-  for (let i = 0; i < valor.length; i++) {
-    if (/\d/.test(valor[i])) {
-      contagem++;
+    if (quantidade === 0) {
+        return 0;
     }
 
-    if (contagem === quantidade) {
-      return i + 1;
-    }
-  }
+    let contagem = 0;
 
-  return valor.length;
+    for (let i = 0; i < valor.length; i++) {
+        if (/\d/.test(valor[i])) {
+            contagem++;
+        }
+
+        if (contagem === quantidade) {
+            return i + 1;
+        }
+    }
+
+    return valor.length;
 }
 
 function inicializarFormatacaoTelefone() {
-  const telefone = document.getElementById("cad-telefone");
-  const formulario = document.getElementById("form-cadastro");
+    const telefone = document.getElementById("cad-telefone");
+    const formulario = document.getElementById("form-cadastro");
 
-  if (!telefone || !formulario) return;
+    if (!telefone || !formulario) return;
 
-  // Formata automaticamente ao digitar ou colar
-  telefone.addEventListener("input", function () {
-    telefone.setCustomValidity("");
+    // Formata automaticamente ao digitar ou colar
+    telefone.addEventListener("input", function () {
+        telefone.setCustomValidity("");
 
-    const cursor = telefone.selectionStart ?? telefone.value.length;
+        const cursor = telefone.selectionStart ?? telefone.value.length;
 
-    const digitosAntesDoCursor = telefone.value
-      .slice(0, cursor)
-      .replace(/\D/g, "")
-      .length;
+        const digitosAntesDoCursor = telefone.value
+            .slice(0, cursor)
+            .replace(/\D/g, "")
+            .length;
 
-    telefone.value = formatarTelefone(telefone.value);
+        telefone.value = formatarTelefone(telefone.value);
 
-    const novaPosicao = posicaoDoCursor(
-      telefone.value,
-      Math.min(
-        digitosAntesDoCursor,
-        telefone.value.replace(/\D/g, "").length
-      )
-    );
+        const novaPosicao = posicaoDoCursor(
+            telefone.value,
+            Math.min(
+                digitosAntesDoCursor,
+                telefone.value.replace(/\D/g, "").length
+            )
+        );
 
-    telefone.setSelectionRange(novaPosicao, novaPosicao);
-  });
+        telefone.setSelectionRange(novaPosicao, novaPosicao);
+    });
 
-  // Valida se o telefone está completo ao enviar o formulário (se informado)
-  formulario.addEventListener("submit", function (event) {
-    const numeros = telefone.value.replace(/\D/g, "");
+    // Valida se o telefone está completo ao enviar o formulário (se informado)
+    formulario.addEventListener("submit", function (event) {
+        const numeros = telefone.value.replace(/\D/g, "");
 
-    if (numeros.length > 0 && numeros.length !== 10 && numeros.length !== 11) {
-      event.preventDefault();
+        if (numeros.length > 0 && numeros.length !== 10 && numeros.length !== 11) {
+            event.preventDefault();
 
-      telefone.setCustomValidity(
-        "Digite um telefone válido com DDD: 10 dígitos para fixo ou 11 para celular."
-      );
+            telefone.setCustomValidity(
+                "Digite um telefone válido com DDD: 10 dígitos para fixo ou 11 para celular."
+            );
 
-      telefone.reportValidity();
-    } else {
-      telefone.setCustomValidity("");
-    }
-  });
+            telefone.reportValidity();
+        } else {
+            telefone.setCustomValidity("");
+        }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

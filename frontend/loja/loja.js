@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const nomeLoja = localStorage.getItem('user_nome');
 
     if (!token || role !== 'LOJA') {
-        alert('Acesso restrito ou sessão expirada. Faça login com uma conta de Estabelecimento.');
+        if (typeof mostrarToast === 'function') {
+            mostrarToast('Acesso restrito ou sessão expirada. Faça login com uma conta de Estabelecimento.', 'aviso');
+        }
         window.location.href = '../login/login.html';
         return;
     }
@@ -34,15 +36,8 @@ function mostrarAlerta(mensagem, tipoOuSucesso = false) {
 
     if (typeof mostrarToast === 'function') {
         mostrarToast(mensagem, tipo);
+        return;
     }
-
-    const alerta = document.getElementById('alerta');
-    if (!alerta) return;
-    alerta.textContent = mensagem;
-    const isSuccess = tipo === 'sucesso' || tipo === 'edicao';
-    alerta.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center card-animate ${isSuccess ? 'bg-tertiary-container/20 text-tertiary' : 'bg-error-container text-on-error-container'}`;
-    alerta.classList.remove('hidden');
-    setTimeout(() => alerta.classList.add('hidden'), 4000);
 }
 
 function realizarLogout() {

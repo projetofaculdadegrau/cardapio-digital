@@ -76,18 +76,10 @@ function mostrarMensagem(texto, tipoOuErro = false) {
     if (typeof mostrarToast === 'function') {
         mostrarToast(texto, tipo);
     }
-
-    const elemento = document.getElementById("mensagem");
-    if (!elemento) return;
-    elemento.textContent = texto;
-    const isError = tipo === 'erro' || tipo === 'exclusao';
-    elemento.className = `mensagem visivel ${isError ? "erro" : "sucesso"}`;
 }
 
 function limparMensagem() {
-    const elemento = document.getElementById("mensagem");
-    elemento.textContent = "";
-    elemento.className = "mensagem";
+    // Mantém compatibilidade com código antigo sem renderizar caixa inline no body.
 }
 
 async function requisicaoAPI(caminho, opcoes = {}) {
@@ -123,8 +115,8 @@ async function requisicaoAPI(caminho, opcoes = {}) {
     return dados;
 }
 
-async function atualizarPainel() {
-    if (atualizacaoEmAndamento || acaoEmAndamento) return;
+async function atualizarPainel(forcar = false) {
+    if ((atualizacaoEmAndamento || acaoEmAndamento) && !forcar) return;
 
     atualizacaoEmAndamento = true;
     const botaoAtualizar = document.getElementById("botao-atualizar");
@@ -301,7 +293,8 @@ async function executarAcao(pedidoId, acao) {
                 : `Pedido #${pedidoId} marcado como entregue.`
         );
 
-        await atualizarPainel();
+        acaoEmAndamento = false;
+        await atualizarPainel(true);
     } catch (erro) {
         mostrarMensagem(erro.message || "Não foi possível concluir a operação.", true);
     } finally {
