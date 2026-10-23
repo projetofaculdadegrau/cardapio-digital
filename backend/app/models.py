@@ -128,6 +128,10 @@ class Order(Base):
         cascade="all, delete-orphan",
     )
 
+    @property
+    def loja_nome(self) -> str:
+        return self.loja.nome if self.loja else f"Loja #{self.loja_id}"
+
 
 class OrderItem(Base):
     __tablename__ = "order_items"

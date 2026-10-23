@@ -674,9 +674,11 @@ function adicionarAoCarrinhoPorId(produtoId) {
         console.warn("Produto não encontrado pelo ID:", produtoId);
         return;
     }
+    
     const lojaNome = p.loja_nome || `Loja #${p.loja_id}`;
     const imagemUrl = obterImagemProduto(p);
     
+    // Chama a função centralizada que valida a loja e gere o modal se necessário
     adicionarAoCarrinho({
         id: p.id,
         nome: p.nome,
@@ -719,7 +721,7 @@ function salvarCarrinhoStorage() {
 }
 
 function adicionarAoCarrinho(produto) {
-    // Regra: se o carrinho já tiver itens de outra loja, pergunta se deseja trocar
+    // Regra: se o carrinho já tiver itens de outra loja, guarda na variável correta e abre o modal
     if (carrinho.length > 0 && carrinhoLojaId !== null && Number(carrinhoLojaId) !== Number(produto.loja_id)) {
         pendenteTrocaProduto = produto;
         abrirModalTrocaLoja();
@@ -745,6 +747,7 @@ function adicionarAoCarrinho(produto) {
 
     salvarCarrinhoStorage();
     mostrarToast(`"${produto.nome}" adicionado ao carrinho!`, 'sucesso');
+    alternarCarrinho(true);
 
     // Animação pop no botão do produto
     const botoes = document.querySelectorAll(`[onclick*="adicionarAoCarrinhoPorId(${produto.id})"]`);
@@ -793,8 +796,38 @@ function limparCarrinhoConfirmado() {
         carrinhoLojaId = null;
         carrinhoLojaNome = null;
         salvarCarrinhoStorage();
-        mostrarToast('Carrinho esvaziado.', 'exclusao');
+        mostrarToast('Carrinho esvaziado com sucesso!', 'sucesso');
     }
+}
+
+function confirmarTrocaLoja() {
+    console.log("Confirmando troca de loja. Produto pendente:", pendenteTrocaProduto);
+
+    // Esvazia completamente o carrinho atual
+    carrinho = [];
+    carrinhoLojaId = null;
+    carrinhoLojaNome = null;
+
+    // Se existe um produto pendente, injeta ele como o primeiro item da nova loja
+    if (pendenteTrocaProduto) {
+        carrinhoLojaId = pendenteTrocaProduto.loja_id;
+        carrinhoLojaNome = pendenteTrocaProduto.loja_nome || "Nova Loja";
+        carrinho.push({
+            id: pendenteTrocaProduto.id,
+            nome: pendenteTrocaProduto.nome,
+            preco: pendenteTrocaProduto.preco,
+            categoria: pendenteTrocaProduto.categoria,
+            imagem: pendenteTrocaProduto.imagem,
+            quantidade: 1
+        });
+        pendenteTrocaProduto = null;
+    }
+
+    salvarCarrinhoStorage();
+    atualizarUIcarrinho();
+    fecharModalTrocaLoja();
+    mostrarToast('Carrinho atualizado para o novo estabelecimento.', 'sucesso');
+    alternarCarrinho(true);
 }
 
 function atualizarUIcarrinho() {
@@ -979,21 +1012,8 @@ function alternarCarrinho(abrir = null, irParaCardapio = false) {
 /* MODAL DE TROCA DE LOJA NO CARRINHO */
 function abrirModalTrocaLoja() {
     const modal = document.getElementById('modal-troca-loja');
-    const btn = document.getElementById('btn-confirmar-troca-loja');
     if (!modal) return;
 
-    if (btn) {
-        btn.onclick = () => {
-            carrinho = [];
-            carrinhoLojaId = null;
-            carrinhoLojaNome = null;
-            fecharModalTrocaLoja();
-            if (pendenteTrocaProduto) {
-                adicionarAoCarrinho(pendenteTrocaProduto);
-                pendenteTrocaProduto = null;
-            }
-        };
-    }
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 }
@@ -1421,6 +1441,8 @@ window.fecharModalSucessoEVerPedidos = fecharModalSucessoEVerPedidos;
 window.carregarMeusPedidos = carregarMeusPedidos;
 window.realizarLogout = realizarLogout;
 window.cancelarPedidoCliente = cancelarPedidoCliente;
+window.abrirModalTrocaLoja = abrirModalTrocaLoja;
+window.confirmarTrocaLoja = confirmarTrocaLoja;
 
 window.addEventListener('beforeunload', () => {
     if (intervaloMeusPedidos) {
