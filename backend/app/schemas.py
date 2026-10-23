@@ -119,7 +119,8 @@ class OrderItemResponse(BaseModel):
     preco_unitario: float
     quantidade: int
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 
 
@@ -134,18 +135,18 @@ class OrderCreate(BaseModel):
 class OrderStatusUpdate(BaseModel):
     status: OrderStatus
 
-
 class OrderResponse(BaseModel):
     id: int
     cliente_id: int
     loja_id: int
+    loja_nome: Optional[str] = None  # <--- Adicionado aqui
     entregador_id: Optional[int] = None
     status: OrderStatus
     total: float
-    endereco_entrega: Optional[str] = None
+    endereco_entrega: str
     observacao: Optional[str] = None
     criado_em: Optional[datetime] = None
-    itens: List[OrderItemResponse] = Field(default_factory=list) # pyright: ignore[reportUndefinedVariable]
+    itens: List[OrderItemResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(
         from_attributes=True,

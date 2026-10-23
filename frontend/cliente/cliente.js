@@ -1269,6 +1269,7 @@ async function carregarMeusPedidos(mostrarLoading = true) {
             const statusInfo = STATUS_PEDIDO[ped.status] || { label: ped.status, cor: 'bg-slate-100 text-slate-700 border-slate-200', icone: 'info' };
             const dataHora = ped.criado_em ? new Date(ped.criado_em).toLocaleString('pt-BR') : 'Data não informada';
             const totalFormatado = Number(ped.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const nomeEstabelecimento = ped.loja_nome || `Loja #${ped.loja_id}`; // <--- Nome da loja obtido do backend
 
             const podeCancelar = ped.status === 'PENDENTE' || ped.status === 'RECEBIDO';
             const botaoCancelarHtml = podeCancelar ? `
@@ -1292,8 +1293,9 @@ async function carregarMeusPedidos(mostrarLoading = true) {
                 <div class="p-4 sm:p-5 rounded-2xl bg-surface-container-low border border-surface-container-high/70 space-y-3 card-animate">
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b border-surface-container-high pb-3">
                         <div class="flex items-center gap-2">
-                            <span class="font-display font-extrabold text-sm sm:text-base text-on-surface">Pedido #${ped.id}</span>
-                            <span class="text-xs text-on-surface-variant">&bull; ${dataHora}</span>
+                            <span class="material-symbols-outlined text-primary text-base">storefront</span>
+                            <span class="font-display font-extrabold text-sm sm:text-base text-on-surface">${escapeHtml(nomeEstabelecimento)}</span>
+                            <span class="text-xs text-on-surface-variant">&bull; Pedido #${ped.id} (${dataHora})</span>
                         </div>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${statusInfo.cor}">
                             <span class="material-symbols-outlined text-[16px]">${statusInfo.icone}</span>
