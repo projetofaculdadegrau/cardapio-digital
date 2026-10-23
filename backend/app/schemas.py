@@ -152,3 +152,25 @@ class OrderResponse(BaseModel):
         from_attributes=True,
         use_enum_values=True,
     )
+
+# RECUPERAÇÃO DE SENHA
+class ForgotPasswordSchema(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordSchema(BaseModel):
+    token: str
+    nova_senha: str
+
+    @field_validator('nova_senha')
+    @classmethod
+    def validar_forca_nova_senha(cls, v: str) -> str:
+        if len(v) < 6:
+            raise ValueError('A senha deve ter pelo menos 6 caracteres.')
+        if not re.search(r"[A-Z]", v):
+            raise ValueError('A senha deve conter pelo menos uma letra maiúscula.')
+        if not re.search(r"[a-z]", v):
+            raise ValueError('A senha deve conter pelo menos uma letra minúscula.')
+        if not re.search(r"\d", v):
+            raise ValueError('A senha deve conter pelo menos um número.')
+        return v

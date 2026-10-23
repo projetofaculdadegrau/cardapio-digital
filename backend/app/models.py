@@ -41,6 +41,10 @@ class User(Base):
     veiculo = Column(String, nullable=True)
     placa_veiculo = Column(String, nullable=True)
 
+    # Campos para recuperação de senha
+    reset_token = Column(String, nullable=True)
+    reset_token_expires = Column(DateTime(timezone=True), nullable=True)
+
     produtos = relationship(
         "Product",
         back_populates="loja",
