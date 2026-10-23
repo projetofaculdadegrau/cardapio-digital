@@ -360,6 +360,58 @@ function inicializarFormatacaoTelefone() {
     });
 }
 
+function abrirModalEsqueceuSenha() {
+    const modal = document.getElementById('modal-esqueceu-senha');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function fecharModalEsqueceuSenha() {
+    const modal = document.getElementById('modal-esqueceu-senha');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+async function enviarSolicitudeRecuperacao(event) {
+    event.preventDefault();
+    const inputEmail = document.getElementById('email-recuperacao');
+    const btnEnviar = document.getElementById('btn-enviar-recuperacao');
+    const email = inputEmail ? inputEmail.value.trim() : '';
+
+    if (!email) return;
+
+    if (btnEnviar) {
+        btnEnviar.disabled = true;
+        btnEnviar.textContent = 'Enviando...';
+    }
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/auth/esqueci-senha`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+        
+        // Exibe mensagem de sucesso (mesmo se o e-mail não existir por segurança)
+        alert(data.message || 'Se o e-mail estiver cadastrado, as instruções foram enviadas.');
+        fecharModalEsqueceuSenha();
+        if (inputEmail) inputEmail.value = '';
+    } catch (e) {
+        alert('Erro ao conectar com o servidor.');
+    } finally {
+        if (btnEnviar) {
+            btnEnviar.disabled = false;
+            btnEnviar.textContent = 'Enviar Instruções';
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     mudarAba('login');
     inicializarFormatacaoTelefone();

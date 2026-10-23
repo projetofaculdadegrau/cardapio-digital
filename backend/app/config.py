@@ -1,8 +1,7 @@
-
 import os
 from pathlib import Path
 
-from pydantic_settings import BaseSettings # pyright: ignore[reportMissingImports]
+from pydantic_settings import BaseSettings # type: ignore
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,6 +14,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = (
         "postgresql://postgres:postgrespassword@localhost:5432/cardapioDigital_db"
     )
+    RESEND_API_KEY: str = ""
 
     class Config:
         env_file = BACKEND_DIR / ".env"

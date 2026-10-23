@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cardápio Digital - Redefinir Senha</title>
+
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@200..800&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN + Config idêntica à tela de login -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#8f7067",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#f6fff6",
+                        "surface-container-highest": "#eae1da",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#fbf2ea",
+                        "surface-bright": "#fff8f3",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#efe7df",
+                        "inverse-on-surface": "#f8efe8",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffdbd0",
+                        "primary": "#ac2d00",
+                        "inverse-surface": "#34302b",
+                        "surface-variant": "#eae1da",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "secondary": "#ab3500",
+                        "tertiary-container": "#26845b",
+                        "on-tertiary-fixed": "#002112",
+                        "on-surface": "#1f1b17",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#d63c05",
+                        "outline-variant": "#e4beb4",
+                        "on-secondary-container": "#5d1900",
+                        "background": "#fff8f3",
+                        "primary-fixed": "#ffdbd1",
+                        "surface": "#fff8f3",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5b4039",
+                        "tertiary": "#006a44",
+                        "tertiary-fixed": "#9bf5c4",
+                        "surface-container": "#f5ece5",
+                        "secondary-container": "#fe6a34",
+                        "surface-tint": "#b02e00",
+                        "on-primary-container": "#fffbff",
+                        "on-background": "#1f1b17",
+                        "inverse-primary": "#ffb5a0",
+                        "surface-dim": "#e1d9d1",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#3b0900",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        "headline-lg": ["Manrope"],
+                        "label-sm": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "display-hero": ["Manrope"],
+                        "label-lg": ["Manrope"],
+                        "body-sm": ["DM Sans"],
+                        "headline-md": ["Manrope"],
+                        "body-md": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "label-md": ["Manrope"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Cabeçalho Principal -->
+    <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
+        <div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+                    <span class="material-symbols-outlined text-[24px]">restaurant_menu</span>
+                </div>
+                <span class="font-headline-sm text-lg sm:text-xl font-bold tracking-tight text-on-surface">Cardápio Digital</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="w-full pt-24 pb-12 flex-1 flex flex-col justify-center bg-background">
+        <div class="w-full max-w-md mx-auto px-4 sm:px-6">
+            <div class="bg-surface-container-lowest rounded-2xl p-7 sm:p-10 shadow-[0_4px_24px_-2px_rgba(36,33,31,0.06)] border border-surface-container-high/60">
+                
+                <div class="mb-6">
+                    <span class="font-label-sm text-xs uppercase tracking-wider text-primary font-bold">Segurança</span>
+                    <h2 class="font-headline-lg text-2xl font-extrabold text-on-surface tracking-tight mt-1">Redefinir Senha</h2>
+                    <p class="font-body-md text-sm text-on-surface-variant mt-1.5">Digite sua nova senha abaixo para acessar sua conta.</p>
+                </div>
+
+                <form id="form-redefinir" onsubmit="executarRedefinicao(event)" class="space-y-4">
+                    <div>
+                        <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">Nova Senha</label>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+                            <input 
+                                id="nova-senha" 
+                                type="password" 
+                                required 
+                                oninput="validarRequisitosSenha(this.value)"
+                                placeholder="Digite sua nova senha"
+                                class="w-full pl-11 pr-12 py-3 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-sm outline-none shadow-sm focus:ring-2 focus:ring-primary border border-surface-container-highest transition-all" 
+                            />
+                            <button type="button" onclick="alternarVisibilidadeSenha('nova-senha', 'eye-nova')" class="absolute right-3.5 text-on-surface-variant hover:text-on-surface p-1 rounded-md transition-colors cursor-pointer">
+                                <span id="eye-nova" class="material-symbols-outlined text-[20px]">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Requisitos de Senha em Tempo Real -->
+                    <div id="password-requirements" class="mt-2 grid grid-cols-2 gap-1.5 text-[11px] p-3 rounded-xl bg-surface-container border border-surface-container-highest">
+                        <div id="req-length" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                            <span>Mínimo 6 caracteres</span>
+                        </div>
+                        <div id="req-upper" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                            <span>1 letra maiúscula</span>
+                        </div>
+                        <div id="req-lower" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                            <span>1 letra minúscula</span>
+                        </div>
+                        <div id="req-number" class="flex items-center gap-1 text-on-surface-variant/70 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
+                            <span>1 número</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">Confirmar Nova Senha</label>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock_reset</span>
+                            <input 
+                                id="confirma-senha" 
+                                type="password" 
+                                required 
+                                placeholder="Repita a nova senha"
+                                class="w-full pl-11 pr-12 py-3 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-sm outline-none shadow-sm focus:ring-2 focus:ring-primary border border-surface-container-highest transition-all" 
+                            />
+                            <button type="button" onclick="alternarVisibilidadeSenha('confirma-senha', 'eye-conf')" class="absolute right-3.5 text-on-surface-variant hover:text-on-surface p-1 rounded-md transition-colors cursor-pointer">
+                                <span id="eye-conf" class="material-symbols-outlined text-[20px]">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-salvar"
+                        class="w-full py-3.5 px-6 rounded-xl bg-primary hover:bg-primary-container active:scale-[0.98] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer mt-4">
+                        <span>Salvar Nova Senha</span>
+                        <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                    </button>
+                </form>
+
+                <div id="mensagem-status" class="hidden p-4 mt-4 rounded-xl text-xs text-center font-medium"></div>
+
+                <div class="pt-6 mt-6 border-t border-surface-container-highest text-center">
+                    <p class="text-sm text-on-surface-variant">
+                        Lembrou a senha?
+                        <a href="index.html" class="font-bold text-primary hover:underline ml-1 cursor-pointer">Fazer login</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+            mostrarMensagem("Token de recuperação inválido ou ausente.", "erro");
+            document.getElementById('form-redefinir').style.display = 'none';
+        }
+
+        function alternarVisibilidadeSenha(idInput, idIcone) {
+            const input = document.getElementById(idInput);
+            const icone = document.getElementById(idIcone);
+            if (!input || !icone) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icone.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icone.textContent = 'visibility';
+            }
+        }
+
+        function validarRequisitosSenha(senha) {
+            const temTamanho = senha.length >= 6;
+            const temMaiuscula = /[A-Z]/.test(senha);
+            const temMinuscula = /[a-z]/.test(senha);
+            const temNumero = /\d/.test(senha);
+
+            atualizarEstadoRequisito('req-length', temTamanho);
+            atualizarEstadoRequisito('req-upper', temMaiuscula);
+            atualizarEstadoRequisito('req-lower', temMinuscula);
+            atualizarEstadoRequisito('req-number', temNumero);
+        }
+
+        function atualizarEstadoRequisito(idElemento, atendido) {
+            const el = document.getElementById(idElemento);
+            if (!el) return;
+            const icone = el.querySelector('.material-symbols-outlined');
+            
+            if (atendido) {
+                el.className = "flex items-center gap-1 text-tertiary font-semibold transition-colors";
+                if (icone) icone.textContent = "check_circle";
+            } else {
+                el.className = "flex items-center gap-1 text-on-surface-variant/70 transition-colors";
+                if (icone) icone.textContent = "radio_button_unchecked";
+            }
+        }
+
+        async function executarRedefinicao(event) {
+            event.preventDefault();
+            const novaSenha = document.getElementById('nova-senha').value;
+            const confirmaSenha = document.getElementById('confirma-senha').value;
+            const btnSalvar = document.getElementById('btn-salvar');
+
+            const temTamanho = novaSenha.length >= 6;
+            const temMaiuscula = /[A-Z]/.test(novaSenha);
+            const temMinuscula = /[a-z]/.test(novaSenha);
+            const temNumero = /\d/.test(novaSenha);
+
+            if (!temTamanho || !temMaiuscula || !temMinuscula || !temNumero) {
+                mostrarMensagem("A senha não atende a todos os requisitos de segurança.", "erro");
+                return;
+            }
+
+            if (novaSenha !== confirmaSenha) {
+                mostrarMensagem("As senhas não coincidem.", "erro");
+                return;
+            }
+
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = "Salvando...";
+
+            try {
+                const res = await fetch(`${API_URL}/auth/redefinir-senha`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, nova_senha: novaSenha })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.detail || data.message || "Erro ao redefinir senha.");
+                }
+
+                mostrarMensagem("Senha redefinida com sucesso! Redirecionando para o login...", "sucesso");
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2500);
+
+            } catch (e) {
+                mostrarMensagem(e.message, "erro");
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = "Salvar Nova Senha";
+            }
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const el = document.getElementById('mensagem-status');
+            el.textContent = texto;
+            el.classList.remove('hidden', 'bg-tertiary-fixed/20', 'text-tertiary', 'bg-error-container', 'text-on-error-container');
+            if (tipo === 'sucesso') {
+                el.classList.add('bg-tertiary-fixed/20', 'text-tertiary');
+            } else {
+                el.classList.add('bg-error-container', 'text-on-error-container');
+            }
+        }
+    </script>
+</body>
+</html>

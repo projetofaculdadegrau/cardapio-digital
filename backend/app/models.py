@@ -41,6 +41,10 @@ class User(Base):
     veiculo = Column(String, nullable=True)
     placa_veiculo = Column(String, nullable=True)
 
+    # Campos para recuperação de senha
+    reset_token = Column(String, nullable=True)
+    reset_token_expires = Column(DateTime(timezone=True), nullable=True)
+
     produtos = relationship(
         "Product",
         back_populates="loja",
@@ -127,6 +131,10 @@ class Order(Base):
         back_populates="pedido",
         cascade="all, delete-orphan",
     )
+
+    @property
+    def loja_nome(self) -> str:
+        return self.loja.nome if self.loja else f"Loja #{self.loja_id}"
 
 
 class OrderItem(Base):

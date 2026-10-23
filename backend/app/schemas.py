@@ -119,7 +119,8 @@ class OrderItemResponse(BaseModel):
     preco_unitario: float
     quantidade: int
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 
 
@@ -134,20 +135,42 @@ class OrderCreate(BaseModel):
 class OrderStatusUpdate(BaseModel):
     status: OrderStatus
 
-
 class OrderResponse(BaseModel):
     id: int
     cliente_id: int
     loja_id: int
+    loja_nome: Optional[str] = None  # <--- Adicionado aqui
     entregador_id: Optional[int] = None
     status: OrderStatus
     total: float
-    endereco_entrega: Optional[str] = None
+    endereco_entrega: str
     observacao: Optional[str] = None
     criado_em: Optional[datetime] = None
-    itens: List[OrderItemResponse] = Field(default_factory=list) # pyright: ignore[reportUndefinedVariable]
+    itens: List[OrderItemResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(
         from_attributes=True,
         use_enum_values=True,
     )
+
+# RECUPERAÇÃO DE SENHA
+class ForgotPasswordSchema(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordSchema(BaseModel):
+    token: str
+    nova_senha: str
+
+    @field_validator('nova_senha')
+    @classmethod
+    def validar_forca_nova_senha(cls, v: str) -> str:
+        if len(v) < 6:
+            raise ValueError('A senha deve ter pelo menos 6 caracteres.')
+        if not re.search(r"[A-Z]", v):
+            raise ValueError('A senha deve conter pelo menos uma letra maiúscula.')
+        if not re.search(r"[a-z]", v):
+            raise ValueError('A senha deve conter pelo menos uma letra minúscula.')
+        if not re.search(r"\d", v):
+            raise ValueError('A senha deve conter pelo menos um número.')
+        return v
