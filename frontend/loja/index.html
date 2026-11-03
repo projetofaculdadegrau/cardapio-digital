@@ -109,6 +109,12 @@
                     <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
                     <span>Sistema Operacional Ativo</span>
                 </div>
+
+                <button onclick="abrirModalConfiguracoes()" class="px-4 py-2 bg-surface-container-high hover:bg-surface-container text-on-surface transition-colors text-on-surface font-bold rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer">
+                    <span class="material-symbols-outlined text-[20px]">settings</span>
+                    <span class="text-xs font-bold hidden sm:inline">Configurações</span>
+                </button>
+
                 <button onclick="realizarLogout()"
                     class="px-4 py-2 bg-surface-container-high hover:bg-error-container hover:text-on-error-container text-on-surface font-bold rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer">
                     <span class="material-symbols-outlined text-[18px]">logout</span>
@@ -354,6 +360,55 @@
             </div>
         </div>
     </main>
+
+<!-- ================= MODAL DE EDIÇÃO DE CONFIGURAÇÕES DO PERFIL ================= -->   
+<div id="modal-configuracoes" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-white w-full max-w-lg mx-4 rounded-3xl p-6 sm:p-8 shadow-2xl border border-surface-container-highest relative animate-in fade-in zoom-in duration-200">
+            
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <span class="font-label-sm text-xs uppercase tracking-wider text-primary font-bold">Painel da Loja</span>
+                <h3 class="font-headline-lg text-xl font-extrabold text-on-surface tracking-tight">Configurações da Conta</h3>
+            </div>
+            <button onclick="fecharModalConfiguracoes()" class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-[24px]">close</span>
+            </button>
+        </div>
+
+        <form id="form-configuracoes" onsubmit="atualizarPerfil(event)" class="space-y-4">
+            <div>
+                <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">Nome do Estabelecimento / Responsável</label>
+                <input id="cfg-nome" type="text" required class="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface border border-surface-container-highest focus:ring-2 focus:ring-primary outline-none text-sm transition-all"/>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">E-mail</label>
+                        <input id="cfg-email" type="email" required class="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface border border-surface-container-highest focus:ring-2 focus:ring-primary outline-none text-sm transition-all"/>
+                </div>
+                <div>
+                    <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">Telefone / WhatsApp</label>
+                    <input id="cfg-telefone" type="text" placeholder="(00) 00000-0000" maxlength="15" oninput="aplicarMascaraTelefone(event)" class="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface border border-surface-container-highest focus:ring-2 focus:ring-primary outline-none text-sm transition-all"/>
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">Endereço do Estabelecimento</label>
+                <input id="cfg-endereco" type="text" placeholder="Rua, número, bairro..." class="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface border border-surface-container-highest focus:ring-2 focus:ring-primary outline-none text-sm transition-all"/>
+            </div>
+
+            <div class="pt-2 border-t border-surface-container-highest">
+                <label class="block font-label-md text-xs font-bold text-on-surface mb-1.5">Nova Senha <span class="text-on-surface-variant font-normal">(Opcional)</span></label>
+                <input id="cfg-nova-senha" type="password" placeholder="Mínimo de 6 caracteres" class="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface border border-surface-container-highest focus:ring-2 focus:ring-primary outline-none text-sm transition-all"/>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-4">
+                <button type="button" onclick="fecharModalConfiguracoes()" class="px-5 py-2.5 rounded-xl border border-surface-container-highest text-on-surface-variant font-bold text-sm hover:bg-surface-container transition-all cursor-pointer">Cancelar</button>
+                <button type="submit" id="btn-salvar-cfg" class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-sm shadow-md transition-all cursor-pointer">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
 
     <!-- Rodapé -->
     <footer class="w-full bg-surface-container-low py-6 shadow-[0_-1px_6px_rgba(0,0,0,0.02)] mt-auto">

@@ -14,11 +14,6 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 - **Esteira de Pedidos em Tempo Real:** Fluxo de criação de pedidos pelo cliente e atualização de status pelas lojas e entregadores.
 - **Guardas de Rota (Route Guards):** Verificação automática de token e redirecionamento no frontend (`cliente`, `loja`, `entregador`) prevenindo acessos não autorizados.
 
-### Alterado / Melhorias de UX
-- **Refinamento do Fluxo de Status de Pedido (BUG-17):**
-  - Quando a loja conclui o preparo, o status interno passa para "Pronto para entrega" (`PRONTO_PARA_ENVIO`).
-  - Para o cliente, o status permanece como "Na cozinha" (`EM_PREPARO`) até que o entregador aceite a corrida, momento em que transiciona para "A caminho" (`A_CAMINHO`) para ambos os painéis.
-
 ---
 
 ## [v0.1.0] - Área Pública (Frontend Estático / Legado)

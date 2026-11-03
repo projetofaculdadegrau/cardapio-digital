@@ -358,7 +358,7 @@ const STATUS_CONFIG = {
     PENDENTE:            { label: 'Pendente',   cor: 'bg-amber-100 text-amber-700',    icone: 'schedule' },
     RECEBIDO:            { label: 'Recebido',   cor: 'bg-slate-100 text-slate-700',    icone: 'inventory_2' },
     EM_PREPARO:          { label: 'Em preparo', cor: 'bg-blue-100 text-blue-700',      icone: 'cooking' },
-    PRONTO_PARA_ENVIO:   { label: 'Pronto para entrega', cor: 'bg-violet-100 text-violet-700', icone: 'check_circle' }, // <-- Ajustado aqui
+    PRONTO_PARA_ENVIO:   { label: 'Pronto para entrega', cor: 'bg-violet-100 text-violet-700', icone: 'check_circle' },
     A_CAMINHO:           { label: 'A caminho',  cor: 'bg-cyan-100 text-cyan-700',      icone: 'local_shipping' },
     ENTREGUE:            { label: 'Entregue',   cor: 'bg-emerald-100 text-emerald-700', icone: 'done_all' },
     CANCELADO:           { label: 'Cancelado',  cor: 'bg-red-100 text-red-700',        icone: 'cancel' }
@@ -371,7 +371,7 @@ const ACOES_LOJA = {
         { texto: 'Recusar', status: 'CANCELADO',  estilo: 'bg-surface-container hover:bg-error-container hover:text-on-error-container text-on-surface-variant', icone: 'close' }
     ],
     EM_PREPARO: [
-        { texto: 'Pronto para entrega', status: 'PRONTO_PARA_ENVIO', estilo: 'bg-primary hover:bg-primary-container text-white', icone: 'check' } // <-- Ajustado o texto do botão
+        { texto: 'Pronto para entrega', status: 'PRONTO_PARA_ENVIO', estilo: 'bg-primary hover:bg-primary-container text-white', icone: 'check' }
     ],
     PRONTO_PARA_ENVIO: []  // Aguardando o entregador aceitar a corrida
 };
@@ -523,3 +523,112 @@ function iniciarMonitoramentoPedidos() {
     if (intervaloPedidos) clearInterval(intervaloPedidos);
     intervaloPedidos = setInterval(carregarPedidos, 15000);
 }
+
+const TOKEN_KEY = "access_token";
+
+function aplicarMascaraTelefone(event) {
+    let input = event.target;
+    let valor = input.value.replace(/\D/g, "");
+    if (valor.length > 11) valor = valor.substring(0, 11);
+
+    if (valor.length > 6) {
+        valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+        valor = valor.replace(/^(\d{2})(\d{4})(\d{4}).*/, "($1) $2-$3");
+    } else if (valor.length > 2) {
+        valor = valor.replace(/^(\d{2})(\d+)/, "($1) $2");
+    } else if (valor.length > 0) {
+        valor = valor.replace(/^(\d+)/, "($1");
+    }
+    input.value = valor;
+}
+
+async function abrirModalConfiguracoes() {
+    const modal = document.getElementById('modal-configuracoes');
+    if (modal) {
+        modal.style.display = 'flex'; // Garante a abertura correta alinhando com o display do HTML
+    }
+    
+    try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_URL}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error("Erro ao carregar dados.");
+        const user = await res.json();
+        
+        document.getElementById('cfg-nome').value = user.nome || '';
+        document.getElementById('cfg-email').value = user.email || '';
+        document.getElementById('cfg-telefone').value = user.telefone || '';
+        
+        if (document.getElementById('cfg-endereco')) {
+            document.getElementById('cfg-endereco').value = user.endereco || '';
+        }
+        document.getElementById('cfg-nova-senha').value = '';
+    } catch (e) {
+        if (typeof mostrarToast === 'function') mostrarToast("Erro ao carregar perfil.", "erro");
+    }
+}
+
+function fecharModalConfiguracoes() {
+    const modal = document.getElementById('modal-configuracoes');
+    if (modal) {
+        modal.style.display = 'none'; // Oculta o modal corretamente
+    }
+}
+
+async function atualizarPerfil(event) {
+    event.preventDefault();
+    const btnSalvar = document.getElementById('btn-salvar-cfg');
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = "Salvando...";
+
+    const payload = {
+        nome: document.getElementById('cfg-nome').value,
+        email: document.getElementById('cfg-email').value,
+        telefone: document.getElementById('cfg-telefone').value,
+    };
+
+    if (document.getElementById('cfg-endereco')) {
+        payload.endereco = document.getElementById('cfg-endereco').value;
+    }
+
+    const nova_senha = document.getElementById('cfg-nova-senha').value;
+    if (nova_senha.trim() !== "") {
+        payload.nova_senha = nova_senha;
+    }
+
+    try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_URL}/auth/atualizar-perfil`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Erro ao atualizar perfil.");
+
+        fecharModalConfiguracoes();
+        if (typeof mostrarToast === 'function') {
+            mostrarToast("Perfil atualizado com sucesso!", "edicao");
+        }
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+
+    } catch (e) {
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(e.message, "erro");
+        }
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = "Salvar Alterações";
+    }
+}
+
+// Expõe globalmente para garantir que o HTML encontre as funções
+window.abrirModalConfiguracoes = abrirModalConfiguracoes;
+window.fecharModalConfiguracoes = fecharModalConfiguracoes;

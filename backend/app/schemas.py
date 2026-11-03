@@ -29,6 +29,16 @@ class UserCreate(BaseModel):
         return v
 
 
+class UserUpdate(BaseModel):
+    nome: Optional[str] = None
+    email: Optional[EmailStr] = None
+    telefone: Optional[str] = None
+    endereco: Optional[str] = None
+    veiculo: Optional[str] = None
+    placa_veiculo: Optional[str] = None
+    nova_senha: Optional[str] = None
+
+
 class LoginSchema(BaseModel):
     email: EmailStr
     senha: str
