@@ -75,7 +75,7 @@ function configurarSessaoUsuario() {
 
     // Se estiver logado como LOJA, redireciona para a tela de loja
     if (token && role === 'LOJA') {
-        window.location.href = '../loja/loja.html';
+        window.location.href = '../loja/index.html';
         return;
     }
 
@@ -134,7 +134,7 @@ function realizarLogout() {
         localStorage.removeItem('user_nome');
         localStorage.removeItem('user_id');
         localStorage.removeItem('cardapio_carrinho_cliente');
-        window.location.href = '../login/index.html';
+        window.location.href = '../cliente/index.html';
     }
 }
 

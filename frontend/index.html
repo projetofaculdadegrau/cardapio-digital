@@ -9,28 +9,23 @@
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
     <div class="text-center">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-        <p class="text-gray-600 font-medium">A verificar sessão...</p>
+        <p class="text-gray-600 font-medium">Carregando Cardápio Digital...</p>
     </div>
 
     <script>
-        // Verifica se já existe um token e um perfil salvos no navegador
+        // Evita loop verificando se já estamos direcionando
         const token = localStorage.getItem('access_token');
         const role = localStorage.getItem('user_role');
 
-        if (!token) {
-            // Se não estiver logado, vai para o login
-            window.location.href = './login/index.html';
+        // Se for visitante ou cliente, vai para a pasta frontend/cliente/
+        if (!token || role === 'CLIENTE') {
+            window.location.replace('./cliente/index.html');
+        } else if (role === 'LOJA') {
+            window.location.replace('./loja/index.html');
+        } else if (role === 'ENTREGADOR') {
+            window.location.replace('./entregador/index.html');
         } else {
-            // Se estiver logado, redireciona para o painel correspondente ao papel (role)
-            if (role === 'LOJA') {
-                window.location.href = './loja/index.html';
-            } else if (role === 'CLIENTE') {
-                window.location.href = './cliente/index.html';
-            } else if (role === 'ENTREGADOR') {
-                window.location.href = './entregador/index.html';
-            } else {
-                window.location.href = './login/index.html';
-            }
+            window.location.replace('./cliente/index.html');
         }
     </script>
 </body>
