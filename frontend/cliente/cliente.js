@@ -72,6 +72,7 @@ function configurarSessaoUsuario() {
     const containerLogado = document.getElementById('usuario-logado-container');
     const containerVisitante = document.getElementById('usuario-visitante-container');
     const headerNome = document.getElementById('cliente-nome-header');
+    const btnConfiguracoes = document.getElementById('btn-configuracoes');
 
     // Se estiver logado como LOJA, redireciona para a tela de loja
     if (token && role === 'LOJA') {
@@ -86,10 +87,15 @@ function configurarSessaoUsuario() {
             containerLogado.classList.add('flex');
         }
         if (containerVisitante) {
-            containerVisitante.classList.add('hidden');
+            containerVisitante.classList.add('hidden');   
+        }
+
+        if (btnConfiguracoes) {
+            btnConfiguracoes.classList.remove('hidden');
+            btnConfiguracoes.classList.add('inline-flex');
         }
         if (headerNome && nome) {
-            headerNome.textContent = nome.split(' ')[0];
+            headerNome.textContent = nome.split(' ')[0];    
         }
         buscarPerfilUsuario();
     } else {
@@ -101,6 +107,10 @@ function configurarSessaoUsuario() {
         if (containerVisitante) {
             containerVisitante.classList.remove('hidden');
             containerVisitante.classList.add('flex');
+        }
+        if (btnConfiguracoes) {
+            btnConfiguracoes.classList.add('hidden');
+            btnConfiguracoes.classList.remove('inline-flex', 'flex');
         }
     }
 }
