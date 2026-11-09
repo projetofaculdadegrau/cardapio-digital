@@ -18,9 +18,18 @@
             <h1>Painel do Entregador</h1>
             <p id="boas-vindas">Gerencie suas entregas.</p>
         </div>
-        <button id="botao-sair" class="botao botao-secundario" type="button">
-            Sair
-        </button>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <button onclick="abrirModalConfiguracoes()" id="botao-configuracoes" class="botao botao-secundario" type="button">
+                <span class="material-symbols-outlined" style="font-size: 20px;">settings</span>
+                <span>Configurações</span>
+            </button>
+
+            <button id="botao-sair" class="botao botao-secundario" type="button">
+                <span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
+                <span>Sair</span>
+            </button>
+        </div>
     </header>
 
     <main class="conteudo">
@@ -52,11 +61,66 @@
         </section>
     </main>
 
+    <!-- Modal de Configurações do Perfil -->
+    <div id="modal-configuracoes" style="display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; background: rgba(0,0,0,0.6);">
+        <div style="background: white; width: 100%; max-width: 512px; margin: 0 16px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); position: relative;">
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                <div>
+                    <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold; color: #174d36;">Painel do Entregador</span>
+                    <h3 style="font-size: 20px; font-weight: 800; margin: 4px 0 0 0;">Configurações do Perfil</h3>
+                </div>
+                <button onclick="fecharModalConfiguracoes()" style="background: none; border: none; cursor: pointer; padding: 4px;">
+                    <span class="material-symbols-outlined" style="font-size: 24px;">close</span>
+                </button>
+            </div>
+
+            <form id="form-configuracoes" onsubmit="atualizarPerfil(event)" style="display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px;">Nome Completo</label>
+                    <input id="cfg-nome" type="text" required style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #dce5de; outline: none; font-size: 14px;" />
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px;">E-mail</label>
+                        <input id="cfg-email" type="email" required style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #dce5de; outline: none; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px;">Telefone / WhatsApp</label>
+                        <input id="cfg-telefone" type="text" placeholder="(00) 00000-0000" maxlength="15" oninput="aplicarMascaraTelefone(event)" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #dce5de; outline: none; font-size: 14px;" />
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px;">Veículo</label>
+                        <input id="cfg-veiculo" type="text" placeholder="Ex: Moto Honda CG" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #dce5de; outline: none; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px;">Placa do Veículo</label>
+                        <input id="cfg-placa" type="text" placeholder="Ex: ABC-1234" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #dce5de; outline: none; font-size: 14px;" />
+                    </div>
+                </div>
+
+                <div style="padding-top: 8px; border-top: 1px solid #edf0ed;">
+                    <label style="display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px;">Nova Senha <span style="font-weight: normal; color: #637168;">(Opcional)</span></label>
+                    <input id="cfg-nova-senha" type="password" placeholder="Mínimo de 6 caracteres" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #dce5de; outline: none; font-size: 14px;" />
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-top: 8px;">
+                    <button type="button" onclick="fecharModalConfiguracoes()" class="botao botao-secundario">Cancelar</button>
+                    <button type="submit" id="btn-salvar-cfg" class="botao botao-primario" style="width: auto; margin-top: 0;">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast Flutuante Global -->
     <div id="toast-flutuante" role="status" aria-live="polite"></div>
 
     <footer>
-        <p>Cardápio Digital · Painel do Entregador</p>
+        <p>Cardápio Digital · Todos os direitos reservados</p>
         <p id="ultima-atualizacao"></p>
     </footer>
 

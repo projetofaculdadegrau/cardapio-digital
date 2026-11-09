@@ -301,3 +301,119 @@ async function executarAcao(pedidoId, acao) {
         acaoEmAndamento = false;
     }
 }
+
+const TOKEN_KEY = "access_token";
+
+function aplicarMascaraTelefone(event) {
+    let input = event.target;
+    let valor = input.value.replace(/\D/g, ""); // Remove tudo o que não for dígito
+
+    // Limita o tamanho máximo para 11 dígitos (DDD + 9 dígitos)
+    if (valor.length > 11) {
+        valor = valor.substring(0, 11);
+    }
+
+    // Aplica a formatação progressiva
+    if (valor.length > 6) {
+        // Formato: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+        valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+        valor = valor.replace(/^(\d{2})(\d{4})(\d{4}).*/, "($1) $2-$3");
+    } else if (valor.length > 2) {
+        // Formato parcial: (XX) XXXX...
+        valor = valor.replace(/^(\d{2})(\d+)/, "($1) $2");
+    } else if (valor.length > 0) {
+        // Formato parcial: (XX...
+        valor = valor.replace(/^(\d+)/, "($1");
+    }
+
+    input.value = valor;
+}
+
+async function abrirModalConfiguracoes() {
+    const modal = document.getElementById('modal-configuracoes');
+    modal.style.display = 'flex';
+    try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_URL}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error("Erro ao carregar dados.");
+        const user = await res.json();
+        
+        document.getElementById('cfg-nome').value = user.nome || '';
+        document.getElementById('cfg-email').value = user.email || '';
+        document.getElementById('cfg-telefone').value = user.telefone || '';
+        
+        if (document.getElementById('cfg-endereco')) {
+            document.getElementById('cfg-endereco').value = user.endereco || '';
+        }
+        if (document.getElementById('cfg-veiculo')) {
+            document.getElementById('cfg-veiculo').value = user.veiculo || '';
+        }
+        if (document.getElementById('cfg-placa')) {
+            document.getElementById('cfg-placa').value = user.placa_veiculo || '';
+        }
+        document.getElementById('cfg-nova-senha').value = '';
+    } catch (e) {
+        if (typeof mostrarToast === 'function') mostrarToast("Erro ao carregar perfil.", "erro");
+    }
+}
+
+function fecharModalConfiguracoes() {
+    const modal = document.getElementById('modal-configuracoes');
+    modal.style.display = 'none';
+}
+
+async function atualizarPerfil(event) {
+    event.preventDefault();
+    const btnSalvar = document.getElementById('btn-salvar-cfg');
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = "Salvando...";
+
+    const payload = {
+        nome: document.getElementById('cfg-nome').value,
+        email: document.getElementById('cfg-email').value,
+        telefone: document.getElementById('cfg-telefone').value,
+    };
+
+    if (document.getElementById('cfg-endereco')) payload.endereco = document.getElementById('cfg-endereco').value;
+    if (document.getElementById('cfg-veiculo')) payload.veiculo = document.getElementById('cfg-veiculo').value;
+    if (document.getElementById('cfg-placa')) payload.placa_veiculo = document.getElementById('cfg-placa').value;
+
+    const nova_senha = document.getElementById('cfg-nova-senha').value;
+    if (nova_senha.trim() !== "") payload.nova_senha = nova_senha;
+
+    try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_URL}/auth/atualizar-perfil`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Erro ao atualizar perfil.");
+
+        fecharModalConfiguracoes();
+        if (typeof mostrarToast === 'function') {
+            mostrarToast("Perfil atualizado com sucesso!", "sucesso");
+        }
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+
+    } catch (e) {
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(e.message, "erro");
+        }
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = "Salvar Alterações";
+    }
+}
+
+window.abrirModalConfiguracoes = abrirModalConfiguracoes;
+window.fecharModalConfiguracoes = fecharModalConfiguracoes;

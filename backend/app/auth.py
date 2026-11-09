@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from jose import jwt, JWTError # type: ignore
 from app.db import get_db
 from app.models import User
-from app.schemas import UserCreate, UserResponse, LoginSchema, Token, ForgotPasswordSchema, ResetPasswordSchema
+from app.schemas import UserCreate, UserResponse, LoginSchema, Token, ForgotPasswordSchema, ResetPasswordSchema, UserUpdate
 from app.security import get_password_hash, verify_password, create_access_token, security
 from app.config import settings
 
@@ -197,3 +197,50 @@ def redefinir_senha(payload: ResetPasswordSchema, db: Session = Depends(get_db))
     db.commit()
 
     return {"message": "Senha redefinida com sucesso! Você já pode fazer login."}
+
+@router.put("/atualizar-perfil", response_model=UserResponse)
+def atualizar_perfil(
+    user_in: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    try:
+        # Se o usuário estiver alterando o e-mail, verifica se já pertence a outro cadastro
+        if user_in.email and user_in.email != current_user.email:
+            email_existente = db.query(User).filter(User.email == user_in.email).first()
+            if email_existente:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Este e-mail já está em uso por outro usuário."
+                )
+            current_user.email = user_in.email
+
+        # Atualiza os campos se eles foram enviados na requisição
+        if user_in.nome is not None:
+            current_user.nome = user_in.nome
+        if user_in.telefone is not None:
+            current_user.telefone = user_in.telefone
+        if user_in.endereco is not None:
+            current_user.endereco = user_in.endereco
+        if user_in.veiculo is not None:
+            current_user.veiculo = user_in.veiculo
+        if user_in.placa_veiculo is not None:
+            current_user.placa_veiculo = user_in.placa_veiculo
+            
+        # Se informou uma nova senha nas configurações
+        if user_in.nova_senha:
+            current_user.senha_hash = get_password_hash(user_in.nova_senha)
+
+        db.commit()
+        db.refresh(current_user)
+
+        return current_user
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro interno ao atualizar perfil: {str(e)}"
+        )

@@ -3,10 +3,11 @@ from typing import List
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app.config import settings
 from app.db import engine, Base, get_db
-import app.models  # Garante que todos os modelos estejam registrados no Base
+import app.models
 from app.models import User, UserRole
 from app.schemas import LojaPublicaResponse
 from app.auth import router as auth_router
@@ -42,7 +43,7 @@ app.include_router(orders_router)
 
 @app.get("/")
 def home():
-    return {"status": "API Cardápio Digital rodando com sucesso!"}
+    return RedirectResponse(url="/static/cliente/index.html")
 
 @app.get("/lojas", response_model=List[LojaPublicaResponse], tags=["Lojas / Estabelecimentos"])
 def listar_lojas_publicas(db: Session = Depends(get_db)):

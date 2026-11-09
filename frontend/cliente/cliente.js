@@ -72,10 +72,11 @@ function configurarSessaoUsuario() {
     const containerLogado = document.getElementById('usuario-logado-container');
     const containerVisitante = document.getElementById('usuario-visitante-container');
     const headerNome = document.getElementById('cliente-nome-header');
+    const btnConfiguracoes = document.getElementById('btn-configuracoes');
 
     // Se estiver logado como LOJA, redireciona para a tela de loja
     if (token && role === 'LOJA') {
-        window.location.href = '../loja/loja.html';
+        window.location.href = '../loja/index.html';
         return;
     }
 
@@ -86,10 +87,15 @@ function configurarSessaoUsuario() {
             containerLogado.classList.add('flex');
         }
         if (containerVisitante) {
-            containerVisitante.classList.add('hidden');
+            containerVisitante.classList.add('hidden');   
+        }
+
+        if (btnConfiguracoes) {
+            btnConfiguracoes.classList.remove('hidden');
+            btnConfiguracoes.classList.add('inline-flex');
         }
         if (headerNome && nome) {
-            headerNome.textContent = nome.split(' ')[0];
+            headerNome.textContent = nome.split(' ')[0];    
         }
         buscarPerfilUsuario();
     } else {
@@ -101,6 +107,10 @@ function configurarSessaoUsuario() {
         if (containerVisitante) {
             containerVisitante.classList.remove('hidden');
             containerVisitante.classList.add('flex');
+        }
+        if (btnConfiguracoes) {
+            btnConfiguracoes.classList.add('hidden');
+            btnConfiguracoes.classList.remove('inline-flex', 'flex');
         }
     }
 }
@@ -134,7 +144,7 @@ function realizarLogout() {
         localStorage.removeItem('user_nome');
         localStorage.removeItem('user_id');
         localStorage.removeItem('cardapio_carrinho_cliente');
-        window.location.href = '../login/index.html';
+        window.location.href = '../cliente/index.html';
     }
 }
 
@@ -1359,6 +1369,124 @@ async function cancelarPedidoCliente(pedidoId) {
         carregarMeusPedidos(false); // Atualiza a lista sem mostrar o loading bruto
     } catch (e) {
         mostrarToast(`Erro: ${e.message}`, 'erro');
+    }
+}
+
+const TOKEN_KEY = "access_token";
+
+async function abrirModalConfiguracoes() {
+    const modal = document.getElementById('modal-configuracoes');
+    modal.classList.remove('hidden');
+
+    // Carregar dados atuais do usuário logado via GET /auth/me
+    try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_URL}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error("Erro ao carregar dados do perfil.");
+        
+        const user = await res.json();
+        
+        // Preencher os campos do formulário
+        document.getElementById('cfg-nome').value = user.nome || '';
+        document.getElementById('cfg-email').value = user.email || '';
+        document.getElementById('cfg-telefone').value = user.telefone || '';
+        document.getElementById('cfg-endereco').value = user.endereco || '';
+        document.getElementById('cfg-nova-senha').value = '';
+        
+    } catch (e) {
+        mostrarMensagemCfg("Erro ao carregar informações do perfil.", "erro");
+    }
+}
+
+function fecharModalConfiguracoes() {
+    document.getElementById('modal-configuracoes').classList.add('hidden');
+    document.getElementById('cfg-mensagem-status').classList.add('hidden');
+}
+
+function aplicarMascaraTelefone(event) {
+    let input = event.target;
+    let valor = input.value.replace(/\D/g, ""); // Remove tudo o que não for dígito
+
+    // Limita o tamanho máximo para 11 dígitos (DDD + 9 dígitos)
+    if (valor.length > 11) {
+        valor = valor.substring(0, 11);
+    }
+
+    // Aplica a formatação progressiva
+    if (valor.length > 6) {
+        // Formato: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+        valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+    } else if (valor.length > 2) {
+        // Formato parcial: (XX) XXXX...
+        valor = valor.replace(/^(\d{2})(\d+)/, "($1) $2");
+    } else if (valor.length > 0) {
+        // Formato parcial: (XX...
+        valor = valor.replace(/^(\d+)/, "($1");
+    }
+
+    input.value = valor;
+}
+
+async function atualizarPerfilCliente(event) {
+    event.preventDefault();
+    
+    const nome = document.getElementById('cfg-nome').value;
+    const email = document.getElementById('cfg-email').value;
+    const telefone = document.getElementById('cfg-telefone').value;
+    const endereco = document.getElementById('cfg-endereco').value;
+    const nova_senha = document.getElementById('cfg-nova-senha').value;
+    
+    const btnSalvar = document.getElementById('btn-salvar-cfg');
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = "Salvando...";
+
+    const payload = { nome, email, telefone, endereco };
+    if (nova_senha.trim() !== "") {
+        payload.nova_senha = nova_senha;
+    }
+
+    try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_URL}/auth/atualizar-perfil`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.detail || "Erro ao atualizar perfil.");
+        }
+        
+        fecharModalConfiguracoes();
+        mostrarToast("Perfil atualizado com sucesso!", "sucesso");
+        
+        setTimeout(() => {;
+            window.location.reload(); // Recarrega para refletir eventuais mudanças no header
+        }, 1500);
+
+    } catch (e) {
+        mostrarMensagemCfg(e.message, "erro");
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = "Salvar Alterações";
+    }
+}
+
+function mostrarMensagemCfg(texto, tipo) {
+    const el = document.getElementById('cfg-mensagem-status');
+    el.textContent = texto;
+    el.classList.remove('hidden', 'bg-tertiary-fixed/20', 'text-tertiary', 'bg-error-container', 'text-on-error-container');
+    if (tipo === 'sucesso') {
+        el.classList.add('bg-tertiary-fixed/20', 'text-tertiary');
+    } else {
+        el.classList.add('bg-error-container', 'text-on-error-container');
     }
 }
 
